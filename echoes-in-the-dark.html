@@ -1,60 +1,238 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Echoes In The Dark | Blue Whirl Game Studio</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Light mode */
+        .light body { background-color: #f3f4f6; color: #1f2937; }
+        .light .bg-slate-900 { background-color: #e5e7eb !important; }
+        .light .bg-slate-800 { background-color: #f9fafb !important; }
+        .light .text-slate-200 { color: #374151 !important; }
+        .light .text-slate-300 { color: #4b5563 !important; }
+        .light .text-slate-400 { color: #4b5563 !important; }
+        .light .border-slate-700 { border-color: #d1d5db !important; }
+        .light .hover\:text-sky-400:hover { color: #38bdf8 !important; }
+        .light .text-sky-400 { color: #0ea5e9 !important; }
+        .light .game-media-bg { background-color: #ffffff; }
+        .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; }
+
+
+        /* Dark mode (default) */
+        body { background-color: #0f172a; color: #e2e8f0; }
+        .game-media-bg { background-color: #1e293b; /* slate-800 */ }
+        .navbar-bg { background-color: rgba(15, 23, 42, 0.85); }
+
+        .cta-button {
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+            transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-button:hover {
+            background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+        }
+        .nav-link-hover::after {
+            content: ''; display: block; width: 0; height: 2px;
+            background: #38bdf8; transition: width 0.3s;
+            position: absolute; left: 0; bottom: -4px;
+        }
+        .nav-link-hover:hover::after { width: 100%; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        .light ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 8px;
+        }
+        .lightbox-caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .lightbox-close:hover,
+        .lightbox-close:focus {
+            color: #bbb;
+            text-decoration: none;
+        }
+        .gallery-thumbnail {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .gallery-thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <nav class="navbar">
-                <div class="logo">
-                    <img src="assets/logo 192.png" alt="Blue Whirl Logo" height="48">
-                    <span>Blue Whirl</span>
+<body class="bg-slate-900 text-slate-200">
+
+    <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="https://placehold.co/48x48/38bdf8/ffffff?text=BW&font=montserrat" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
+                    <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
+                    <a href="index.html#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
+                    <a href="index.html#team" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Team</a>
+                    <a href="index.html#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
                 </div>
-                <ul class="nav-links">
-                    <li><a href="index.html#about">About</a></li>
-                    <li><a href="index.html#games">Games</a></li>
-                    <li><a href="index.html#team">Team</a></li>
-                    <li><a href="index.html#careers">Careers</a></li>
-                    <li><a href="index.html#contact">Contact</a></li>
-                </ul>
-                <button id="theme-toggle" title="Toggle dark/light mode" style="margin-left:1rem;">🌙</button>
-            </nav>
-        </header>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Echoes In The Dark</h1>
-                <p>Unravel mysteries in a world where shadows whisper and secrets linger.</p>
+                <div class="flex items-center">
+                    <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+                        <i class="fas fa-moon text-xl"></i>
+                    </button>
+                    <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
-        </section>
-        <section>
-            <h2>About the Game</h2>
-            <p>
-                Step into the unknown in <strong>Echoes In The Dark</strong>, a narrative-driven adventure where every choice shapes your fate. Explore haunting environments, solve intricate puzzles, and uncover the truth behind the darkness that surrounds you.
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <a href="index.html#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
+            <a href="index.html#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
+            <a href="index.html#team" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Team</a>
+            <a href="index.html#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
+        </div>
+    </nav>
+
+    <section class="relative py-20 md:py-32 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/0f172a/1e293b?text=Echoes+Game+Banner&font=montserrat');">
+        <div class="absolute inset-0 bg-slate-900 opacity-70"></div>
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4">Echoes In The Dark</h1>
+            <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-2xl mx-auto">Unravel chilling mysteries in a world where shadows whisper and long-forgotten secrets linger.</p>
+            <a href="#game-details" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg">
+                Discover the Story
+            </a>
+        </div>
+    </section>
+
+    <section id="game-details" class="py-16 md:py-24 bg-slate-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-6 text-sky-400">Step Into the Unknown</h2>
+                    <p class="text-slate-300 mb-4 leading-relaxed">
+                        <strong>Echoes In The Dark</strong> is a narrative-driven psychological horror adventure that will test your courage and wit. Traverse hauntingly atmospheric environments, from derelict manors to fog-laden forests, each meticulously crafted to immerse you in a world teetering on the brink of madness.
+                    </p>
+                    <p class="text-slate-300 mb-6 leading-relaxed">
+                        Every shadow could hide a threat, every echo could be a clue. Your choices matter, shaping the narrative and leading to one of several unique endings. Can you uncover the truth before the darkness consumes you?
+                    </p>
+                    <div class="mt-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-sky-400">Key Features:</h3>
+                        <ul class="space-y-3 text-slate-300">
+                            <li class="flex items-start"><i class="fas fa-puzzle-piece text-sky-400 mr-3 mt-1"></i><span>Intricate Puzzles: Challenge your mind with complex riddles and environmental puzzles.</span></li>
+                            <li class="flex items-start"><i class="fas fa-book-open text-sky-400 mr-3 mt-1"></i><span>Branching Narrative: Your decisions directly impact the story and its outcome.</span></li>
+                            <li class="flex items-start"><i class="fas fa-ghost text-sky-400 mr-3 mt-1"></i><span>Atmospheric Horror: Experience true psychological horror with immersive sound design and visuals.</span></li>
+                            <li class="flex items-start"><i class="fas fa-search-location text-sky-400 mr-3 mt-1"></i><span>Deep Exploration: Uncover hidden lore, collectibles, and secrets scattered throughout the world.</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="game-media-bg p-4 rounded-lg shadow-xl">
+                    <img src="https://placehold.co/800x600/1e293b/38bdf8?text=Gameplay+Screenshot+1&font=montserrat" alt="Echoes In The Dark Gameplay" class="w-full rounded-lg shadow-md gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/38bdf8?text=Gameplay+Screenshot+1&font=montserrat" data-caption="Intense exploration moment in Echoes In The Dark.">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-16 md:py-24">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-sky-400">Visuals from the Abyss</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+1&font=montserrat" alt="Gallery Image 1" class="rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+1&font=montserrat" data-caption="A mysterious corridor.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+2&font=montserrat" alt="Gallery Image 2" class="rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+2&font=montserrat" data-caption="An ancient artifact.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+3&font=montserrat" alt="Gallery Image 3" class="rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+3&font=montserrat" data-caption="Concept art of a creature.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+4&font=montserrat" alt="Gallery Image 4" class="rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+4&font=montserrat" data-caption="A haunting landscape.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+5&font=montserrat" alt="Gallery Image 5" class="hidden md:block rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+5&font=montserrat" data-caption="Character concept.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+6&font=montserrat" alt="Gallery Image 6" class="hidden md:block rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+6&font=montserrat" data-caption="In-game puzzle element.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+7&font=montserrat" alt="Gallery Image 7" class="hidden lg:block rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+7&font=montserrat" data-caption="A dark forest scene.">
+                <img src="https://placehold.co/400x300/1e293b/94a3b8?text=Gallery+8&font=montserrat" alt="Gallery Image 8" class="hidden lg:block rounded-lg shadow-lg gallery-thumbnail" data-src="https://placehold.co/1200x900/1e293b/94a3b8?text=Gallery+Image+8&font=montserrat" data-caption="Close-up of an important item.">
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-24 bg-slate-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-4 text-sky-400">Dare to Listen to the Echoes?</h2>
+            <p class="text-lg text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed">
+                Echoes In The Dark is coming soon. Wishlist now on your favorite platform and prepare to face your fears.
             </p>
-            <img src="assets/game1.jpg" alt="Echoes In The Dark" style="width:100%;max-width:500px;border-radius:12px;box-shadow:0 2px 12px #5ecfff33;margin:24px 0;">
-            <h2>Features</h2>
-            <ul>
-                <li>Atmospheric exploration and storytelling</li>
-                <li>Challenging puzzles and hidden secrets</li>
-                <li>Branching narrative with multiple endings</li>
-                <li>Immersive sound design and visuals</li>
-            </ul>
-        </section>
-        <footer>
-            <div class="footer-content">
-                <p>&copy; 2024 Blue Whirl Game Studio. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#"><img src="assets/twitter.svg" alt="Twitter"></a>
-                    <a href="#"><img src="assets/facebook.svg" alt="Facebook"></a>
-                    <a href="#"><img src="assets/discord.svg" alt="Discord"></a>
-                </div>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <a href="#" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center space-x-2">
+                    <i class="fab fa-steam"></i> <span>Wishlist on Steam</span>
+                </a>
+                <a href="#" class="cta-button bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center space-x-2">
+                    <i class="fab fa-discord"></i> <span>Join our Discord</span>
+                </a>
             </div>
-        </footer>
+        </div>
+    </section>
+
+    <footer class="py-10 bg-slate-900 border-t border-slate-700">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+            <div class="flex justify-center space-x-6 mb-4">
+                 <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            </div>
+            <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
+             <p class="text-xs mt-1"><a href="index.html" class="hover:text-sky-400">Back to Blue Whirl Home</a></p>
+        </div>
+    </footer>
+
+    <div id="imageLightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightboxImg">
+        <div id="lightboxCaption" class="lightbox-caption"></div>
     </div>
-    <script src="main.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>

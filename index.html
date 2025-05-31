@@ -1,127 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Whirl Game Studio</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Blue Whirl Game Studio - Innovative Games, Unforgettable Experiences</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Light mode */
+        .light body {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        .light .bg-slate-900 { background-color: #e5e7eb !important; /* gray-200 */ }
+        .light .bg-slate-800 { background-color: #f9fafb !important; /* gray-50 */ }
+        .light .text-slate-200 { color: #374151 !important; /* gray-700 */ }
+        .light .text-slate-400 { color: #4b5563 !important; /* gray-600 */ }
+        .light .border-slate-700 { border-color: #d1d5db !important; /* gray-300 */ }
+        .light .hover\:text-sky-400:hover { color: #38bdf8 !important; /* sky-500 */ }
+        .light .text-sky-400 { color: #0ea5e9 !important; /* sky-600 */ }
+        .light .placeholder-slate-400::placeholder { color: #6b7280 !important; /* gray-500 */ }
+        .light input, .light textarea { background-color: #f9fafb; border-color: #d1d5db; color: #1f2937; }
+        .light .game-card, .light .team-member-card { background-color: #ffffff; }
+        .light .hero-gradient { background: linear-gradient(120deg, rgba(56, 189, 248, 0.1) 0%, rgba(243, 244, 246, 0.01) 100%);}
+        .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; /* gray-200 with opacity */ }
+        .light #toast { background-color: #0ea5e9; color: #ffffff; }
+
+
+        /* Dark mode (default) */
+        body {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+        }
+        .hero-gradient {
+             background: linear-gradient(120deg, rgba(30, 64, 175, 0.2) 0%, rgba(15, 23, 42, 0.1) 100%);
+        }
+        .navbar-bg { background-color: rgba(15, 23, 42, 0.85); /* slate-900 with opacity for backdrop blur */ }
+
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 3D Tilt effect for cards */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+        .cta-button {
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%); /* sky-500 to sky-600 */
+            transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-button:hover {
+            background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+        }
+        .nav-link-hover::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #38bdf8; /* sky-400 */
+            transition: width 0.3s;
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+        }
+        .nav-link-hover:hover::after {
+            width: 100%;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; /* slate-800 */
+        }
+        .light ::-webkit-scrollbar-track {
+            background: #e5e7eb; /* gray-200 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38bdf8; /* sky-400 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9; /* sky-500 */
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <nav class="navbar">
-                <div class="logo">
-                    <img src="assets/logo 192.png" alt="Blue Whirl Logo" height="48">
-                    <span>Blue Whirl</span>
+<body class="bg-slate-900 text-slate-200">
+
+    <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="#" class="flex items-center space-x-2">
+                    <img src="https://placehold.co/48x48/38bdf8/ffffff?text=BW&font=montserrat" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
+                    <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
+                    <a href="#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
+                    <a href="#team" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Team</a>
+                    <a href="#careers" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Careers</a>
+                    <a href="#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
                 </div>
-                <ul class="nav-links">
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#games">Games</a></li>
-                    <li><a href="#team">Team</a></li>
-                    <li><a href="#careers">Careers</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-                <button id="theme-toggle" title="Toggle dark/light mode" style="margin-left:1rem;">🌙</button>
-            </nav>
-        </header>
-
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Welcome to Blue Whirl</h1>
-                <p id="hero-subtitle">Innovative games. Unforgettable experiences.</p>
-                <a href="#games" class="cta-button">Explore Our Games</a>
+                <div class="flex items-center">
+                    <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+                        <i class="fas fa-moon text-xl"></i> </button>
+                    <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
-        </section>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <a href="#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
+            <a href="#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
+            <a href="#team" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Team</a>
+            <a href="#careers" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Careers</a>
+            <a href="#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
+        </div>
+    </nav>
 
-        <section id="about" class="about">
-            <h2>About Us</h2>
-            <p>
-                Blue Whirl is a passionate game studio dedicated to creating immersive and innovative gaming experiences. 
-                Our team blends creativity, technology, and storytelling to bring unique worlds to life.
+    <section class="hero-gradient pt-24 pb-16 md:pt-32 md:pb-24 text-center overflow-hidden">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+                Welcome to <span class="text-sky-400">Blue Whirl</span>
+            </h1>
+            <p id="hero-subtitle" class="text-xl md:text-2xl text-slate-300 mb-10 h-8">Innovative games. Unforgettable experiences.</p>
+            <a href="#games" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg">
+                Explore Our Games
+            </a>
+        </div>
+    </section>
+
+    <section id="about" class="py-16 md:py-24 bg-slate-800 reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-4 text-sky-400">About Us</h2>
+            <p class="text-lg text-slate-400 max-w-3xl mx-auto text-center leading-relaxed">
+                Blue Whirl is a passionate and innovative game development studio. We are dedicated to crafting immersive worlds, compelling narratives, and unforgettable gameplay experiences. Our team blends cutting-edge technology with boundless creativity to push the boundaries of interactive entertainment.
             </p>
-        </section>
+        </div>
+    </section>
 
-        <section id="games" class="games">
-            <h2>Our Games</h2>
-            <div class="game-list">
-                <div class="game-card">
-                    <img src="assets/game1.jpg" alt="Echoes In The Dark">
-                    <h3>Echoes In The Dark</h3>
-                    <p>Unravel mysteries in a world where shadows whisper and secrets linger.</p>
-                    <a href="echoes-in-the-dark.html" class="details-link">Learn More</a>
+    <section id="games" class="py-16 md:py-24 reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-sky-400">Our Games</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 p-1 tilt-card reveal">
+                    <div class="relative">
+                        <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Echoes+In+The+Dark&font=montserrat" alt="Echoes In The Dark" class="w-full h-56 object-cover rounded-t-lg">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Echoes In The Dark</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-400 mb-4 text-sm leading-relaxed">Unravel chilling mysteries in a world where shadows whisper and long-forgotten secrets linger in the oppressive darkness.</p>
+                        <a href="echoes-in-the-dark.html" class="inline-block cta-button text-slate-900 text-sm font-semibold py-2 px-6 rounded-full">Learn More</a>
+                    </div>
                 </div>
-                <div class="game-card">
-                    <img src="assets/game2.jpg" alt="Game 2">
-                    <h3>Game 2</h3>
-                    <p>Game 2 description coming soon.</p>
-                    <a href="game-2.html" class="details-link">Learn More</a>
+
+                <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 p-1 tilt-card reveal">
+                     <div class="relative">
+                        <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Project+Odyssey&font=montserrat" alt="Game 2" class="w-full h-56 object-cover rounded-t-lg">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Project Odyssey</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-400 mb-4 text-sm leading-relaxed">Embark on an epic journey through fantastical realms. (Description coming soon).</p>
+                        <a href="#" class="inline-block cta-button text-slate-900 text-sm font-semibold py-2 px-6 rounded-full opacity-50 cursor-not-allowed">Coming Soon</a>
+                    </div>
                 </div>
-                <div class="game-card">
-                    <img src="assets/game3.jpg" alt="Game 3">
-                    <h3>Game 3</h3>
-                    <p>Game 3 description coming soon.</p>
-                    <a href="game-3.html" class="details-link">Learn More</a>
+
+                <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 p-1 tilt-card reveal">
+                    <div class="relative">
+                        <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Neon+Racers&font=montserrat" alt="Game 3" class="w-full h-56 object-cover rounded-t-lg">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Neon Racers</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-400 mb-4 text-sm leading-relaxed">High-octane futuristic racing with stunning visuals. (Description coming soon).</p>
+                         <a href="#" class="inline-block cta-button text-slate-900 text-sm font-semibold py-2 px-6 rounded-full opacity-50 cursor-not-allowed">Coming Soon</a>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="team" class="team">
-            <h2>Meet the Team</h2>
-            <div class="team-list">
-                <div class="team-member">
-                    <img src="assets/team1.jpg" alt="Team Member 1">
-                    <h4>Alex Rivera</h4>
-                    <p>Creative Director</p>
+    <section id="team" class="py-16 md:py-24 bg-slate-800 reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 text-sky-400">Meet the Whirlwind Team</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 reveal">
+                    <img src="https://placehold.co/150x150/38bdf8/ffffff?text=AR&font=montserrat" alt="Alex Rivera" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                    <h4 class="text-xl font-semibold mb-1 text-sky-400">Alex Rivera</h4>
+                    <p class="text-slate-400">Creative Director</p>
                 </div>
-                <div class="team-member">
-                    <img src="assets/team2.jpg" alt="Team Member 2">
-                    <h4>Jamie Chen</h4>
-                    <p>Lead Developer</p>
+                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 reveal">
+                    <img src="https://placehold.co/150x150/38bdf8/ffffff?text=JC&font=montserrat" alt="Jamie Chen" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                    <h4 class="text-xl font-semibold mb-1 text-sky-400">Jamie Chen</h4>
+                    <p class="text-slate-400">Lead Developer</p>
                 </div>
-                <div class="team-member">
-                    <img src="assets/team3.jpg" alt="Team Member 3">
-                    <h4>Sam Patel</h4>
-                    <p>Art Lead</p>
+                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 reveal">
+                    <img src="https://placehold.co/150x150/38bdf8/ffffff?text=SP&font=montserrat" alt="Sam Patel" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                    <h4 class="text-xl font-semibold mb-1 text-sky-400">Sam Patel</h4>
+                    <p class="text-slate-400">Art Lead</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="careers" class="careers">
-            <h2>Careers</h2>
-            <p>We're always looking for talented individuals to join our team. Check out our open positions!</p>
-            <a href="careers.html" class="cta-button">View Openings</a>
-        </section>
+    <section id="careers" class="py-16 md:py-24 text-center reveal">
+         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold mb-4 text-sky-400">Join Our Adventure</h2>
+            <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+                We're always looking for passionate and talented individuals to help us create the next generation of gaming experiences. If you're ready to make your mark, check out our open positions.
+            </p>
+            <a href="#" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg opacity-70 cursor-not-allowed" title="Careers Page Coming Soon">
+                View Openings (Soon)
+            </a>
+        </div>
+    </section>
 
-        <section id="contact" class="contact">
-            <h2>Contact Us</h2>
-            <form id="contact-form" action="submit-form" method="POST">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required>
+    <section id="contact" class="py-16 md:py-24 bg-slate-800 reveal">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-10 text-sky-400">Get In Touch</h2>
+            <form id="contact-form" class="max-w-xl mx-auto bg-slate-900 p-8 rounded-lg shadow-2xl">
+                <div class="mb-5">
+                    <label for="name" class="block mb-2 text-sm font-medium text-sky-400">Full Name</label>
+                    <input type="text" id="name" name="name" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-slate-400" placeholder="John Doe" required>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+                <div class="mb-5">
+                    <label for="email" class="block mb-2 text-sm font-medium text-sky-400">Email Address</label>
+                    <input type="email" id="email" name="email" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-slate-400" placeholder="you@example.com" required>
                 </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
+                <div class="mb-5">
+                    <label for="message" class="block mb-2 text-sm font-medium text-sky-400">Your Message</label>
+                    <textarea id="message" name="message" rows="4" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-slate-400" placeholder="Let us know how we can help..." required></textarea>
                 </div>
-                <button type="submit" class="cta-button">Send Message</button>
+                <button type="submit" class="cta-button text-slate-900 font-bold w-full py-3 px-5 rounded-lg text-base text-center">Send Message</button>
             </form>
-        </section>
+        </div>
+    </section>
 
-        <footer>
-            <div class="footer-content">
-                <p>&copy; 2024 Blue Whirl Game Studio. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#"><img src="assets/twitter.svg" alt="Twitter"></a>
-                    <a href="#"><img src="assets/facebook.svg" alt="Facebook"></a>
-                    <a href="#"><img src="assets/discord.svg" alt="Discord"></a>
-                </div>
+    <footer class="py-10 bg-slate-900 border-t border-slate-700">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-youtube fa-lg"></i></a>
             </div>
-        </footer>
+            <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
+            <p class="text-xs mt-1">Crafted with <i class="fas fa-heart text-red-500"></i> in the digital realm.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-sky-500 text-white py-3 px-6 rounded-lg shadow-md transition-opacity duration-300 opacity-0 z-[100]">
+        Message sent!
     </div>
-    <script src="main.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
