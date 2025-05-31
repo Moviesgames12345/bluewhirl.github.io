@@ -134,6 +134,13 @@ footer {
     border-radius: 0 0 1rem 1rem;
 }
 
+/* Container */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
 /* Responsive Design */
 @media (max-width: 700px) {
     main {
