@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Whirl Game Studio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Blue Whirl Logo" height="48">
+                <span>Blue Whirl</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#games">Games</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="#careers">Careers</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Blue Whirl</h1>
+            <p>Innovative games. Unforgettable experiences.</p>
+            <a href="#games" class="cta-button">Explore Our Games</a>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <h2>About Us</h2>
+        <p>
+            Blue Whirl is a passionate game studio dedicated to creating immersive and innovative gaming experiences. 
+            Our team blends creativity, technology, and storytelling to bring unique worlds to life.
+        </p>
+    </section>
+
+    <section id="games" class="games">
+        <h2>Our Games</h2>
+        <div class="game-list">
+            <div class="game-card">
+                <img src="assets/game1.jpg" alt="Game 1">
+                <h3>Skybound Realms</h3>
+                <p>An epic adventure in the clouds. Explore, build, and conquer!</p>
+                <a href="#" class="details-link">Learn More</a>
+            </div>
+            <div class="game-card">
+                <img src="assets/game2.jpg" alt="Game 2">
+                <h3>Neon Drift</h3>
+                <p>High-speed racing in a neon-lit cyber city. Challenge your reflexes!</p>
+                <a href="#" class="details-link">Learn More</a>
+            </div>
+            <div class="game-card">
+                <img src="assets/game3.jpg" alt="Game 3">
+                <h3>Echoes of Ember</h3>
+                <p>Unravel mysteries in a world where magic meets technology.</p>
+                <a href="#" class="details-link">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="team">
+        <h2>Meet the Team</h2>
+        <div class="team-list">
+            <div class="team-member">
+                <img src="assets/team1.jpg" alt="Team Member 1">
+                <h4>Alex Rivera</h4>
+                <p>Creative Director</p>
+            </div>
+            <div class="team-member">
+                <img src="assets/team2.jpg" alt="Team Member 2">
+                <h4>Jamie Chen</h4>
+                <p>Lead Developer</p>
+            </div>
+            <div class="team-member">
+                <img src="assets/team3.jpg" alt="Team Member 3">
+                <h4>Sam Patel</h4>
+                <p>Art Lead</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="careers" class="careers">
+        <h2>Careers</h2>
+        <p>We're always looking for talented individuals to join our team. Check out our open positions!</p>
+        <a href="careers.html" class="cta-button">View Openings</a>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2>Contact Us</h2>
+        <form id="contact-form" action="submit-form" method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="cta-button">Send Message</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Blue Whirl Game Studio. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#"><img src="assets/twitter.svg" alt="Twitter"></a>
+                <a href="#"><img src="assets/facebook.svg" alt="Facebook"></a>
+                <a href="#"><img src="assets/discord.svg" alt="Discord"></a>
+            </div>
+        </div>
+    </footer>
+    <script src="main.js"></script>
+</body>
+</html>
