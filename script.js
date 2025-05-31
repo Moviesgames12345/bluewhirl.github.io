@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const windowHeight = window.innerHeight;
         revealElements.forEach(el => {
             const elementTop = el.getBoundingClientRect().top;
-            // Reveal when element is 85% up the screen or 100px from top for smaller elements
+            // Reveal when element is 85% up the screen or 50px from top for smaller elements
             if (elementTop < windowHeight - (el.offsetHeight > 100 ? windowHeight * 0.15 : 50) ) {
                 el.classList.add("visible");
             }
@@ -128,9 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
     revealOnScroll(); // Initial check
 
     // --- 3D Tilt effect for game cards ---
-    // Applied via CSS hover, but JS can enhance or control it if needed
-    // For this version, pure CSS hover is efficient.
-    // If you need JS-controlled tilt:
     document.querySelectorAll('.tilt-card').forEach(card => {
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
@@ -189,5 +186,76 @@ document.addEventListener('DOMContentLoaded', () => {
     const yearSpan = document.getElementById("current-year");
     if (yearSpan) {
         yearSpan.textContent = new Date().getFullYear();
+    }
+
+    // --- Media Lightbox (for images and videos on echoes-in-the-dark.html) ---
+    const mediaLightbox = document.getElementById('mediaLightbox');
+
+    if (mediaLightbox) {
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxVideo = document.getElementById('lightboxVideo');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+        const closeLightboxButton = mediaLightbox.querySelector('.lightbox-close');
+
+        document.querySelectorAll('.gallery-thumbnail').forEach(item => {
+            item.addEventListener('click', function() {
+                const src = this.dataset.src;
+                const caption = this.dataset.caption;
+                const type = this.dataset.type;
+
+                if (lightboxCaption) lightboxCaption.textContent = caption;
+
+                if (type === 'video') {
+                    if (lightboxImg) lightboxImg.style.display = 'none';
+                    if (lightboxVideo) {
+                        lightboxVideo.style.display = 'block';
+                        if (lightboxVideo.src !== src) { // Avoid reloading if src is the same
+                            lightboxVideo.src = src;
+                        }
+                        lightboxVideo.load(); // Ensure the new source is loaded
+                        lightboxVideo.play().catch(error => {
+                            console.warn("Video autoplay was prevented:", error);
+                            // Autoplay might be blocked by the browser, but controls will still be available.
+                        });
+                    }
+                } else { // Default to image if type is 'image' or not specified
+                    if (lightboxVideo) {
+                        lightboxVideo.style.display = 'none';
+                        lightboxVideo.pause();
+                        lightboxVideo.src = ""; // Clear src to stop download
+                    }
+                    if (lightboxImg) {
+                        lightboxImg.style.display = 'block';
+                        if (lightboxImg.src !== src) {
+                            lightboxImg.src = src;
+                        }
+                    }
+                }
+                mediaLightbox.style.display = 'flex'; // Or 'block', depending on your lightbox CSS for centering
+            });
+        });
+
+        if (closeLightboxButton) {
+            closeLightboxButton.addEventListener('click', () => {
+                mediaLightbox.style.display = 'none';
+                if (lightboxImg) lightboxImg.src = ""; // Clear src
+                if (lightboxVideo) {
+                    lightboxVideo.pause();
+                    lightboxVideo.src = ""; // Clear src to stop video download/streaming
+                }
+            });
+        }
+
+        // Optional: Close lightbox when clicking outside the content
+        mediaLightbox.addEventListener('click', (e) => {
+            if (e.target === mediaLightbox) { // Clicked on the backdrop
+                mediaLightbox.style.display = 'none';
+                if (lightboxImg) lightboxImg.src = "";
+                if (lightboxVideo) {
+                    lightboxVideo.pause();
+                    lightboxVideo.src = "";
+                }
+            }
+        });
     }
 });
