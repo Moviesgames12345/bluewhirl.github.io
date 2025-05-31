@@ -149,29 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById("contact-form");
     const toast = document.getElementById("toast");
 
-    if (contactForm && toast) {
-        contactForm.addEventListener("submit", function(e) {
-            e.preventDefault();
-            // Basic validation (can be enhanced)
-            const name = contactForm.name.value.trim();
-            const email = contactForm.email.value.trim();
-            const message = contactForm.message.value.trim();
-
-            if (!name || !email || !message) {
-                toast.textContent = "Please fill all fields!";
-                toast.style.backgroundColor = "#ef4444"; // Red for error
-            } else if (!/\S+@\S+\.\S+/.test(email)) {
-                 toast.textContent = "Invalid email address!";
-                toast.style.backgroundColor = "#ef4444"; // Red for error
-            }
-            else {
-                // Simulate form submission
-                console.log("Form submitted:", { name, email, message });
-                toast.textContent = "Thank you for your message!";
-                toast.style.backgroundColor = "#38bdf8"; // Sky blue for success
-                contactForm.reset();
-            }
-
+    function showToast(message, bgColor) {
+        if (toast) {
+            toast.textContent = message;
+            toast.style.backgroundColor = bgColor;
             toast.classList.remove('opacity-0');
             toast.classList.add('opacity-100');
 
@@ -179,6 +160,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 toast.classList.remove('opacity-100');
                 toast.classList.add('opacity-0');
             }, 3000);
+        }
+    }
+
+    if (contactForm && toast) {
+        contactForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const name = contactForm.name.value.trim();
+            const email = contactForm.email.value.trim();
+            const message = contactForm.message.value.trim();
+            let isValid = true;
+            let toastMessage = "";
+            let toastBgColor = "";
+
+            if (!name || !email || !message) {
+                isValid = false;
+                toastMessage = "Please fill all fields!";
+                toastBgColor = "#ef4444"; // Red for error
+            } else if (!/\S+@\S+\.\S+/.test(email)) {
+                isValid = false;
+                toastMessage = "Invalid email address!";
+                toastBgColor = "#ef4444"; // Red for error
+            }
+
+            if (!isValid) {
+                showToast(toastMessage, toastBgColor);
+                return; // Stop if validation fails
+            }
+
+            // If validation passes, prepare data for Formspree
+            const formData = new FormData(contactForm);
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+
+            fetch(contactForm.action, { // Use form's action attribute from HTML
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    toastMessage = "Thank you for your message!";
+                    toastBgColor = "#38bdf8"; // Sky blue for success
+                    contactForm.reset();
+                } else {
+                    response.json().then(data => {
+                        toastMessage = data.errors ? data.errors.map(error => error.message).join(", ") : "Oops! There was a problem.";
+                    }).catch(() => {
+                        toastMessage = "Oops! There was a problem submitting your form.";
+                    });
+                    toastBgColor = "#ef4444"; // Red for error
+                }
+            }).catch(error => {
+                console.error('Error submitting form:', error);
+                toastMessage = "Oops! There was a problem. Please check your connection and try again.";
+                toastBgColor = "#ef4444"; // Red for error
+            }).finally(() => {
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+                showToast(toastMessage, toastBgColor);
+            });
         });
     }
 
