@@ -1,0 +1,19 @@
+bluewhirl.github.io/
+│
+├── index.html
+├── echoes-in-the-dark.html
+├── game-2.html
+├── game-3.html
+├── styles.css
+├── main.js
+└── assets/
+    ├── logo.png
+    ├── game1.jpg
+    ├── game2.jpg
+    ├── game3.jpg
+    ├── team1.jpg
+    ├── team2.jpg
+    ├── team3.jpg
+    ├── twitter.svg
+    ├── facebook.svg
+    └── discord.svg
