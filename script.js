@@ -190,35 +190,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (yearSpan) {
         yearSpan.textContent = new Date().getFullYear();
     }
-
-    // --- Lightbox for Image Gallery (on echoes-in-the-dark.html) ---
-    const lightbox = document.getElementById('imageLightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxCaption = document.getElementById('lightboxCaption');
-    const galleryThumbnails = document.querySelectorAll('.gallery-thumbnail');
-
-    if (lightbox && lightboxImg && lightboxCaption) {
-        galleryThumbnails.forEach(thumbnail => {
-            thumbnail.addEventListener('click', function() {
-                lightbox.style.display = "flex"; // Use flex for centering
-                lightboxImg.src = this.dataset.src || this.src; // Use data-src for higher-res if available
-                lightboxCaption.innerHTML = this.dataset.caption || this.alt;
-            });
-        });
-
-        const closeBtn = lightbox.querySelector('.lightbox-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                lightbox.style.display = "none";
-            });
-        }
-
-        // Close lightbox when clicking outside the image
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.style.display = "none";
-            }
-        });
-    }
-
 });
