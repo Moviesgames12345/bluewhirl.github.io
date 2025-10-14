@@ -325,42 +325,233 @@
     pointLight.position.set(-3, -3, 2);
     scene.add(pointLight);
 
-    // Embedded 3D model JSON (simple torus-knot as placeholder)
-    const modelJson = {
-        "metadata": { "type": "Object", "version": 4.6, "generator": "Object3D.toJSON" },
-        "geometries": [
-            {
-                "uuid": "4d8b2c8e-52f1-419b-83c9-33519c5c24b6",
-                "type": "TorusKnotGeometry",
-                "radius": 1,
-                "tube": 0.4,
-                "tubularSegments": 64,
-                "radialSegments": 8,
-                "p": 2,
-                "q": 3
-            }
-        ],
-        "materials": [
-            {
-                "uuid": "7f0a40a2-2374-42f5-824f-2fde371a260f",
-                "type": "MeshStandardMaterial",
-                "color": 16777215,
-                "roughness": 0.1,
-                "metalness": 0.8
-            }
-        ],
-        "object": {
-            "uuid": "20a2e560-61d9-4845-a4b0-3574d75b8bae",
-            "type": "Mesh",
-            "geometry": "4d8b2c8e-52f1-419b-83c9-33519c5c24b6",
-            "material": "7f0a40a2-2374-42f5-824f-2fde371a260f"
-        }
-    };
+        // Create a particle sphere that radiates outward (frozen explosion)
+        const particleCount = 1500; // tweak for performance
+        const basePositions = new Float32Array(particleCount * 3);
+        const positions = new Float32Array(particleCount * 3);
+        const directions = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
 
-    const loader = new THREE.ObjectLoader();
-    const model = loader.parse(modelJson);
-    scene.add(model);
-    model.scale.set(0.7, 0.7, 0.7);
+        // Helper: random point on sphere
+        function randomPointOnSphere(radius) {
+            const u = Math.random();
+            const v = Math.random();
+            const theta = 2 * Math.PI * u;
+            const phi = Math.acos(2 * v - 1);
+            const x = radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.sin(phi) * Math.sin(theta);
+            const z = radius * Math.cos(phi);
+            return [x, y, z];
+        }
+
+        // Initialize buffers
+        const sphereRadius = 0.95;
+        for (let i = 0; i < particleCount; i++) {
+            const [x, y, z] = randomPointOnSphere(sphereRadius);
+            basePositions[i * 3 + 0] = x;
+            basePositions[i * 3 + 1] = y;
+            basePositions[i * 3 + 2] = z;
+
+            // initial positions match base
+            positions[i * 3 + 0] = x;
+            positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z;
+
+            // outward direction is normalized base position with small random
+            const dir = new THREE.Vector3(x, y, z).normalize().multiplyScalar(1 + Math.random() * 0.5);
+            directions[i * 3 + 0] = dir.x;
+            directions[i * 3 + 1] = dir.y;
+            directions[i * 3 + 2] = dir.z;
+
+            // zero initial velocity
+            velocities[i * 3 + 0] = 0;
+            velocities[i * 3 + 1] = 0;
+            velocities[i * 3 + 2] = 0;
+
+            // initial color: cool luminescent bluish-teal
+            const c = new THREE.Color().setHSL(0.55 + Math.random() * 0.05, 0.9, 0.5);
+            colors[i * 3 + 0] = c.r;
+            colors[i * 3 + 1] = c.g;
+            colors[i * 3 + 2] = c.b;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        // Shader material for glowing points
+        const vertexShader = `
+            attribute vec3 color;
+            varying vec3 vColor;
+            void main() {
+                vColor = color;
+                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                // size attenuation
+                float size = 40.0 * (1.0 / -mvPosition.z);
+                gl_PointSize = size * 0.6; // base scale
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        `;
+
+        const fragmentShader = `
+            varying vec3 vColor;
+            void main() {
+                // radial gradient for glow
+                vec2 uv = gl_PointCoord - vec2(0.5);
+                float dist = length(uv);
+                float alpha = smoothstep(0.5, 0.0, dist);
+                // soft edge falloff
+                alpha *= 0.9;
+                // additive glow
+                gl_FragColor = vec4(vColor, alpha);
+            }
+        `;
+
+        const material = new THREE.ShaderMaterial({
+            vertexShader,
+            fragmentShader,
+            transparent: true,
+            depthTest: false,
+            blending: THREE.AdditiveBlending,
+            vertexColors: true
+        });
+
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+
+        // state for explosion and mouse
+        let explosionProgress = 0.0;
+        const explosionMagnitude = 2.2; // how far particles go
+        const mouse = new THREE.Vector2(0, 0);
+        const raycaster = new THREE.Raycaster();
+        const tmpVec3 = new THREE.Vector3();
+
+        // Mouse events
+        window.addEventListener('mousemove', (e) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        });
+
+        // GSAP ScrollTrigger timeline (bind explosion progress and camera zoom)
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: 'main',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1,
+            },
+        })
+        .to({}, { // animate explosionProgress via onUpdate
+            duration: 1,
+            onStart: () => {},
+            onUpdate: function() { /* placeholder */ }
+        });
+
+        // We'll animate explosionProgress and camera zoom separately and connect to ScrollTrigger
+        ScrollTrigger.create({
+            trigger: 'main',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1,
+            onUpdate: (self) => {
+                explosionProgress = self.progress; // 0 -> 1 as user scrolls
+                // map progress to camera z movement for subtle zoom
+                camera.position.z = 3 - 0.8 * explosionProgress;
+            }
+        });
+
+        // Animation loop with simple particle physics and mouse repulsion
+        const influenceRadius = 120; // pixels
+        const repulsionStrength = 6.5; // tuning
+        const damping = 0.92;
+
+        function animate() {
+            // Update particle positions based on basePositions + explosion + velocities
+            for (let i = 0; i < particleCount; i++) {
+                const ix = i * 3;
+                // compute target from base + direction * explosion
+                const tx = basePositions[ix + 0] + directions[ix + 0] * explosionProgress * explosionMagnitude;
+                const ty = basePositions[ix + 1] + directions[ix + 1] * explosionProgress * explosionMagnitude;
+                const tz = basePositions[ix + 2] + directions[ix + 2] * explosionProgress * explosionMagnitude;
+
+                // apply simple velocity integration
+                velocities[ix + 0] += (tx - positions[ix + 0]) * 0.02;
+                velocities[ix + 1] += (ty - positions[ix + 1]) * 0.02;
+                velocities[ix + 2] += (tz - positions[ix + 2]) * 0.02;
+
+                // Mouse repulsion: get mouse point in world at distance 2 from camera
+                raycaster.setFromCamera(mouse, camera);
+                const mousePoint = raycaster.ray.at(2, tmpVec3);
+
+                // compute distance from particle to mousePoint
+                const px = positions[ix + 0];
+                const py = positions[ix + 1];
+                const pz = positions[ix + 2];
+                const dx = px - mousePoint.x;
+                const dy = py - mousePoint.y;
+                const dz = pz - mousePoint.z;
+                const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                // convert 3D dist to screen-space approximation (larger influence for closer distances)
+                if (dist < 1.8) {
+                    // compute repulsion force
+                    const f = (1.8 - dist) * repulsionStrength * 0.06;
+                    velocities[ix + 0] += (dx / (dist + 0.0001)) * f;
+                    velocities[ix + 1] += (dy / (dist + 0.0001)) * f;
+                    velocities[ix + 2] += (dz / (dist + 0.0001)) * f;
+
+                    // brighten color when affected
+                    const cIndex = ix;
+                    const strength = Math.min(1.0, (1.8 - dist) * 0.6 + 0.1);
+                    // lerp towards warm luminescent color (teal->cyan->magenta accents)
+                    const highlight = new THREE.Color().setHSL(0.62 - 0.12 * strength, 0.95, 0.6 + 0.2 * strength);
+                    colors[cIndex + 0] = THREE.MathUtils.lerp(colors[cIndex + 0], highlight.r, 0.18);
+                    colors[cIndex + 1] = THREE.MathUtils.lerp(colors[cIndex + 1], highlight.g, 0.18);
+                    colors[cIndex + 2] = THREE.MathUtils.lerp(colors[cIndex + 2], highlight.b, 0.18);
+                } else {
+                    // slowly relax color back to base bluish
+                    const cIndex = ix;
+                    const base = new THREE.Color().setHSL(0.55 + (i % 10) * 0.002, 0.9, 0.45 + (i % 6) * 0.01);
+                    colors[cIndex + 0] = THREE.MathUtils.lerp(colors[cIndex + 0], base.r, 0.01);
+                    colors[cIndex + 1] = THREE.MathUtils.lerp(colors[cIndex + 1], base.g, 0.01);
+                    colors[cIndex + 2] = THREE.MathUtils.lerp(colors[cIndex + 2], base.b, 0.01);
+                }
+
+                // apply velocities and damping
+                positions[ix + 0] += velocities[ix + 0];
+                positions[ix + 1] += velocities[ix + 1];
+                positions[ix + 2] += velocities[ix + 2];
+
+                velocities[ix + 0] *= damping;
+                velocities[ix + 1] *= damping;
+                velocities[ix + 2] *= damping;
+            }
+
+            // update buffers
+            geometry.attributes.position.needsUpdate = true;
+            geometry.attributes.color.needsUpdate = true;
+
+            // slow rotation for subtle movement
+            points.rotation.y += 0.0012; // slower rotation
+            points.rotation.x += 0.0003;
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            sizes.width = window.innerWidth;
+            sizes.height = window.innerHeight;
+            camera.aspect = sizes.width / sizes.height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(sizes.width, sizes.height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        });
 
     // GSAP ScrollTrigger timeline bound to <main>
     gsap.timeline({
