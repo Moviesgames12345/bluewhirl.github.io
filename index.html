@@ -18,7 +18,7 @@
             color: #1f2937; /* gray-800 */
         }
         .light .bg-slate-900 { background-color: #e5e7eb !important; /* gray-200 */ }
-        .light .bg-slate-800 { background-color: #f9fafb !important; /* gray-50 */ }
+        .light .bg-slate-800 { background-color: #ffffff !important; /* white */ }
         .light .text-slate-200 { color: #374151 !important; /* gray-700 */ }
         .light .text-slate-400 { color: #4b5563 !important; /* gray-600 */ }
         .light .border-slate-700 { border-color: #d1d5db !important; /* gray-300 */ }
@@ -30,6 +30,23 @@
         .light .hero-gradient { background: linear-gradient(120deg, rgba(56, 189, 248, 0.1) 0%, rgba(243, 244, 246, 0.01) 100%);}
         .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; /* gray-200 with opacity */ }
         .light #toast { background-color: #0ea5e9; color: #ffffff; }
+        .light .cta-button { color: #0f172a !important; /* slate-900 */ }
+        .light .cta-button:hover { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4); }
+        .light .section-title { text-shadow: 0 2px 8px rgba(31, 41, 55, 0.1); }
+        .light .section-title::after { box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+        .light input:focus, .light textarea:focus { 
+            border-color: #ec4899 !important; /* pink-500 */
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3) !important;
+            outline: none;
+        }
+        /* --- Light mode modal styles --- */
+        .light #modal-content { background-color: #ffffff; }
+        .light #modal-content h3 { color: #10b981; /* emerald-500 */ }
+        .light #modal-content p { color: #374151; /* gray-700 */ }
+
+        /* --- FIX: Added transparency to About section --- */
+        #about { background-color: rgba(30, 41, 59, 0.9); /* slate-800 with 90% opacity */ }
+        .light #about { background-color: rgba(255, 255, 255, 0.9) !important; /* white with 90% opacity */ }
 
 
         /* Dark mode (default) */
@@ -57,10 +74,10 @@
         /* 3D Tilt effect for cards */
         .tilt-card {
             transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
         }
         .cta-button {
             background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%); /* sky-500 to sky-600 */
+            color: #ffffff;
             transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
         }
         .cta-button:hover {
@@ -83,6 +100,39 @@
             width: 100%;
         }
 
+        /* --- Styling for Section Titles --- */
+        .section-title {
+            position: relative;
+            text-align: center;
+            font-size: 1.875rem; /* text-3xl */
+            line-height: 2.25rem;
+            font-weight: 700;
+            color: #38bdf8; /* text-sky-400 */
+            margin-bottom: 3rem; /* mb-12 */
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4), 0 0 5px rgba(56, 189, 248, 0.5);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.75rem; /* Positioned below the text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+        }
+
+        /* Contrasting form focus styles */
+        input:focus, textarea:focus {
+            border-color: #f472b6 !important; /* pink-400 */
+            box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3) !important;
+            outline: none;
+        }
+
+
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -100,192 +150,203 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #0ea5e9; /* sky-500 */
         }
-    </style>
-    /* Add canvas and styles for 3D background */
-    <style>
-        /* --- Add these styles for the 3D animation --- */
 
-        /* Fixes the canvas to the viewport background */
+        /* Styles for the 3D animation */
         canvas#webgl {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Let page interactions pass through */
-            z-index: 0;
             outline: none;
+            z-index: 0;
         }
 
-        /* Ensures the main content is scrollable and appears on top of the canvas */
         main {
             position: relative;
             z-index: 1;
         }
+        
+        /* --- Easter Egg Modal Styles --- */
+        #easter-egg-modal {
+            transition: opacity 0.3s ease-out;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-out;
+        }
+        #easter-egg-modal.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #easter-egg-modal.visible #modal-content {
+            transform: scale(1);
+        }
     </style>
-
 </head>
 <body class="bg-slate-900 text-slate-200">
 
-    <!-- 3D background canvas -->
     <canvas id="webgl"></canvas>
 
-    <main>
-
-    <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="#" class="flex items-center space-x-2">
-                    <img src="assets/logo 192.png" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
-                    <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
-                </a>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
-                    <a href="#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
-                    <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Shop</a>
-                    <a href="#careers" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Careers</a>
-                    <a href="#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
-                </div>
-                <div class="flex items-center">
-                    <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
-                        <i class="fas fa-moon text-xl"></i> </button>
-                    <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
+    <div id="easter-egg-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="bg-slate-800 rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95">
+            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Easter Egg Found!</h3>
+            <p class="text-slate-300 mb-6">Congratulations, you've found a hidden secret! You have a keen eye for detail.</p>
+            <button id="close-modal-button" class="cta-button text-white font-bold py-2 px-6 rounded-full text-base">Close</button>
         </div>
-        <div id="mobile-menu" class="md:hidden hidden">
-            <a href="#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
-            <a href="#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
-            <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Shop</a>
-            <a href="#careers" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Careers</a>
-            <a href="#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
-        </div>
-    </nav>
-
-    <section class="hero-gradient pt-24 pb-16 md:pt-32 md:pb-24 text-center overflow-hidden">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
-                Welcome to <span class="text-sky-400">Blue Whirl</span>
-            </h1>
-            <p id="hero-subtitle" class="text-xl md:text-2xl text-slate-300 mb-10 h-8">Engineering Your Next Adventure.</p>
-            <a href="#games" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg">
-                Check Out Our Games
-            </a>
-        </div>
-    </section>
-
-    <section id="about" class="py-16 md:py-24 bg-slate-800 reveal">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-4 text-sky-400">About Us</h2>
-            <p class="text-lg text-slate-400 max-w-3xl mx-auto text-center leading-relaxed">
-                Blue Whirl is a passionate and innovative game development studio. We are dedicated to crafting immersive worlds, compelling narratives, and unforgettable gameplay experiences.
-            </p>
-        </div>
-    </section>
-
-    <section id="games" class="py-16 md:py-24 reveal">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-sky-400">Our Games</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 p-1 tilt-card reveal">
-                    <div class="relative">
-                        <img src="assets/echoes6.png" alt="Echoes In The Dark" class="w-full h-56 object-cover rounded-t-lg">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Echoes In The Dark</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-400 mb-4 text-sm leading-relaxed">Unravel chilling mysteries in a world where shadows whisper and long-forgotten secrets linger in the oppressive darkness.</p>
-                        <a href="echoes-in-the-dark.html" class="inline-block cta-button text-slate-900 text-sm font-semibold py-2 px-6 rounded-full">Learn More</a>
-                    </div>
-                </div>
-
-                <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 p-1 tilt-card reveal">
-                     <div class="relative">
-                        <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Coming+Soon&font=montserrat" alt="Game 2" class="w-full h-56 object-cover rounded-t-lg">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Coming soon..</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-400 mb-4 text-sm leading-relaxed">Coming soon...</p>
-                        <a href="#" class="inline-block cta-button text-slate-900 text-sm font-semibold py-2 px-6 rounded-full opacity-50 cursor-not-allowed">Coming Soon</a>
-                    </div>
-                </div>
-
-                <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 p-1 tilt-card reveal">
-                    <div class="relative">
-                        <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Coming+Soon&font=montserrat" alt="Game 3" class="w-full h-56 object-cover rounded-t-lg">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Coming soon..</h3>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-slate-400 mb-4 text-sm leading-relaxed">Coming soon...</p>
-                         <a href="#" class="inline-block cta-button text-slate-900 text-sm font-semibold py-2 px-6 rounded-full opacity-50 cursor-not-allowed">Coming Soon</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="careers" class="py-16 md:py-24 text-center reveal">
-         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold mb-4 text-sky-400">Join Our Adventure</h2>
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-                We're always looking for passionate and talented individuals to help us create the next generation of gaming experiences. If you're ready to make your mark, check out our open positions.
-            </p>
-            <a href="#" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg opacity-70 cursor-not-allowed" title="Careers Page Coming Soon">
-                View Openings (Soon)
-            </a>
-        </div>
-    </section>
-
-    <section id="contact" class="py-16 md:py-24 bg-slate-800 reveal">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-10 text-sky-400">Get In Touch</h2>
-            <form id="contact-form" action="https://formspree.io/f/mdkznydk" method="POST" class="max-w-xl mx-auto bg-slate-900 p-8 rounded-lg shadow-2xl">
-                <div class="mb-5">
-                    <label for="name" class="block mb-2 text-sm font-medium text-sky-400">Full Name</label>
-                    <input type="text" id="name" name="name" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-slate-400" placeholder="John Doe" required>
-                </div>
-                <div class="mb-5">
-                    <label for="email" class="block mb-2 text-sm font-medium text-sky-400">Email Address</label>
-                    <input type="email" id="email" name="email" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-slate-400" placeholder="you@example.com" required>
-                </div>
-                <div class="mb-5">
-                    <label for="message" class="block mb-2 text-sm font-medium text-sky-400">Your Message</label>
-                    <textarea id="message" name="message" rows="4" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-slate-400" placeholder="Let us know how we can help..." required></textarea>
-                </div>
-                <button type="submit" class="cta-button text-slate-900 font-bold w-full py-3 px-5 rounded-lg text-base text-center">Send Message</button>
-            </form>
-        </div>
-    </section>
-
-    <footer class="py-10 bg-slate-900 border-t border-slate-700">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
-            <div class="flex justify-center space-x-6 mb-4">
-                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
-                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
-                <a href="https://discord.gg/bcaQdDa3GX" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
-                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-linkedin-in fa-lg"></i></a>
-                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-youtube fa-lg"></i></a>
-            </div>
-            <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
-            <p class="text-xs mt-1">Crafted with <i class="fas fa-heart text-red-500"></i> in the digital realm.</p>
-        </div>
-    </footer>
-
-    <div id="toast" class="fixed bottom-5 right-5 bg-sky-500 text-white py-3 px-6 rounded-lg shadow-md transition-opacity duration-300 opacity-0 z-[100]">
-        Message sent!
     </div>
 
+    <main>
+        <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <a href="#" class="flex items-center space-x-2">
+                        <img src="assets/logo 192.png" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
+                        <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
+                    </a>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
+                        <a href="#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
+                        <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Shop</a>
+                        <a href="#careers" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Careers</a>
+                        <a href="#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+                            <i class="fas fa-moon text-xl"></i> </button>
+                        <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="mobile-menu" class="md:hidden hidden">
+                <a href="#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
+                <a href="#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
+                <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Shop</a>
+                <a href="#careers" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Careers</a>
+                <a href="#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
+            </div>
+        </nav>
+    
+        <section class="hero-gradient pt-24 pb-16 md:pt-32 md:pb-24 text-center overflow-hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+                    Welcome to <span class="text-sky-400">Blue Whirl</span>
+                </h1>
+                <p id="hero-subtitle" class="text-xl md:text-2xl text-slate-300 mb-10 h-8">Engineering Your Next Adventure.</p>
+                <a href="#games" class="cta-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg">
+                    Check Out Our Games
+                </a>
+            </div>
+        </section>
+    
+        <section id="about" class="py-16 md:py-24 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">About Us</h2>
+                <p class="text-lg text-slate-400 max-w-3xl mx-auto text-center leading-relaxed">
+                    Blue Whirl is a passionate and innovative game development studio. We are dedicated to crafting immersive worlds, compelling narratives, and unforgettable gameplay experiences.
+                </p>
+            </div>
+        </section>
+    
+        <section id="games" class="py-16 md:py-24 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">Our Games</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                    <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden p-1 tilt-card reveal">
+                        <div class="relative">
+                            <img src="assets/echoes6.png" alt="Echoes In The Dark" class="w-full h-56 object-cover rounded-t-lg">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Echoes In The Dark</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-slate-400 mb-4 text-sm leading-relaxed">Unravel chilling mysteries in a world where shadows whisper and long-forgotten secrets linger in the oppressive darkness.</p>
+                            <a href="echoes-in-the-dark.html" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full">Learn More</a>
+                        </div>
+                    </div>
+    
+                    <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden p-1 tilt-card reveal">
+                         <div class="relative">
+                            <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Coming+Soon&font=montserrat" alt="Game 2" class="w-full h-56 object-cover rounded-t-lg">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Coming soon..</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-slate-400 mb-4 text-sm leading-relaxed">Coming soon...</p>
+                            <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full opacity-50 cursor-not-allowed">Coming Soon</a>
+                        </div>
+                    </div>
+    
+                    <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden p-1 tilt-card reveal">
+                        <div class="relative">
+                            <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Coming+Soon&font=montserrat" alt="Game 3" class="w-full h-56 object-cover rounded-t-lg">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Coming soon..</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-slate-400 mb-4 text-sm leading-relaxed">Coming soon...</p>
+                             <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full opacity-50 cursor-not-allowed">Coming Soon</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <section id="careers" class="py-16 md:py-24 text-center reveal">
+           <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">Join Our Adventure</h2>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+                    We're always looking for passionate and talented individuals to help us create the next generation of gaming experiences. If you're ready to make your mark, check out our open positions.
+                </p>
+                <a href="#" class="cta-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg opacity-70 cursor-not-allowed" title="Careers Page Coming Soon">
+                    View Openings (Soon)
+                </a>
+            </div>
+        </section>
+    
+        <section id="contact" class="py-16 md:py-24 bg-slate-800 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">Get In Touch</h2>
+                <form id="contact-form" action="https://formspree.io/f/mdkznydk" method="POST" class="max-w-xl mx-auto bg-slate-900 p-8 rounded-lg shadow-2xl">
+                    <div class="mb-5">
+                        <label for="name" class="block mb-2 text-sm font-medium text-sky-400">Full Name</label>
+                        <input type="text" id="name" name="name" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400" placeholder="John Doe" required>
+                    </div>
+                    <div class="mb-5">
+                        <label for="email" class="block mb-2 text-sm font-medium text-sky-400">Email Address</label>
+                        <input type="email" id="email" name="email" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400" placeholder="you@example.com" required>
+                    </div>
+                    <div class="mb-5">
+                        <label for="message" class="block mb-2 text-sm font-medium text-sky-400">Your Message</label>
+                        <textarea id="message" name="message" rows="4" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400" placeholder="Let us know how we can help..." required></textarea>
+                    </div>
+                    <button type="submit" class="cta-button text-white font-bold w-full py-3 px-5 rounded-lg text-base text-center">Send Message</button>
+                </form>
+            </div>
+        </section>
+    
+        <footer class="py-10 bg-slate-900 border-t border-slate-700">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+                <div class="flex justify-center space-x-6 mb-4">
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="https://discord.gg/bcaQdDa3GX" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-youtube fa-lg"></i></a>
+                </div>
+                <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
+                <p class="text-xs mt-1">Crafted with <i class="fas fa-heart text-red-500"></i> in the digital realm.</p>
+            </div>
+        </footer>
+    
+        <div id="toast" class="fixed bottom-5 right-5 bg-sky-500 text-white py-3 px-6 rounded-lg shadow-md transition-opacity duration-300 opacity-0 z-[100]">
+            Message sent!
+        </div>
+    
     </main>
 
-    <!-- Importmap and module script for 3D scroll animation (Three.js + GSAP ScrollTrigger) -->
     <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
             "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
             "ScrollTrigger": "https://unpkg.com/gsap@3.12.5/ScrollTrigger.js"
         }
@@ -293,303 +354,364 @@
     </script>
 
     <script type="module">
-    import * as THREE from 'three';
-    import { gsap } from 'gsap';
-    import { ScrollTrigger } from 'ScrollTrigger';
+        import * as THREE from 'three';
+        import { gsap } from 'gsap';
+        import { ScrollTrigger } from 'ScrollTrigger';
 
-    gsap.registerPlugin(ScrollTrigger);
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // --- FIX: Wrap all code in DOMContentLoaded listener to prevent race conditions ---
+        document.addEventListener('DOMContentLoaded', () => {
 
-    // Scene, camera, renderer
-    const scene = new THREE.Scene();
-    let sizes = { width: window.innerWidth, height: window.innerHeight };
-    const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-    camera.position.z = 3;
-    scene.add(camera);
+            // --- 3D PARTICLE ANIMATION CODE ---
+            const scene = new THREE.Scene();
+            const sizes = { width: window.innerWidth, height: window.innerHeight };
+            const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+            camera.position.z = 4;
+            scene.add(camera);
 
-    const renderer = new THREE.WebGLRenderer({
-        canvas: document.querySelector('canvas#webgl'),
-        alpha: true,
-        antialias: true
-    });
-    renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = false;
-
-    // Lighting (blue themed)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0x00aaff, 3);
-    directionalLight.position.set(3, 3, 5);
-    scene.add(directionalLight);
-    const pointLight = new THREE.PointLight(0x0055ff, 10);
-    pointLight.position.set(-3, -3, 2);
-    scene.add(pointLight);
-
-        // Create a particle sphere that radiates outward (frozen explosion)
-        const particleCount = 1500; // tweak for performance
-        const basePositions = new Float32Array(particleCount * 3);
-        const positions = new Float32Array(particleCount * 3);
-        const directions = new Float32Array(particleCount * 3);
-        const velocities = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
-
-        // Helper: random point on sphere
-        function randomPointOnSphere(radius) {
-            const u = Math.random();
-            const v = Math.random();
-            const theta = 2 * Math.PI * u;
-            const phi = Math.acos(2 * v - 1);
-            const x = radius * Math.sin(phi) * Math.cos(theta);
-            const y = radius * Math.sin(phi) * Math.sin(theta);
-            const z = radius * Math.cos(phi);
-            return [x, y, z];
-        }
-
-        // Initialize buffers
-        const sphereRadius = 0.95;
-        for (let i = 0; i < particleCount; i++) {
-            const [x, y, z] = randomPointOnSphere(sphereRadius);
-            basePositions[i * 3 + 0] = x;
-            basePositions[i * 3 + 1] = y;
-            basePositions[i * 3 + 2] = z;
-
-            // initial positions match base
-            positions[i * 3 + 0] = x;
-            positions[i * 3 + 1] = y;
-            positions[i * 3 + 2] = z;
-
-            // outward direction is normalized base position with small random
-            const dir = new THREE.Vector3(x, y, z).normalize().multiplyScalar(1 + Math.random() * 0.5);
-            directions[i * 3 + 0] = dir.x;
-            directions[i * 3 + 1] = dir.y;
-            directions[i * 3 + 2] = dir.z;
-
-            // zero initial velocity
-            velocities[i * 3 + 0] = 0;
-            velocities[i * 3 + 1] = 0;
-            velocities[i * 3 + 2] = 0;
-
-            // initial color: cool luminescent bluish-teal
-            const c = new THREE.Color().setHSL(0.55 + Math.random() * 0.05, 0.9, 0.5);
-            colors[i * 3 + 0] = c.r;
-            colors[i * 3 + 1] = c.g;
-            colors[i * 3 + 2] = c.b;
-        }
-
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        // Shader material for glowing points
-        const vertexShader = `
-            attribute vec3 color;
-            varying vec3 vColor;
-            void main() {
-                vColor = color;
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                // size attenuation
-                float size = 40.0 * (1.0 / -mvPosition.z);
-                gl_PointSize = size * 0.6; // base scale
-                gl_Position = projectionMatrix * mvPosition;
-            }
-        `;
-
-        const fragmentShader = `
-            varying vec3 vColor;
-            void main() {
-                // radial gradient for glow
-                vec2 uv = gl_PointCoord - vec2(0.5);
-                float dist = length(uv);
-                float alpha = smoothstep(0.5, 0.0, dist);
-                // soft edge falloff
-                alpha *= 0.9;
-                // additive glow
-                gl_FragColor = vec4(vColor, alpha);
-            }
-        `;
-
-        const material = new THREE.ShaderMaterial({
-            vertexShader,
-            fragmentShader,
-            transparent: true,
-            depthTest: false,
-            blending: THREE.AdditiveBlending,
-            vertexColors: true
-        });
-
-        const points = new THREE.Points(geometry, material);
-        scene.add(points);
-
-        // state for explosion and mouse
-        let explosionProgress = 0.0;
-        const explosionMagnitude = 2.2; // how far particles go
-        const mouse = new THREE.Vector2(0, 0);
-        const raycaster = new THREE.Raycaster();
-        const tmpVec3 = new THREE.Vector3();
-
-        // Mouse events
-        window.addEventListener('mousemove', (e) => {
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        });
-
-        // GSAP ScrollTrigger timeline (bind explosion progress and camera zoom)
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: 'main',
-                start: 'top top',
-                end: 'bottom bottom',
-                scrub: 1,
-            },
-        })
-        .to({}, { // animate explosionProgress via onUpdate
-            duration: 1,
-            onStart: () => {},
-            onUpdate: function() { /* placeholder */ }
-        });
-
-        // We'll animate explosionProgress and camera zoom separately and connect to ScrollTrigger
-        ScrollTrigger.create({
-            trigger: 'main',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1,
-            onUpdate: (self) => {
-                explosionProgress = self.progress; // 0 -> 1 as user scrolls
-                // map progress to camera z movement for subtle zoom
-                camera.position.z = 3 - 0.8 * explosionProgress;
-            }
-        });
-
-        // Animation loop with simple particle physics and mouse repulsion
-        const influenceRadius = 120; // pixels
-        const repulsionStrength = 6.5; // tuning
-        const damping = 0.92;
-
-        function animate() {
-            // Update particle positions based on basePositions + explosion + velocities
-            for (let i = 0; i < particleCount; i++) {
-                const ix = i * 3;
-                // compute target from base + direction * explosion
-                const tx = basePositions[ix + 0] + directions[ix + 0] * explosionProgress * explosionMagnitude;
-                const ty = basePositions[ix + 1] + directions[ix + 1] * explosionProgress * explosionMagnitude;
-                const tz = basePositions[ix + 2] + directions[ix + 2] * explosionProgress * explosionMagnitude;
-
-                // apply simple velocity integration
-                velocities[ix + 0] += (tx - positions[ix + 0]) * 0.02;
-                velocities[ix + 1] += (ty - positions[ix + 1]) * 0.02;
-                velocities[ix + 2] += (tz - positions[ix + 2]) * 0.02;
-
-                // Mouse repulsion: get mouse point in world at distance 2 from camera
-                raycaster.setFromCamera(mouse, camera);
-                const mousePoint = raycaster.ray.at(2, tmpVec3);
-
-                // compute distance from particle to mousePoint
-                const px = positions[ix + 0];
-                const py = positions[ix + 1];
-                const pz = positions[ix + 2];
-                const dx = px - mousePoint.x;
-                const dy = py - mousePoint.y;
-                const dz = pz - mousePoint.z;
-                const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-                // convert 3D dist to screen-space approximation (larger influence for closer distances)
-                if (dist < 1.8) {
-                    // compute repulsion force
-                    const f = (1.8 - dist) * repulsionStrength * 0.06;
-                    velocities[ix + 0] += (dx / (dist + 0.0001)) * f;
-                    velocities[ix + 1] += (dy / (dist + 0.0001)) * f;
-                    velocities[ix + 2] += (dz / (dist + 0.0001)) * f;
-
-                    // brighten color when affected
-                    const cIndex = ix;
-                    const strength = Math.min(1.0, (1.8 - dist) * 0.6 + 0.1);
-                    // lerp towards warm luminescent color (teal->cyan->magenta accents)
-                    const highlight = new THREE.Color().setHSL(0.62 - 0.12 * strength, 0.95, 0.6 + 0.2 * strength);
-                    colors[cIndex + 0] = THREE.MathUtils.lerp(colors[cIndex + 0], highlight.r, 0.18);
-                    colors[cIndex + 1] = THREE.MathUtils.lerp(colors[cIndex + 1], highlight.g, 0.18);
-                    colors[cIndex + 2] = THREE.MathUtils.lerp(colors[cIndex + 2], highlight.b, 0.18);
-                } else {
-                    // slowly relax color back to base bluish
-                    const cIndex = ix;
-                    const base = new THREE.Color().setHSL(0.55 + (i % 10) * 0.002, 0.9, 0.45 + (i % 6) * 0.01);
-                    colors[cIndex + 0] = THREE.MathUtils.lerp(colors[cIndex + 0], base.r, 0.01);
-                    colors[cIndex + 1] = THREE.MathUtils.lerp(colors[cIndex + 1], base.g, 0.01);
-                    colors[cIndex + 2] = THREE.MathUtils.lerp(colors[cIndex + 2], base.b, 0.01);
-                }
-
-                // apply velocities and damping
-                positions[ix + 0] += velocities[ix + 0];
-                positions[ix + 1] += velocities[ix + 1];
-                positions[ix + 2] += velocities[ix + 2];
-
-                velocities[ix + 0] *= damping;
-                velocities[ix + 1] *= damping;
-                velocities[ix + 2] *= damping;
-            }
-
-            // update buffers
-            geometry.attributes.position.needsUpdate = true;
-            geometry.attributes.color.needsUpdate = true;
-
-            // slow rotation for subtle movement
-            points.rotation.y += 0.0012; // slower rotation
-            points.rotation.x += 0.0003;
-
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-
-        // Resize handling
-        window.addEventListener('resize', () => {
-            sizes.width = window.innerWidth;
-            sizes.height = window.innerHeight;
-            camera.aspect = sizes.width / sizes.height;
-            camera.updateProjectionMatrix();
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.querySelector('canvas#webgl'),
+                alpha: true,
+                antialias: true
+            });
             renderer.setSize(sizes.width, sizes.height);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const particleCount = 2300;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const originalPositions = new Float32Array(particleCount * 3);
+            const particleSizes = new Float32Array(particleCount);
+            
+            const easterEggParticleIndex = Math.floor(Math.random() * particleCount);
+
+            const colorEasterEgg = new THREE.Color('#34d399');
+            const colorInside = new THREE.Color('#f472b6');
+            const colorOutside = new THREE.Color('#38bdf8');
+
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const theta = Math.random() * Math.PI * 2;
+                const radius = 2 + Math.random() * 2;
+
+                positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i3 + 2] = radius * Math.cos(phi);
+                
+                originalPositions.set([positions[i3], positions[i3+1], positions[i3+2]], i3);
+                colorOutside.toArray(colors, i3);
+
+                particleSizes[i] = Math.random() * 1.0 + 0.5;
+            }
+
+            const particleGeometry = new THREE.BufferGeometry();
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            particleGeometry.setAttribute('aSize', new THREE.BufferAttribute(particleSizes, 1));
+            
+            const softCircleSvg = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <defs>
+                        <radialGradient id="softGradient" cx="50%" cy="50%" r="50%">
+                            <stop offset="70%" stop-color="white" stop-opacity="1"/>
+                            <stop offset="100%" stop-color="white" stop-opacity="0"/>
+                        </radialGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="50" fill="url(#softGradient)"/>
+                </svg>
+            `;
+            const softCircleDataUrl = 'data:image/svg+xml;base64,' + btoa(softCircleSvg);
+            const particleTexture = new THREE.TextureLoader().load(softCircleDataUrl);
+            
+            const vertexShader = `
+                attribute float aSize;
+                varying vec3 vColor;
+
+                void main() {
+                    vColor = color;
+                    vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_Position = projectionMatrix * modelViewPosition;
+                    gl_PointSize = aSize * 18.0; 
+                }
+            `;
+            
+            const fragmentShader = `
+                uniform sampler2D uTexture;
+                varying vec3 vColor;
+
+                void main() {
+                    gl_FragColor = vec4(vColor, 1.0);
+                    gl_FragColor = gl_FragColor * texture2D(uTexture, gl_PointCoord);
+                }
+            `;
+
+            const particleMaterial = new THREE.ShaderMaterial({
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                uniforms: { uTexture: { value: particleTexture } },
+                transparent: true,
+                depthWrite: false,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+            });
+
+            const particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+
+            const pointer = new THREE.Vector2(-10, -10);
+            const interactionRadius = 0.47;
+            const repulsionStrength = 1.5;
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.params.Points.threshold = 0.1; 
+
+            const webglCanvas = document.getElementById('webgl');
+            
+            function updatePointerPosition(event) {
+                const touch = event.touches ? event.touches[0] : event;
+                pointer.x = (touch.clientX / sizes.width) * 2 - 1;
+                pointer.y = -(touch.clientY / sizes.height) * 2 + 1;
+            }
+            window.addEventListener('mousemove', updatePointerPosition);
+            window.addEventListener('touchstart', updatePointerPosition, { passive: false });
+            window.addEventListener('touchmove', updatePointerPosition, { passive: false });
+            window.addEventListener('mouseout', () => pointer.set(-10, -10));
+            window.addEventListener('touchend', () => pointer.set(-10, -10));
+            
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: 'main',
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: 3,
+                },
+            }).to(particles.rotation, {
+                y: Math.PI,
+                x: Math.PI / 2,
+                ease: 'power1.inOut'
+            });
+
+            const animate = () => {
+                const inverseParticleQuaternion = particles.quaternion.clone().invert();
+                const particlePositions = particles.geometry.attributes.position;
+                const particleColors = particles.geometry.attributes.color;
+                const currentParticleSizes = particles.geometry.attributes.aSize; 
+
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+                    const particleVec = new THREE.Vector3().fromArray(particlePositions.array, i3);
+                    const worldPos = particleVec.clone().applyQuaternion(particles.quaternion);
+                    const screenPos = worldPos.clone().project(camera);
+                    const distance = pointer.distanceTo(screenPos);
+                    const targetPos = new THREE.Vector3().fromArray(originalPositions, i3);
+                    
+                    let targetColor = colorOutside;
+                    const isEasterEgg = (i === easterEggParticleIndex);
+                    
+                    let targetSize = particleSizes[i];
+
+                    if (distance < interactionRadius) {
+                        if (isEasterEgg) {
+                            targetColor = colorEasterEgg;
+                            targetSize = 1.5; 
+                        } else {
+                            targetColor = colorInside;
+                        }
+
+                        const forceMagnitude = 1 - distance / interactionRadius;
+                        const repulsionDirection2D = screenPos.clone().sub(pointer).normalize();
+                        const force_cameraSpace = new THREE.Vector3(repulsionDirection2D.x, repulsionDirection2D.y, 0);
+                        const force_worldSpace = force_cameraSpace.applyQuaternion(camera.quaternion);
+                        const force_localSpace = force_worldSpace.applyQuaternion(inverseParticleQuaternion);
+                        targetPos.add(force_localSpace.multiplyScalar(forceMagnitude * repulsionStrength));
+                    }
+
+                    particlePositions.setX(i, THREE.MathUtils.lerp(particleVec.x, targetPos.x, 0.05));
+                    particlePositions.setY(i, THREE.MathUtils.lerp(particleVec.y, targetPos.y, 0.05));
+                    particlePositions.setZ(i, THREE.MathUtils.lerp(particleVec.z, targetPos.z, 0.05));
+                    const currentColor = new THREE.Color().fromArray(particleColors.array, i3);
+                    currentColor.lerp(targetColor, 0.05);
+                    currentColor.toArray(particleColors.array, i3);
+
+                    currentParticleSizes.setX(i, THREE.MathUtils.lerp(currentParticleSizes.getX(i), targetSize, 0.05)); 
+                }
+                particlePositions.needsUpdate = true;
+                particleColors.needsUpdate = true;
+                currentParticleSizes.needsUpdate = true; 
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            };
+            animate();
+
+            window.addEventListener('resize', () => {
+                sizes.width = window.innerWidth;
+                sizes.height = window.innerHeight;
+                camera.aspect = sizes.width / sizes.height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(sizes.width, sizes.height);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            });
+
+
+            // --- WEBSITE INTERACTIVITY CODE ---
+            const modal = document.getElementById('easter-egg-modal');
+            const closeModalButton = document.getElementById('close-modal-button');
+
+            function showModal() {
+                modal.classList.add('visible');
+            }
+
+            function hideModal() {
+                modal.classList.remove('visible');
+            }
+
+            closeModalButton.addEventListener('click', hideModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideModal();
+                }
+            });
+
+            function onParticleClick(event) {
+                updatePointerPosition(event);
+                raycaster.setFromCamera(pointer, camera);
+                const intersects = raycaster.intersectObject(particles, true);
+
+                if (intersects.length > 0) {
+                    const closest = intersects[0];
+                    if (closest.index === easterEggParticleIndex) {
+                        showModal();
+                    }
+                }
+            }
+            window.addEventListener('click', onParticleClick);
+            window.addEventListener('touchend', onParticleClick, { passive: false });
+
+
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            if (localStorage.getItem('theme') === 'light') {
+                document.documentElement.classList.add('light');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light');
+                if (document.documentElement.classList.contains('light')) {
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => revealObserver.observe(el));
+            
+            const contactForm = document.getElementById('contact-form');
+            const toast = document.getElementById('toast');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                }).then(response => {
+                    if (response.ok) {
+                        toast.classList.remove('opacity-0');
+                        setTimeout(() => toast.classList.add('opacity-0'), 3000);
+                        this.reset();
+                    } else {
+                        alert('Oops! There was a problem submitting your form.');
+                    }
+                }).catch(error => {
+                    console.error('Form submission error:', error);
+                    alert('Oops! There was a problem submitting your form.');
+                });
+            });
+
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            const subtitle = document.getElementById('hero-subtitle');
+            const phrases = ["Engineering Your Next Adventure.", "Crafting Unforgettable Worlds.", "Where Innovation Meets Play."];
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function typeEffect() {
+                const currentPhrase = phrases[phraseIndex];
+                if (isDeleting) {
+                    subtitle.textContent = currentPhrase.substring(0, charIndex--);
+                } else {
+                    subtitle.textContent = currentPhrase.substring(0, charIndex++);
+                }
+
+                if (!isDeleting && charIndex === currentPhrase.length) {
+                    setTimeout(() => isDeleting = true, 2000);
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                }
+                
+                const typeSpeed = isDeleting ? 50 : 100;
+                setTimeout(typeEffect, typeSpeed);
+            }
+            typeEffect();
+            
+            const tiltCards = document.querySelectorAll('.tilt-card');
+            tiltCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    gsap.to(card, { scale: 1.05, duration: 0.3, ease: 'power2.out' });
+                });
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const { width, height } = rect;
+                    const rotateX = (y / height - 0.5) * -20;
+                    const rotateY = (x / width - 0.5) * 20;
+
+                    gsap.to(card, {
+                        duration: 0.2,
+                        rotationX: rotateX,
+                        rotationY: rotateY,
+                        transformPerspective: 1000,
+                        ease: 'power1.out'
+                    });
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        duration: 0.3,
+                        scale: 1,
+                        rotationX: 0,
+                        rotationY: 0,
+                        ease: 'power2.out'
+                    });
+                });
+            });
+
         });
-
-    // GSAP ScrollTrigger timeline bound to <main>
-    gsap.timeline({
-        scrollTrigger: {
-            trigger: 'main',
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1,
-        },
-    })
-    .to(model.rotation, {
-        y: Math.PI * 2,
-        x: Math.PI * 1.5,
-        ease: 'power1.inOut'
-    })
-    .to(camera.position, {
-        z: 2.2,
-        ease: 'power1.inOut'
-    }, '<');
-
-    // Render loop
-    const animate = () => {
-        renderer.render(scene, camera);
-        window.requestAnimationFrame(animate);
-    };
-    animate();
-
-    // Resize handling
-    window.addEventListener('resize', () => {
-        sizes.width = window.innerWidth;
-        sizes.height = window.innerHeight;
-        camera.aspect = sizes.width / sizes.height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(sizes.width, sizes.height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    });
     </script>
-
-    <script src="script.js"></script>
 </body>
 </html>
