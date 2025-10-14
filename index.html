@@ -44,9 +44,9 @@
         .light #modal-content h3 { color: #10b981; /* emerald-500 */ }
         .light #modal-content p { color: #374151; /* gray-700 */ }
 
-        /* --- FIX: Added transparency to About section --- */
-        #about { background-color: rgba(30, 41, 59, 0.9); /* slate-800 with 90% opacity */ }
-        .light #about { background-color: rgba(255, 255, 255, 0.9) !important; /* white with 90% opacity */ }
+        /* --- NEW: About Us tile background --- */
+        .about-tile-bg { background-color: rgba(30, 41, 59, 0.9); /* slate-800 with 90% opacity */ }
+        .light .about-tile-bg { background-color: rgba(255, 255, 255, 0.9) !important; /* white with 90% opacity */ }
 
 
         /* Dark mode (default) */
@@ -240,10 +240,12 @@
     
         <section id="about" class="py-16 md:py-24 reveal">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="section-title">About Us</h2>
-                <p class="text-lg text-slate-400 max-w-3xl mx-auto text-center leading-relaxed">
-                    Blue Whirl is a passionate and innovative game development studio. We are dedicated to crafting immersive worlds, compelling narratives, and unforgettable gameplay experiences.
-                </p>
+                <div class="about-tile-bg rounded-2xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto">
+                    <h2 class="section-title">About Us</h2>
+                    <p class="text-lg text-slate-400 max-w-3xl mx-auto text-center leading-relaxed">
+                        Blue Whirl is a passionate and innovative game development studio. We are dedicated to crafting immersive worlds, compelling narratives, and unforgettable gameplay experiences.
+                    </p>
+                </div>
             </div>
         </section>
     
@@ -360,7 +362,6 @@
 
         gsap.registerPlugin(ScrollTrigger);
         
-        // --- FIX: Wrap all code in DOMContentLoaded listener to prevent race conditions ---
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- 3D PARTICLE ANIMATION CODE ---
