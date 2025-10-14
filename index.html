@@ -101,8 +101,36 @@
             background: #0ea5e9; /* sky-500 */
         }
     </style>
+    /* Add canvas and styles for 3D background */
+    <style>
+        /* --- Add these styles for the 3D animation --- */
+
+        /* Fixes the canvas to the viewport background */
+        canvas#webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let page interactions pass through */
+            z-index: 0;
+            outline: none;
+        }
+
+        /* Ensures the main content is scrollable and appears on top of the canvas */
+        main {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+
 </head>
 <body class="bg-slate-900 text-slate-200">
+
+    <!-- 3D background canvas -->
+    <canvas id="webgl"></canvas>
+
+    <main>
 
     <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -250,6 +278,126 @@
     <div id="toast" class="fixed bottom-5 right-5 bg-sky-500 text-white py-3 px-6 rounded-lg shadow-md transition-opacity duration-300 opacity-0 z-[100]">
         Message sent!
     </div>
+
+    </main>
+
+    <!-- Importmap and module script for 3D scroll animation (Three.js + GSAP ScrollTrigger) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
+            "ScrollTrigger": "https://unpkg.com/gsap@3.12.5/ScrollTrigger.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+    import * as THREE from 'three';
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Scene, camera, renderer
+    const scene = new THREE.Scene();
+    let sizes = { width: window.innerWidth, height: window.innerHeight };
+    const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+    camera.position.z = 3;
+    scene.add(camera);
+
+    const renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('canvas#webgl'),
+        alpha: true,
+        antialias: true
+    });
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = false;
+
+    // Lighting (blue themed)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0x00aaff, 3);
+    directionalLight.position.set(3, 3, 5);
+    scene.add(directionalLight);
+    const pointLight = new THREE.PointLight(0x0055ff, 10);
+    pointLight.position.set(-3, -3, 2);
+    scene.add(pointLight);
+
+    // Embedded 3D model JSON (simple torus-knot as placeholder)
+    const modelJson = {
+        "metadata": { "type": "Object", "version": 4.6, "generator": "Object3D.toJSON" },
+        "geometries": [
+            {
+                "uuid": "4d8b2c8e-52f1-419b-83c9-33519c5c24b6",
+                "type": "TorusKnotGeometry",
+                "radius": 1,
+                "tube": 0.4,
+                "tubularSegments": 64,
+                "radialSegments": 8,
+                "p": 2,
+                "q": 3
+            }
+        ],
+        "materials": [
+            {
+                "uuid": "7f0a40a2-2374-42f5-824f-2fde371a260f",
+                "type": "MeshStandardMaterial",
+                "color": 16777215,
+                "roughness": 0.1,
+                "metalness": 0.8
+            }
+        ],
+        "object": {
+            "uuid": "20a2e560-61d9-4845-a4b0-3574d75b8bae",
+            "type": "Mesh",
+            "geometry": "4d8b2c8e-52f1-419b-83c9-33519c5c24b6",
+            "material": "7f0a40a2-2374-42f5-824f-2fde371a260f"
+        }
+    };
+
+    const loader = new THREE.ObjectLoader();
+    const model = loader.parse(modelJson);
+    scene.add(model);
+    model.scale.set(0.7, 0.7, 0.7);
+
+    // GSAP ScrollTrigger timeline bound to <main>
+    gsap.timeline({
+        scrollTrigger: {
+            trigger: 'main',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1,
+        },
+    })
+    .to(model.rotation, {
+        y: Math.PI * 2,
+        x: Math.PI * 1.5,
+        ease: 'power1.inOut'
+    })
+    .to(camera.position, {
+        z: 2.2,
+        ease: 'power1.inOut'
+    }, '<');
+
+    // Render loop
+    const animate = () => {
+        renderer.render(scene, camera);
+        window.requestAnimationFrame(animate);
+    };
+    animate();
+
+    // Resize handling
+    window.addEventListener('resize', () => {
+        sizes.width = window.innerWidth;
+        sizes.height = window.innerHeight;
+        camera.aspect = sizes.width / sizes.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(sizes.width, sizes.height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+    </script>
 
     <script src="script.js"></script>
 </body>
