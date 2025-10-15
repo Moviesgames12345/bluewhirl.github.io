@@ -13,26 +13,71 @@
             transition: background-color 0.3s, color 0.3s;
         }
         /* Light mode */
-        .light body { background-color: #f3f4f6; color: #1f2937; }
-        .light .bg-slate-900 { background-color: #e5e7eb !important; }
-        .light .bg-slate-800 { background-color: #f9fafb !important; }
-        .light .text-slate-200 { color: #374151 !important; }
-        .light .text-slate-300 { color: #4b5563 !important; }
-        .light .text-slate-400 { color: #4b5563 !important; }
-        .light .border-slate-700 { border-color: #d1d5db !important; }
-        .light .hover\:text-sky-400:hover { color: #38bdf8 !important; }
-        .light .text-sky-400 { color: #0ea5e9 !important; }
-        .light .game-media-bg { background-color: #ffffff; }
-        .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; }
+        .light body {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        .light .bg-slate-900 { background-color: #e5e7eb !important; /* gray-200 */ }
+        .light .bg-slate-800 { background-color: #ffffff !important; /* white */ }
+        .light .text-slate-200 { color: #374151 !important; /* gray-700 */ }
+        .light .text-slate-400 { color: #4b5563 !important; /* gray-600 */ }
+        .light .border-slate-700 { border-color: #d1d5db !important; /* gray-300 */ }
+        .light .hover\:text-sky-400:hover { color: #38bdf8 !important; /* sky-500 */ }
+        .light .text-sky-400 { color: #0ea5e9 !important; /* sky-600 */ }
+        .light .placeholder-slate-400::placeholder { color: #6b7280 !important; /* gray-500 */ }
+        .light input, .light textarea { background-color: #f9fafb; border-color: #d1d5db; color: #1f2937; }
+        .light .game-card, .light .team-member-card { background-color: #ffffff; }
+        .light .hero-gradient { background: linear-gradient(120deg, rgba(56, 189, 248, 0.1) 0%, rgba(243, 244, 246, 0.01) 100%);}
+        .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; /* gray-200 with opacity */ }
+        .light #toast { background-color: #0ea5e9; color: #ffffff; }
+        .light .cta-button { color: #0f172a !important; /* slate-900 */ }
+        .light .cta-button:hover { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4); }
+        .light .section-title { text-shadow: 0 2px 8px rgba(31, 41, 55, 0.1); }
+        .light .section-title::after { box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+        .light input:focus, .light textarea:focus { 
+            border-color: #ec4899 !important; /* pink-500 */
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3) !important;
+            outline: none;
+        }
+        /* --- Light mode modal styles --- */
+        .light #modal-content { background-color: #ffffff; }
+        .light #modal-content h3 { color: #10b981; /* emerald-500 */ }
+        .light #modal-content p { color: #374151; /* gray-700 */ }
+
+        /* --- NEW: About Us tile background --- */
+        .about-tile-bg { background-color: rgba(30, 41, 59, 0.9); /* slate-800 with 90% opacity */ }
+        .light .about-tile-bg { background-color: rgba(255, 255, 255, 0.9) !important; /* white with 90% opacity */ }
 
 
         /* Dark mode (default) */
-        body { background-color: #0f172a; color: #e2e8f0; }
-        .game-media-bg { background-color: #1e293b; /* slate-800 */ }
-        .navbar-bg { background-color: rgba(15, 23, 42, 0.85); }
+        body {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+        }
+        .hero-gradient {
+             background: linear-gradient(120deg, rgba(30, 64, 175, 0.2) 0%, rgba(15, 23, 42, 0.1) 100%);
+        }
+        .navbar-bg { background-color: rgba(15, 23, 42, 0.85); /* slate-900 with opacity for backdrop blur */ }
 
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 3D Tilt effect for cards */
+        .tilt-card {
+            transform-style: preserve-3d;
+        }
         .cta-button {
-            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%); /* sky-500 to sky-600 */
+            color: #ffffff;
             transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
         }
         .cta-button:hover {
@@ -41,19 +86,99 @@
             box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
         }
         .nav-link-hover::after {
-            content: ''; display: block; width: 0; height: 2px;
-            background: #38bdf8; transition: width 0.3s;
-            position: absolute; left: 0; bottom: -4px;
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #38bdf8; /* sky-400 */
+            transition: width 0.3s;
+            position: absolute;
+            left: 0;
+            bottom: -4px;
         }
-        .nav-link-hover:hover::after { width: 100%; }
+        .nav-link-hover:hover::after {
+            width: 100%;
+        }
+
+        /* --- Styling for Section Titles --- */
+        .section-title {
+            position: relative;
+            text-align: center;
+            font-size: 1.875rem; /* text-3xl */
+            line-height: 2.25rem;
+            font-weight: 700;
+            color: #38bdf8; /* text-sky-400 */
+            margin-bottom: 3rem; /* mb-12 */
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4), 0 0 5px rgba(56, 189, 248, 0.5);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.75rem; /* Positioned below the text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+        }
+
+        /* Contrasting form focus styles */
+        input:focus, textarea:focus {
+            border-color: #f472b6 !important; /* pink-400 */
+            box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3) !important;
+            outline: none;
+        }
+
 
         /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        .light ::-webkit-scrollbar-track { background: #e5e7eb; }
-        ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; /* slate-800 */
+        }
+        .light ::-webkit-scrollbar-track {
+            background: #e5e7eb; /* gray-200 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38bdf8; /* sky-400 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9; /* sky-500 */
+        }
 
+        /* Styles for the 3D animation */
+        canvas#webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            outline: none;
+            z-index: 0;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* --- Easter Egg Modal Styles --- */
+        #easter-egg-modal {
+            transition: opacity 0.3s ease-out;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-out;
+        }
+        #easter-egg-modal.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #easter-egg-modal.visible #modal-content {
+            transform: scale(1);
+        }
         /* Lightbox styles */
         .lightbox {
             display: none;
@@ -112,186 +237,202 @@
 </head>
 <body class="bg-slate-900 text-slate-200">
 
-    <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="index.html" class="flex items-center space-x-2">
-                    <img src="assets/logo 192.png" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
-                    <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
-                </a>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="index.html#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
-                    <a href="index.html#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
-                    <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Shop</a>
-                    <a href="#development-team" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Team</a>
-                    <a href="index.html#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
-                </div>
-                <div class="flex items-center">
-                    <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
-                        <i class="fas fa-moon text-xl"></i>
-                    </button>
-                    <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
+    <canvas id="webgl"></canvas>
+
+    <div id="easter-egg-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="bg-slate-800 rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95">
+            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Easter Egg Found!</h3>
+            <p class="text-slate-300 mb-6">Congratulations, you've found a hidden secret! You have a keen eye for detail.</p>
+            <button id="close-modal-button" class="cta-button text-white font-bold py-2 px-6 rounded-full text-base">Close</button>
         </div>
-        <div id="mobile-menu" class="md:hidden hidden">
-            <a href="index.html#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
-            <a href="index.html#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
-            <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Shop</a>
-            <a href="#development-team" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Team</a>
-            <a href="index.html#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
-        </div>
-    </nav>
-
-    <section class="relative py-20 md:py-32 bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/0f172a/1e293b?text=Echoes+In+The+Dark&font=montserrat');">
-        <div class="absolute inset-0 bg-slate-900 opacity-70"></div>
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4">Echoes In The Dark</h1>
-            <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">In the freezing dark of a derelict Arctic outpost, your greatest enemy isn't the cold—it's the person standing next to you. A multiplayer survival horror game of paranoia and betrayal.</p>
-            <a href="#game-details" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg">
-                Discover the Paranoia
-            </a>
-        </div>
-    </section>
-
-    <section id="game-details" class="py-16 md:py-24 bg-slate-800">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 class="text-3xl font-bold mb-6 text-sky-400">Trust is Your Most Fragile Resource</h2>
-                    <p class="text-slate-300 mb-4 leading-relaxed">
-                        <strong>Echoes In The Dark - </strong> You are part of a research team trapped in the isolated, decaying Arctic Outpost. To survive, your group must explore the hazardous facility, investigate clues from data logs and schematics, and use what you find to repair critical systems for your escape or to contain the mysterious entity you've discovered.
-                    </p>
-                    <p class="text-slate-300 mb-6 leading-relaxed">
-                        But one of you is not who they seem. A hidden player, The Anomaly, is working against the group. Their goal is to ensure no one leaves. They will deceive you, sabotage your equipment, and turn the failing outpost itself into a weapon against you. Paranoia will spread, and you'll have to decide who to trust before it's too late.
-                    </p>
-                    <div class="mt-8">
-                        <h3 class="text-2xl font-semibold mb-4 text-sky-400">Key Features:</h3>
-                        <ul class="space-y-3 text-slate-300">
-                            <li class="flex items-start"><i class="fas fa-satellite-dish text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Investigate & Repair:</strong> Sent with scant information, your investigation team must explore a remote Arctic research facility gone dark, where technology has turned hostile and the previous crew met a grim fate.</span></li>
-                            <li class="flex items-start"><i class="fas fa-ghost text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>The Unseen Manipulator:</strong> Confront an intelligent Anomaly that warps reality, controls the outpost's systems, and preys on your team's sanity.</span></li>
-                            <li class="flex items-start"><i class="fas fa-user-secret text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Paranoia & Deceit:</strong> The Anomaly's influence is insidious. Can you trust your teammates, or has one already fallen under its sway?</span></li>
-                            <li class="flex items-start"><i class="fas fa-file-alt text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Race for Truth & Survival:</strong> Collect scattered research notes to understand the catastrophe and find a way to escape before you become another echo in the dark.</span></li>
-                            <li class="flex items-start"><i class="fas fa-directions text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Consequential Choices:</strong> Your decisions shape the unfolding horror and determine who, if anyone, makes it out alive.</span></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="game-media-bg p-4 rounded-lg shadow-xl">
-                    <img src="assets/echoes4.png" alt="Echoes In The Dark Gameplay" class="w-full rounded-lg shadow-md gallery-thumbnail" data-src="assets/echoes4.png" data-caption=" ">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="gallery" class="py-16 md:py-24">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-sky-400">Visuals from the Game</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                <!-- Converted Gallery Image 1 to Video Thumbnail -->
-                <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer" data-src="assets/test3.mp4" data-caption="Introductory clip or key scene." data-type="video">
-                    <img src="assets/Screenshot4.png" alt="Video Thumbnail 1" class="w-full h-full object-cover rounded-lg">
-                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
-                        <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
-                    </div>
-                </div>
-
-                <!-- Video Thumbnail Example 1 -->
-                <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer" data-src="assets/test1.mp4" data-caption=" " data-type="video">
-                    <img src="assets/Screenshot2.png" alt="Video Thumbnail 1" class="w-full h-full object-cover rounded-lg">
-                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
-                        <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
-                    </div>
-                </div>
-
-                <!-- Video Thumbnail Example 2 -->
-                <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer" data-src="assets/test2.mp4" data-caption=" " data-type="video">
-                    <img src="assets/Screenshot3.png" alt="Video Thumbnail 2" class="w-full h-full object-cover rounded-lg">
-                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
-                        <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
-                    </div>
-                </div>
-
-                <!-- Converted Gallery Image 4 to Video Thumbnail -->
-                <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer" data-src="assets/test4.mp4" data-caption=" " data-type="video">
-                    <img src="assets/Screenshot6.png" alt="Video Thumbnail 4" class="w-full h-full object-cover rounded-lg">
-                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
-                        <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
-                    </div>
-                </div>
-                <img src="assets/cave1.png" alt="Gallery Image 5" class="hidden md:block rounded-lg shadow-lg gallery-thumbnail" data-src="assets/cave1.png" data-caption=" " data-type="image">
-                <img src="assets/concept11.png" alt="Gallery Image 6" class="hidden md:block rounded-lg shadow-lg gallery-thumbnail" data-src="assets/concept11.png" data-caption=" " data-type="image">
-                <img src="assets/echoes2.png" alt="Gallery Image 7" class="hidden lg:block rounded-lg shadow-lg gallery-thumbnail" data-src="assets/echoes2.png" data-caption=" " data-type="image">
-                <img src="assets/echoes5.png" alt="Gallery Image 8" class="hidden lg:block rounded-lg shadow-lg gallery-thumbnail" data-src="assets/echoes5.png" data-caption=" " data-type="image">
-            </div>
-        </div>
-    </section>
-
-    <section id="development-team" class="py-16 md:py-24 bg-slate-800">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12 text-sky-400">Meet the Development Team</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
-                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1">
-                    <img src="assets/logo 192.png" alt="Harro" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
-                    <h4 class="text-xl font-semibold mb-1 text-sky-400">BW Harro</h4>
-                    <p class="text-slate-400">Project Manager/Programmer</p>
-                </div>
-                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1">
-                    <img src="https://placehold.co/150x150/38bdf8/ffffff?text=N&font=montserrat" alt="Niko" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
-                    <h4 class="text-xl font-semibold mb-1 text-sky-400">Niko</h4>
-                    <p class="text-slate-400">Programmer</p>
-                </div>
-                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1">
-                    <img src="assets/Shawn.jpg" alt="Shawn" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
-                    <h4 class="text-xl font-semibold mb-1 text-sky-400">JSM Shawn</h4>
-                    <p class="text-slate-400">Programmer</p>
-                </div>
-                <div class="team-member-card text-center bg-slate-800 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1">
-                    <img src="assets/Major.png" alt="Major" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
-                    <h4 class="text-xl font-semibold mb-1 text-sky-400">Major</h4>
-                    <p class="text-slate-400">Art/Level Design/Programmer</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-16 md:py-24 bg-slate-800">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-4 text-sky-400">Dare to Listen to the Echoes?</h2>
-            <p class="text-lg text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed">
-                Echoes In The Dark is coming soon. Wishlist now on your favorite platform and prepare to face your fears.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                <a href="#" class="cta-button text-slate-900 font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center space-x-2">
-                    <i class="fab fa-steam"></i> <span>Wishlist on Steam</span>
-                </a>
-                <a href="https://discord.gg/bcaQdDa3GX" target="_blank" rel="noopener noreferrer" class="cta-button bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center space-x-2">
-                    <i class="fab fa-discord"></i> <span>Join our Discord</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <footer class="py-10 bg-slate-900 border-t border-slate-700">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
-            <div class="flex justify-center space-x-6 mb-4">
-                 <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
-                <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
-                <a href="https://discord.gg/bcaQdDa3GX" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
-            </div>
-            <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
-             <p class="text-xs mt-1"><a href="index.html" class="hover:text-sky-400">Back to Blue Whirl Home</a></p>
-        </div>
-    </footer>
-
-    <div id="mediaLightbox" class="lightbox">
-        <span class="lightbox-close">&times;</span>
-        <img class="lightbox-content" id="lightboxImg" style="display:none;">
-        <video class="lightbox-content" id="lightboxVideo" style="display:none;" controls preload="metadata"></video>
-        <div id="lightboxCaption" class="lightbox-caption"></div>
     </div>
 
-    <script src="script.js"></script>
+    <main>
+        <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="assets/logo 192.png" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
+                        <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
+                    </a>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="index.html#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
+                        <a href="index.html#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
+                        <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Shop</a>
+                        <a href="#development-team" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Team</a>
+                        <a href="index.html#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+                            <i class="fas fa-moon text-xl"></i> </button>
+                        <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="mobile-menu" class="md:hidden hidden">
+                <a href="index.html#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
+                <a href="index.html#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
+                <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Shop</a>
+                <a href="#development-team" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Team</a>
+                <a href="index.html#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
+            </div>
+        </nav>
+    
+        <section class="relative py-20 md:py-32 bg-cover bg-center" style="background-image: url('assets/echoes2.png');">
+            <div class="absolute inset-0 bg-slate-900 opacity-70"></div>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4">Echoes In The Dark</h1>
+                <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">In the freezing dark of a derelict Arctic outpost, your greatest enemy isn't the cold—it's the person standing next to you. A multiplayer survival horror game of paranoia and betrayal.</p>
+                <a href="#game-details" class="cta-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg">
+                    Discover the Paranoia
+                </a>
+            </div>
+        </section>
+    
+        <section id="game-details" class="py-16 md:py-24 bg-slate-800 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="section-title">Trust is Your Most Fragile Resource</h2>
+                        <p class="text-slate-400 mb-4 leading-relaxed">
+                            <strong>Echoes In The Dark - </strong> You are part of a research team trapped in the isolated, decaying Arctic Outpost. To survive, your group must explore the hazardous facility, investigate clues from data logs and schematics, and use what you find to repair critical systems for your escape or to contain the mysterious entity you've discovered.
+                        </p>
+                        <p class="text-slate-400 mb-6 leading-relaxed">
+                            But one of you is not who they seem. A hidden player, The Anomaly, is working against the group. Their goal is to ensure no one leaves. They will deceive you, sabotage your equipment, and turn the failing outpost itself into a weapon against you. Paranoia will spread, and you'll have to decide who to trust before it's too late.
+                        </p>
+                        <div class="mt-8">
+                            <h3 class="text-2xl font-semibold mb-4 text-sky-400">Key Features:</h3>
+                            <ul class="space-y-3 text-slate-400">
+                                <li class="flex items-start"><i class="fas fa-satellite-dish text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Investigate & Repair:</strong> Sent with scant information, your investigation team must explore a remote Arctic research facility gone dark, where technology has turned hostile and the previous crew met a grim fate.</span></li>
+                                <li class="flex items-start"><i class="fas fa-ghost text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>The Unseen Manipulator:</strong> Confront an intelligent Anomaly that warps reality, controls the outpost's systems, and preys on your team's sanity.</span></li>
+                                <li class="flex items-start"><i class="fas fa-user-secret text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Paranoia & Deceit:</strong> The Anomaly's influence is insidious. Can you trust your teammates, or has one already fallen under its sway?</span></li>
+                                <li class="flex items-start"><i class="fas fa-file-alt text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Race for Truth & Survival:</strong> Collect scattered research notes to understand the catastrophe and find a way to escape before you become another echo in the dark.</span></li>
+                                <li class="flex items-start"><i class="fas fa-directions text-sky-400 mr-3 mt-1 w-5 text-center"></i><span><strong>Consequential Choices:</strong> Your decisions shape the unfolding horror and determine who, if anyone, makes it out alive.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="game-media-bg p-4 rounded-lg shadow-xl tilt-card">
+                        <img src="assets/echoes4.png" alt="Echoes In The Dark Gameplay" class="w-full rounded-lg shadow-md gallery-thumbnail" data-src="assets/echoes4.png" data-caption="Gameplay Screenshot">
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <section id="gallery" class="py-16 md:py-24 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">Visuals from the Abyss</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer tilt-card" data-src="assets/test3.mp4" data-caption="Introductory clip or key scene." data-type="video">
+                        <img src="assets/Screenshot4.png" alt="Video Thumbnail 1" class="w-full h-full object-cover rounded-lg">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
+                            <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer tilt-card" data-src="assets/test1.mp4" data-caption="Gameplay Teaser" data-type="video">
+                        <img src="assets/Screenshot2.png" alt="Video Thumbnail 2" class="w-full h-full object-cover rounded-lg">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
+                            <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer tilt-card" data-src="assets/test2.mp4" data-caption="Environment Showcase" data-type="video">
+                        <img src="assets/Screenshot3.png" alt="Video Thumbnail 3" class="w-full h-full object-cover rounded-lg">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
+                            <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-thumbnail rounded-lg shadow-lg relative cursor-pointer tilt-card" data-src="assets/test4.mp4" data-caption="Anomaly Glimpse" data-type="video">
+                        <img src="assets/Screenshot6.png" alt="Video Thumbnail 4" class="w-full h-full object-cover rounded-lg">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 group-hover:bg-opacity-40 transition-opacity duration-300">
+                            <i class="far fa-play-circle fa-3x text-white opacity-80"></i>
+                        </div>
+                    </div>
+                    <img src="assets/cave1.png" alt="Gallery Image 5" class="hidden md:block rounded-lg shadow-lg gallery-thumbnail tilt-card" data-src="assets/cave1.png" data-caption="Concept Art: The Cave" data-type="image">
+                    <img src="assets/concept11.png" alt="Gallery Image 6" class="hidden md:block rounded-lg shadow-lg gallery-thumbnail tilt-card" data-src="assets/concept11.png" data-caption="Concept Art: The Creature" data-type="image">
+                    <img src="assets/echoes2.png" alt="Gallery Image 7" class="hidden lg:block rounded-lg shadow-lg gallery-thumbnail tilt-card" data-src="assets/echoes2.png" data-caption="Environment Art" data-type="image">
+                    <img src="assets/echoes5.png" alt="Gallery Image 8" class="hidden lg:block rounded-lg shadow-lg gallery-thumbnail tilt-card" data-src="assets/echoes5.png" data-caption="In-game Screenshot" data-type="image">
+                </div>
+            </div>
+        </section>
+    
+        <section id="development-team" class="py-16 md:py-24 bg-slate-800 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">Meet the Team</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+                    <div class="team-member-card text-center bg-slate-900 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 tilt-card">
+                        <img src="assets/logo 192.png" alt="Harro" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                        <h4 class="text-xl font-semibold mb-1 text-sky-400">BW Harro</h4>
+                        <p class="text-slate-400">Project Manager/Programmer</p>
+                    </div>
+                    <div class="team-member-card text-center bg-slate-900 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 tilt-card">
+                        <img src="https://placehold.co/150x150/38bdf8/ffffff?text=N&font=montserrat" alt="Niko" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                        <h4 class="text-xl font-semibold mb-1 text-sky-400">Niko</h4>
+                        <p class="text-slate-400">Programmer</p>
+                    </div>
+                    <div class="team-member-card text-center bg-slate-900 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 tilt-card">
+                        <img src="assets/Shawn.jpg" alt="Shawn" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                        <h4 class="text-xl font-semibold mb-1 text-sky-400">JSM Shawn</h4>
+                        <p class="text-slate-400">Programmer</p>
+                    </div>
+                    <div class="team-member-card text-center bg-slate-900 p-6 rounded-lg shadow-xl transform transition-all duration-300 hover:shadow-sky-500/30 hover:-translate-y-1 tilt-card">
+                        <img src="assets/Major.png" alt="Major" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-sky-500 object-cover">
+                        <h4 class="text-xl font-semibold mb-1 text-sky-400">Major</h4>
+                        <p class="text-slate-400">Art/Level Design/Programmer</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <section class="py-16 md:py-24 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="section-title">Dare to Listen?</h2>
+                <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
+                    Echoes In The Dark is coming soon. Wishlist now on your favorite platform and prepare to face your fears.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <a href="#" class="cta-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center space-x-2 opacity-70 cursor-not-allowed">
+                        <i class="fab fa-steam"></i> <span>Wishlist on Steam (Soon)</span>
+                    </a>
+                    <a href="https://discord.gg/bcaQdDa3GX" target="_blank" rel="noopener noreferrer" class="cta-button bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg flex items-center justify-center space-x-2">
+                        <i class="fab fa-discord"></i> <span>Join our Discord</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    
+        <footer class="py-10 bg-slate-900 border-t border-slate-700">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+                <div class="flex justify-center space-x-6 mb-4">
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="https://discord.gg/bcaQdDa3GX" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+                </div>
+                <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
+                <p class="text-xs mt-1"><a href="index.html" class="hover:text-sky-400">Back to Blue Whirl Home</a></p>
+            </div>
+        </footer>
+    
+        <div id="mediaLightbox" class="lightbox">
+            <span class="lightbox-close">&times;</span>
+            <img class="lightbox-content" id="lightboxImg" style="display:none;">
+            <video class="lightbox-content" id="lightboxVideo" style="display:none;" controls preload="metadata"></video>
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    
+    </main>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
+            "ScrollTrigger": "https://unpkg.com/gsap@3.12.5/ScrollTrigger.js"
+        }
+    }
+    </script>
+
+    <script src="games.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -1,52 +1,285 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game 3 | Blue Whirl Game Studio</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Light mode */
+        .light body {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+        }
+        .light .bg-slate-900 { background-color: #e5e7eb !important; /* gray-200 */ }
+        .light .bg-slate-800 { background-color: #ffffff !important; /* white */ }
+        .light .text-slate-200 { color: #374151 !important; /* gray-700 */ }
+        .light .text-slate-400 { color: #4b5563 !important; /* gray-600 */ }
+        .light .border-slate-700 { border-color: #d1d5db !important; /* gray-300 */ }
+        .light .hover\:text-sky-400:hover { color: #38bdf8 !important; /* sky-500 */ }
+        .light .text-sky-400 { color: #0ea5e9 !important; /* sky-600 */ }
+        .light .placeholder-slate-400::placeholder { color: #6b7280 !important; /* gray-500 */ }
+        .light input, .light textarea { background-color: #f9fafb; border-color: #d1d5db; color: #1f2937; }
+        .light .game-card, .light .team-member-card { background-color: #ffffff; }
+        .light .hero-gradient { background: linear-gradient(120deg, rgba(56, 189, 248, 0.1) 0%, rgba(243, 244, 246, 0.01) 100%);}
+        .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; /* gray-200 with opacity */ }
+        .light #toast { background-color: #0ea5e9; color: #ffffff; }
+        .light .cta-button { color: #0f172a !important; /* slate-900 */ }
+        .light .cta-button:hover { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4); }
+        .light .section-title { text-shadow: 0 2px 8px rgba(31, 41, 55, 0.1); }
+        .light .section-title::after { box-shadow: 0 0 10px rgba(14, 165, 233, 0.5); }
+        .light input:focus, .light textarea:focus { 
+            border-color: #ec4899 !important; /* pink-500 */
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3) !important;
+            outline: none;
+        }
+        /* --- Light mode modal styles --- */
+        .light #modal-content { background-color: #ffffff; }
+        .light #modal-content h3 { color: #10b981; /* emerald-500 */ }
+        .light #modal-content p { color: #374151; /* gray-700 */ }
+
+        /* --- NEW: About Us tile background --- */
+        .about-tile-bg { background-color: rgba(30, 41, 59, 0.9); /* slate-800 with 90% opacity */ }
+        .light .about-tile-bg { background-color: rgba(255, 255, 255, 0.9) !important; /* white with 90% opacity */ }
+
+
+        /* Dark mode (default) */
+        body {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+        }
+        .hero-gradient {
+             background: linear-gradient(120deg, rgba(30, 64, 175, 0.2) 0%, rgba(15, 23, 42, 0.1) 100%);
+        }
+        .navbar-bg { background-color: rgba(15, 23, 42, 0.85); /* slate-900 with opacity for backdrop blur */ }
+
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 3D Tilt effect for cards */
+        .tilt-card {
+            transform-style: preserve-3d;
+        }
+        .cta-button {
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%); /* sky-500 to sky-600 */
+            color: #ffffff;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-button:hover {
+            background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3);
+        }
+        .nav-link-hover::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #38bdf8; /* sky-400 */
+            transition: width 0.3s;
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+        }
+        .nav-link-hover:hover::after {
+            width: 100%;
+        }
+
+        /* --- Styling for Section Titles --- */
+        .section-title {
+            position: relative;
+            text-align: center;
+            font-size: 1.875rem; /* text-3xl */
+            line-height: 2.25rem;
+            font-weight: 700;
+            color: #38bdf8; /* text-sky-400 */
+            margin-bottom: 3rem; /* mb-12 */
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4), 0 0 5px rgba(56, 189, 248, 0.5);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.75rem; /* Positioned below the text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+        }
+
+        /* Contrasting form focus styles */
+        input:focus, textarea:focus {
+            border-color: #f472b6 !important; /* pink-400 */
+            box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3) !important;
+            outline: none;
+        }
+
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; /* slate-800 */
+        }
+        .light ::-webkit-scrollbar-track {
+            background: #e5e7eb; /* gray-200 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38bdf8; /* sky-400 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9; /* sky-500 */
+        }
+
+        /* Styles for the 3D animation */
+        canvas#webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            outline: none;
+            z-index: 0;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* --- Easter Egg Modal Styles --- */
+        #easter-egg-modal {
+            transition: opacity 0.3s ease-out;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-out;
+        }
+        #easter-egg-modal.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #easter-egg-modal.visible #modal-content {
+            transform: scale(1);
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <nav class="navbar">
-                <div class="logo">
-                    <img src="assets/logo 192.png" alt="Blue Whirl Logo" height="48">
-                    <span>Blue Whirl</span>
+<body class="bg-slate-900 text-slate-200">
+
+    <canvas id="webgl"></canvas>
+
+    <div id="easter-egg-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="modal-content" class="bg-slate-800 rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95">
+            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Easter Egg Found!</h3>
+            <p class="text-slate-300 mb-6">Congratulations, you've found a hidden secret! You have a keen eye for detail.</p>
+            <button id="close-modal-button" class="cta-button text-white font-bold py-2 px-6 rounded-full text-base">Close</button>
+        </div>
+    </div>
+
+    <main>
+        <nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="assets/logo 192.png" alt="Blue Whirl Logo" class="h-10 w-10 rounded-full">
+                        <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
+                    </a>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="index.html#about" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">About</a>
+                        <a href="index.html#games" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Games</a>
+                        <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Shop</a>
+                        <a href="index.html#careers" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Careers</a>
+                        <a href="index.html#contact" class="text-slate-200 hover:text-sky-400 px-3 py-2 rounded-md text-sm font-medium nav-link-hover relative">Contact</a>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+                            <i class="fas fa-moon text-xl"></i> </button>
+                        <button id="mobile-menu-button" class="md:hidden ml-3 text-slate-400 hover:text-sky-400 focus:outline-none">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
                 </div>
-                <ul class="nav-links">
-                    <li><a href="index.html#about">About</a></li>
-                    <li><a href="index.html#games">Games</a></li>
-                    <li><a href="index.html#team">Team</a></li>
-                    <li><a href="index.html#careers">Careers</a></li>
-                    <li><a href="index.html#contact">Contact</a></li>
-                </ul>
-                <button id="theme-toggle" title="Toggle dark/light mode" style="margin-left:1rem;">🌙</button>
-            </nav>
-        </header>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Game 3</h1>
-                <p>Game 3 description coming soon.</p>
+            </div>
+            <div id="mobile-menu" class="md:hidden hidden">
+                <a href="index.html#about" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">About</a>
+                <a href="index.html#games" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Games</a>
+                <a href="https://dont-buy-this-awesome-stuff.myshopify.com/" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Shop</a>
+                <a href="index.html#careers" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Careers</a>
+                <a href="index.html#contact" class="block py-2 px-4 text-sm text-slate-200 hover:bg-slate-700">Contact</a>
+            </div>
+        </nav>
+    
+        <section class="hero-gradient pt-24 pb-16 md:pt-32 md:pb-24 text-center overflow-hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+                    Game 3
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-300 mb-10">Details coming soon.</p>
             </div>
         </section>
-        <section>
-            <h2>About the Game</h2>
-            <p>
-                Details about Game 3 will be revealed soon. Stay tuned!
-            </p>
-        </section>
-        <footer>
-            <div class="footer-content">
-                <p>&copy; 2024 Blue Whirl Game Studio. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#"><img src="assets/twitter.svg" alt="Twitter"></a>
-                    <a href="#"><img src="assets/facebook.svg" alt="Facebook"></a>
-                    <a href="#"><img src="assets/discord.svg" alt="Discord"></a>
+
+        <section id="game-preview" class="py-16 md:py-24 reveal">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="game-card bg-slate-800 rounded-xl shadow-2xl overflow-hidden p-1 tilt-card">
+                        <div class="relative">
+                            <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Coming+Soon&font=montserrat" alt="Game 3" class="w-full h-56 object-cover rounded-t-lg">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                            <h3 class="absolute bottom-4 left-4 text-2xl font-bold text-white">Coming Soon...</h3>
+                        </div>
+                        <div class="p-6 text-center">
+                            <p class="text-slate-400 mb-4 text-lg leading-relaxed">Our team is passionately developing our next title. Follow our journey and be the first to know what's next!</p>
+                            <a href="index.html#games" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full">Back to Games</a>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </section>
+    
+        <footer class="py-10 bg-slate-900 border-t border-slate-700">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+                <div class="flex justify-center space-x-6 mb-4">
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="https://discord.gg/bcaQdDa3GX" class="hover:text-sky-400 transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                    <a href="#" class="hover:text-sky-400 transition-colors"><i class="fab fa-youtube fa-lg"></i></a>
+                </div>
+                <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
+                <p class="text-xs mt-1">Crafted with <i class="fas fa-heart text-red-500"></i> in the digital realm.</p>
             </div>
         </footer>
-    </div>
-    <script src="main.js"></script>
+    
+    </main>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
+            "ScrollTrigger": "https://unpkg.com/gsap@3.12.5/ScrollTrigger.js"
+        }
+    }
+    </script>
+
+    <script src="games.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
