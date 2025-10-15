@@ -211,10 +211,10 @@
         <section id="games" class="py-16 md:py-24 reveal">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="section-title">Our Games</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0">
                     
                     <!-- Game Card 1 -->
-                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[450px]">
+                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="assets/echoes6.png" alt="Echoes In The Dark" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
                         <div class="relative z-10 p-6 flex flex-col h-full">
@@ -225,7 +225,7 @@
                     </div>
 
                     <!-- Game Card 2 -->
-                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[450px]">
+                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Game+2&font=montserrat" alt="Game 2" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
                         <div class="relative z-10 p-6 flex flex-col h-full">
@@ -236,7 +236,7 @@
                     </div>
 
                     <!-- Game Card 3 -->
-                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[450px]">
+                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Game+3&font=montserrat" alt="Game 3" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
                         <div class="relative z-10 p-6 flex flex-col h-full">
@@ -253,10 +253,10 @@
         <section id="apps" class="py-16 md:py-24 reveal">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="section-title">Our Applications</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0">
                     
                     <!-- App Card 1 -->
-                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[450px]">
+                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/0f172a/38bdf8?text=PWA+App&font=montserrat" alt="Placeholder App" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
                         <div class="relative z-10 p-6 flex flex-col h-full">
@@ -267,7 +267,7 @@
                     </div>
 
                     <!-- App Card 2 -->
-                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[450px]">
+                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/0f172a/94a3b8?text=App+2&font=montserrat" alt="App 2" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
                         <div class="relative z-10 p-6 flex flex-col h-full">
@@ -278,7 +278,7 @@
                     </div>
 
                     <!-- App Card 3 -->
-                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[450px]">
+                    <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/0f172a/94a3b8?text=App+3&font=montserrat" alt="App 3" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
                         <div class="relative z-10 p-6 flex flex-col h-full">
@@ -682,15 +682,14 @@
                         duration: 0.3, scale: 1, rotationX: 0, rotationY: 0, ease: 'power2.out'
                     });
                 };
+                
+                // Mouse Events for tilt-on-move
                 card.addEventListener('mouseenter', handleTiltEnter);
                 card.addEventListener('mousemove', handleTiltMove);
                 card.addEventListener('mouseleave', handleTiltLeave);
-                card.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); handleTiltEnter(); handleTiltMove(e);
-                }, { passive: false });
-                card.addEventListener('touchmove', (e) => {
-                    e.preventDefault(); handleTiltMove(e);
-                }, { passive: false });
+
+                // Simplified Touch Events for "pop" effect without blocking scroll
+                card.addEventListener('touchstart', handleTiltEnter, { passive: true });
                 card.addEventListener('touchend', handleTiltLeave);
             });
 
