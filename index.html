@@ -27,7 +27,7 @@
         .light .text-sky-400 { color: #0ea5e9 !important; /* sky-600 */ }
         .light .placeholder-slate-400::placeholder { color: #6b7280 !important; /* gray-500 */ }
         .light input, .light textarea { background-color: #f9fafb; border-color: #d1d5db; color: #1f2937; }
-        .light .hero-gradient { background: linear-gradient(120deg, rgba(56, 189, 248, 0.1) 0%, rgba(243, 244, 246, 0.01) 100%);}
+        .light .hero-gradient { background: linear-gradient(120deg, rgba(11, 182, 255, 0.096) 0%, rgba(243, 244, 246, 0.01) 100%);}
         .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; /* gray-200 with opacity */ }
         .light #toast { background-color: #0ea5e9; color: #ffffff; }
         .light .cta-button { color: #0f172a !important; /* slate-900 */ }
@@ -42,7 +42,7 @@
         .light #modal-content { background-color: #ffffff; }
         .light #modal-content h3 { color: #10b981; /* emerald-500 */ }
         .light #modal-content p { color: #374151; /* gray-700 */ }
-        .about-tile-bg { background-color: rgba(30, 41, 59, 0.9); }
+        .about-tile-bg { background-color: rgba(17, 40, 77, 0.692); }
         .light .about-tile-bg { background-color: rgba(255, 255, 255, 0.9) !important; }
         .light .product-card-overlay { background-color: rgba(249, 250, 251, 0.7) !important; /* gray-50 with opacity */ }
         .light .product-card h3, .light .product-card p { color: #1f2937 !important; /* gray-800 */ }
@@ -54,7 +54,7 @@
             color: #e2e8f0; /* slate-200 */
         }
         .hero-gradient {
-             background: linear-gradient(120deg, rgba(30, 64, 175, 0.2) 0%, rgba(15, 23, 42, 0.1) 100%);
+             background: linear-gradient(120deg, rgba(30, 64, 175, 0) 0%, rgba(15, 23, 42, 0.1) 100%);
         }
         .navbar-bg { background-color: rgba(15, 23, 42, 0.85); }
 
@@ -75,14 +75,34 @@
             transform-style: preserve-3d;
         }
 
-        /* --- NEW: Product Card Glow Effect --- */
         .product-card {
             box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
-            transition: box-shadow 0.3s ease-in-out;
+            transition: box-shadow 0.3s ease-in-out, min-height 0.4s ease-in-out;
         }
         .product-card:hover {
             box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
         }
+        .card-content {
+            transition: opacity 0.4s ease-in-out, max-height 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out;
+            max-height: 500px; /* arbitrary large value */
+            opacity: 1;
+            overflow: hidden;
+        }
+        .card-content.is-hidden {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+        }
+        .product-card.is-collapsed {
+             min-height: 50px !important; /* Collapsed height to show the button */
+             overflow: hidden;
+        }
+        .light .product-card.is-collapsed {
+            background-color: #f9fafb !important;
+        }
+
 
         .cta-button {
             background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
@@ -144,9 +164,15 @@
 
     <div id="easter-egg-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content" class="bg-slate-800 rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95">
-            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Easter Egg Found!</h3>
-            <p class="text-slate-300 mb-6">Congratulations, you've found a hidden secret! You have a keen eye for detail.</p>
-            <button id="close-modal-button" class="cta-button text-white font-bold py-2 px-6 rounded-full text-base">Close</button>
+            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Secret Found!</h3>
+            <p class="text-slate-300 mb-4">You've found a hidden secret! As a reward, you're eligible for a special role with perks in our Discord community.</p>
+            <a href="https://discord.gg/AxyEXyd" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:text-sky-300 underline mb-6 block">Join our Discord!</a>
+            <form id="discord-form" class="space-y-4">
+                <p class="text-slate-300">Enter your Discord ID below to claim your role:</p>
+                <input type="text" id="discord-id" name="discordId" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400" placeholder="your_discord_username" required>
+                <button type="submit" id="submit-discord-id" class="cta-button text-white font-bold w-full py-2 px-6 rounded-full text-base">Submit ID</button>
+            </form>
+            <button id="close-modal-button" class="mt-4 text-slate-400 hover:text-white">Close</button>
         </div>
     </div>
 
@@ -190,7 +216,7 @@
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
                     Welcome to <span class="text-sky-400">Blue Whirl</span>
                 </h1>
-                <p id="hero-subtitle" class="text-xl md:text-2xl text-slate-300 mb-10 h-8">Engineering Your Next Adventure.</p>
+                <p id="hero-subtitle" class="text-xl md:text-2xl text-slate-200 mb-10 h-8">Engineering Solutions for the Future</p>
                 <a href="#games" class="cta-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg">
                     Check Out Our Games
                 </a>
@@ -201,7 +227,7 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="about-tile-bg rounded-2xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto">
                     <h2 class="section-title">About Us</h2>
-                    <p class="text-lg text-slate-400 max-w-3xl mx-auto text-center leading-relaxed">
+                    <p class="text-lg text-slate-200 max-w-3xl mx-auto text-center leading-relaxed">
                         Blue Whirl is a passionate and innovative game development studio. We are dedicated to crafting immersive worlds, compelling narratives, and unforgettable gameplay experiences.
                     </p>
                 </div>
@@ -211,35 +237,35 @@
         <section id="games" class="py-16 md:py-24 reveal">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="section-title">Our Games</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0 md:items-start">
                     
-                    <!-- Game Card 1 -->
                     <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="assets/echoes6.png" alt="Echoes In The Dark" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
-                        <div class="relative z-10 p-6 flex flex-col h-full">
+                        <button class="toggle-visibility-button absolute top-3 right-3 z-20 text-white/70 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        <div class="card-content relative z-10 p-6 flex flex-col h-full">
                             <h3 class="text-2xl font-bold text-white mb-2">Echoes In The Dark</h3>
                             <p class="text-slate-300 text-sm leading-relaxed flex-grow">Unravel chilling mysteries in a world where shadows whisper and long-forgotten secrets linger in the oppressive darkness.</p>
                             <a href="echoes-in-the-dark.html" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full mt-auto self-start">Learn More</a>
                         </div>
                     </div>
 
-                    <!-- Game Card 2 -->
                     <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Game+2&font=montserrat" alt="Game 2" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
-                        <div class="relative z-10 p-6 flex flex-col h-full">
+                        <button class="toggle-visibility-button absolute top-3 right-3 z-20 text-white/70 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        <div class="card-content relative z-10 p-6 flex flex-col h-full">
                             <h3 class="text-2xl font-bold text-white mb-2">Coming Soon..</h3>
                             <p class="text-slate-300 text-sm leading-relaxed flex-grow">Our next thrilling adventure is currently in development. Stay tuned for more updates!</p>
                             <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full mt-auto self-start opacity-50 cursor-not-allowed">Coming Soon</a>
                         </div>
                     </div>
 
-                    <!-- Game Card 3 -->
                     <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Game+3&font=montserrat" alt="Game 3" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
-                        <div class="relative z-10 p-6 flex flex-col h-full">
+                        <button class="toggle-visibility-button absolute top-3 right-3 z-20 text-white/70 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        <div class="card-content relative z-10 p-6 flex flex-col h-full">
                             <h3 class="text-2xl font-bold text-white mb-2">Coming Soon..</h3>
                             <p class="text-slate-300 text-sm leading-relaxed flex-grow">Another secret project is brewing. We can't wait to share more with you.</p>
                             <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full mt-auto self-start opacity-50 cursor-not-allowed">Coming Soon</a>
@@ -253,41 +279,40 @@
         <section id="apps" class="py-16 md:py-24 reveal">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="section-title">Our Applications</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 px-4 md:px-0 md:items-start">
                     
-                    <!-- App Card 1 -->
                     <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/0f172a/38bdf8?text=PWA+App&font=montserrat" alt="Placeholder App" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
-                        <div class="relative z-10 p-6 flex flex-col h-full">
+                        <button class="toggle-visibility-button absolute top-3 right-3 z-20 text-white/70 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        <div class="card-content relative z-10 p-6 flex flex-col h-full">
                             <h3 class="text-2xl font-bold text-white mb-2">My Awesome PWA</h3>
                             <p class="text-slate-300 text-sm leading-relaxed flex-grow">A brief description of this cool progressive web app or mobile application. Explain its features and purpose.</p>
                             <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full mt-auto self-start">View App</a>
                         </div>
                     </div>
 
-                    <!-- App Card 2 -->
                     <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/0f172a/94a3b8?text=App+2&font=montserrat" alt="App 2" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
-                        <div class="relative z-10 p-6 flex flex-col h-full">
+                        <button class="toggle-visibility-button absolute top-3 right-3 z-20 text-white/70 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        <div class="card-content relative z-10 p-6 flex flex-col h-full">
                             <h3 class="text-2xl font-bold text-white mb-2">Coming Soon..</h3>
                             <p class="text-slate-300 text-sm leading-relaxed flex-grow">The next amazing app is in development. We're excited to show you what's next.</p>
                             <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full mt-auto self-start opacity-50 cursor-not-allowed">Coming Soon</a>
                         </div>
                     </div>
 
-                    <!-- App Card 3 -->
                     <div class="product-card rounded-xl overflow-hidden tilt-card reveal relative min-h-[300px] md:min-h-[450px]">
                         <img src="https://placehold.co/600x400/0f172a/94a3b8?text=App+3&font=montserrat" alt="App 3" class="absolute top-0 left-0 w-full h-full object-cover -z-10">
                         <div class="product-card-overlay absolute top-0 left-0 w-full h-full bg-slate-900/70"></div>
-                        <div class="relative z-10 p-6 flex flex-col h-full">
+                        <button class="toggle-visibility-button absolute top-3 right-3 z-20 text-white/70 hover:text-white"><i class="fas fa-chevron-up"></i></button>
+                        <div class="card-content relative z-10 p-6 flex flex-col h-full">
                             <h3 class="text-2xl font-bold text-white mb-2">Coming Soon..</h3>
                             <p class="text-slate-300 text-sm leading-relaxed flex-grow">Preparing another useful tool for you. More details will be revealed soon!</p>
                             <a href="#" class="inline-block cta-button text-white text-sm font-semibold py-2 px-6 rounded-full mt-auto self-start opacity-50 cursor-not-allowed">Coming Soon</a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -304,7 +329,7 @@
             </div>
         </section>
     
-        <section id="contact" class="py-16 md:py-24 bg-slate-800 reveal">
+        <section id="contact" class="py-16 md:py-24 bg-transparent text-slate-800 reveal">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="section-title">Get In Touch</h2>
                 <form id="contact-form" action="https://formspree.io/f/mdkznydk" method="POST" class="max-w-xl mx-auto bg-slate-900 p-8 rounded-lg shadow-2xl">
@@ -365,13 +390,11 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- 3D PARTICLE ANIMATION CODE ---
-            // This code remains unchanged...
             const scene = new THREE.Scene();
             const sizes = { width: window.innerWidth, height: window.innerHeight };
             const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
             camera.position.z = 4;
             scene.add(camera);
-
             const renderer = new THREE.WebGLRenderer({
                 canvas: document.querySelector('canvas#webgl'),
                 alpha: true,
@@ -379,94 +402,44 @@
             });
             renderer.setSize(sizes.width, sizes.height);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
             const particleCount = 2300;
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
             const originalPositions = new Float32Array(particleCount * 3);
             const particleSizes = new Float32Array(particleCount);
-            
             const easterEggParticleIndex = Math.floor(Math.random() * particleCount);
-
             const colorEasterEgg = new THREE.Color('#34d399');
             const colorInside = new THREE.Color('#f472b6');
             const colorOutside = new THREE.Color('#38bdf8');
-
             for (let i = 0; i < particleCount; i++) {
                 const i3 = i * 3;
                 const phi = Math.acos(2 * Math.random() - 1);
                 const theta = Math.random() * Math.PI * 2;
                 const radius = 2 + Math.random() * 2;
-
                 positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
                 positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
                 positions[i3 + 2] = radius * Math.cos(phi);
-                
                 originalPositions.set([positions[i3], positions[i3+1], positions[i3+2]], i3);
                 colorOutside.toArray(colors, i3);
-
                 particleSizes[i] = Math.random() * 1.0 + 0.5;
             }
-
             const particleGeometry = new THREE.BufferGeometry();
             particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             particleGeometry.setAttribute('aSize', new THREE.BufferAttribute(particleSizes, 1));
-            
-            const softCircleSvg = `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-                    <defs>
-                        <radialGradient id="softGradient" cx="50%" cy="50%" r="50%">
-                            <stop offset="70%" stop-color="white" stop-opacity="1"/>
-                            <stop offset="100%" stop-color="white" stop-opacity="0"/>
-                        </radialGradient>
-                    </defs>
-                    <circle cx="50" cy="50" r="50" fill="url(#softGradient)"/>
-                </svg>
-            `;
+            const softCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="softGradient" cx="50%" cy="50%" r="50%"><stop offset="70%" stop-color="white" stop-opacity="1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(#softGradient)"/></svg>`;
             const softCircleDataUrl = 'data:image/svg+xml;base64,' + btoa(softCircleSvg);
             const particleTexture = new THREE.TextureLoader().load(softCircleDataUrl);
-            
-            const vertexShader = `
-                attribute float aSize;
-                varying vec3 vColor;
-                void main() {
-                    vColor = color;
-                    vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-                    gl_Position = projectionMatrix * modelViewPosition;
-                    gl_PointSize = aSize * 18.0; 
-                }
-            `;
-            
-            const fragmentShader = `
-                uniform sampler2D uTexture;
-                varying vec3 vColor;
-                void main() {
-                    gl_FragColor = vec4(vColor, 1.0);
-                    gl_FragColor = gl_FragColor * texture2D(uTexture, gl_PointCoord);
-                }
-            `;
-
-            const particleMaterial = new THREE.ShaderMaterial({
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader,
-                uniforms: { uTexture: { value: particleTexture } },
-                transparent: true, depthWrite: false, vertexColors: true,
-                blending: THREE.AdditiveBlending,
-            });
-
+            const vertexShader = `attribute float aSize; varying vec3 vColor; void main() { vColor = color; vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewPosition; gl_PointSize = aSize * 18.0; }`;
+            const fragmentShader = `uniform sampler2D uTexture; varying vec3 vColor; void main() { gl_FragColor = vec4(vColor, 1.0); gl_FragColor = gl_FragColor * texture2D(uTexture, gl_PointCoord); }`;
+            const particleMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { uTexture: { value: particleTexture } }, transparent: true, depthWrite: false, vertexColors: true, blending: THREE.AdditiveBlending });
             const particles = new THREE.Points(particleGeometry, particleMaterial);
             scene.add(particles);
-
             const pointer = new THREE.Vector2(-10, -10);
             const interactionRadius = 0.47;
             const repulsionStrength = 1.5;
-
             const raycaster = new THREE.Raycaster();
-            raycaster.params.Points.threshold = 0.1; 
-
-            const webglCanvas = document.getElementById('webgl');
-            
+            raycaster.params.Points.threshold = 0.1;
             function updatePointerPosition(event) {
                 const touch = event.touches ? event.touches[0] : event;
                 pointer.x = (touch.clientX / sizes.width) * 2 - 1;
@@ -477,19 +450,12 @@
             window.addEventListener('touchmove', updatePointerPosition, { passive: false });
             window.addEventListener('mouseout', () => pointer.set(-10, -10));
             window.addEventListener('touchend', () => pointer.set(-10, -10));
-            
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3,
-                },
-            }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut'});
-
+            gsap.timeline({ scrollTrigger: { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3 } }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut'});
             const animate = () => {
                 const inverseParticleQuaternion = particles.quaternion.clone().invert();
                 const particlePositions = particles.geometry.attributes.position;
                 const particleColors = particles.geometry.attributes.color;
-                const currentParticleSizes = particles.geometry.attributes.aSize; 
-
+                const currentParticleSizes = particles.geometry.attributes.aSize;
                 for (let i = 0; i < particleCount; i++) {
                     const i3 = i * 3;
                     const particleVec = new THREE.Vector3().fromArray(particlePositions.array, i3);
@@ -497,19 +463,11 @@
                     const screenPos = worldPos.clone().project(camera);
                     const distance = pointer.distanceTo(screenPos);
                     const targetPos = new THREE.Vector3().fromArray(originalPositions, i3);
-                    
                     let targetColor = colorOutside;
                     const isEasterEgg = (i === easterEggParticleIndex);
                     let targetSize = particleSizes[i];
-
                     if (distance < interactionRadius) {
-                        if (isEasterEgg) {
-                            targetColor = colorEasterEgg;
-                            targetSize = 1.5; 
-                        } else {
-                            targetColor = colorInside;
-                        }
-
+                        if (isEasterEgg) { targetColor = colorEasterEgg; targetSize = 1.5; } else { targetColor = colorInside; }
                         const forceMagnitude = 1 - distance / interactionRadius;
                         const repulsionDirection2D = screenPos.clone().sub(pointer).normalize();
                         const force_cameraSpace = new THREE.Vector3(repulsionDirection2D.x, repulsionDirection2D.y, 0);
@@ -517,24 +475,21 @@
                         const force_localSpace = force_worldSpace.applyQuaternion(inverseParticleQuaternion);
                         targetPos.add(force_localSpace.multiplyScalar(forceMagnitude * repulsionStrength));
                     }
-
                     particlePositions.setX(i, THREE.MathUtils.lerp(particleVec.x, targetPos.x, 0.05));
                     particlePositions.setY(i, THREE.MathUtils.lerp(particleVec.y, targetPos.y, 0.05));
                     particlePositions.setZ(i, THREE.MathUtils.lerp(particleVec.z, targetPos.z, 0.05));
                     const currentColor = new THREE.Color().fromArray(particleColors.array, i3);
                     currentColor.lerp(targetColor, 0.05);
                     currentColor.toArray(particleColors.array, i3);
-                    currentParticleSizes.setX(i, THREE.MathUtils.lerp(currentParticleSizes.getX(i), targetSize, 0.05)); 
+                    currentParticleSizes.setX(i, THREE.MathUtils.lerp(currentParticleSizes.getX(i), targetSize, 0.05));
                 }
                 particlePositions.needsUpdate = true;
                 particleColors.needsUpdate = true;
-                currentParticleSizes.needsUpdate = true; 
-
+                currentParticleSizes.needsUpdate = true;
                 renderer.render(scene, camera);
                 requestAnimationFrame(animate);
             };
             animate();
-
             window.addEventListener('resize', () => {
                 sizes.width = window.innerWidth;
                 sizes.height = window.innerHeight;
@@ -544,10 +499,10 @@
                 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             });
 
-
             // --- WEBSITE INTERACTIVITY CODE ---
             const modal = document.getElementById('easter-egg-modal');
             const closeModalButton = document.getElementById('close-modal-button');
+            const discordForm = document.getElementById('discord-form');
 
             function showModal() { modal.classList.add('visible'); }
             function hideModal() { modal.classList.remove('visible'); }
@@ -555,11 +510,25 @@
             closeModalButton.addEventListener('click', hideModal);
             modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
 
+            discordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const discordIdInput = document.getElementById('discord-id');
+                const submitButton = document.getElementById('submit-discord-id');
+                const discordId = discordIdInput.value.trim();
+                if (discordId) {
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Submitted!';
+                    submitButton.classList.remove('cta-button');
+                    submitButton.classList.add('bg-emerald-500', 'cursor-default');
+                    discordIdInput.disabled = true;
+                    console.log(`Discord ID captured (no-db): ${discordId}`);
+                }
+            });
+
             function onParticleClick(event) {
                 updatePointerPosition(event);
                 raycaster.setFromCamera(pointer, camera);
                 const intersects = raycaster.intersectObject(particles, true);
-
                 if (intersects.length > 0) {
                     if (intersects[0].index === easterEggParticleIndex) showModal();
                 }
@@ -567,15 +536,12 @@
             window.addEventListener('click', onParticleClick);
             window.addEventListener('touchend', onParticleClick, { passive: false });
 
-
             const themeToggle = document.getElementById('theme-toggle');
             const themeIcon = themeToggle.querySelector('i');
-            
             if (localStorage.getItem('theme') === 'light') {
                 document.documentElement.classList.add('light');
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
             }
-
             themeToggle.addEventListener('click', () => {
                 document.documentElement.classList.toggle('light');
                 if (document.documentElement.classList.contains('light')) {
@@ -595,9 +561,7 @@
 
             const revealElements = document.querySelectorAll('.reveal');
             const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) entry.target.classList.add('visible');
-                });
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
             }, { threshold: 0.1 });
             revealElements.forEach(el => revealObserver.observe(el));
             
@@ -605,24 +569,13 @@
             const toast = document.getElementById('toast');
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const formData = new FormData(this);
-                fetch(this.action, {
-                    method: 'POST', body: formData, headers: { 'Accept': 'application/json' }
-                }).then(response => {
+                fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json' } })
+                .then(response => {
                     if (response.ok) {
                         toast.classList.remove('opacity-0');
                         setTimeout(() => toast.classList.add('opacity-0'), 3000);
                         this.reset();
-                    } else {
-                        toast.textContent = 'Submission error. Please try again.';
-                        toast.style.backgroundColor = '#ef4444';
-                        toast.classList.remove('opacity-0');
-                        setTimeout(() => {
-                           toast.classList.add('opacity-0');
-                           toast.textContent = 'Message sent!';
-                           toast.style.backgroundColor = '';
-                        }, 4000);
-                    }
+                    } else { throw new Error('Network response was not ok.'); }
                 }).catch(error => {
                     console.error('Form submission error:', error);
                     toast.textContent = 'Submission error. Please try again.';
@@ -630,8 +583,10 @@
                     toast.classList.remove('opacity-0');
                     setTimeout(() => {
                        toast.classList.add('opacity-0');
-                       toast.textContent = 'Message sent!';
-                       toast.style.backgroundColor = '';
+                       setTimeout(() => { // Reset text after fade out
+                           toast.textContent = 'Message sent!';
+                           toast.style.backgroundColor = '';
+                       }, 300);
                     }, 4000);
                 });
             });
@@ -640,23 +595,13 @@
 
             const subtitle = document.getElementById('hero-subtitle');
             if(subtitle) {
-                const phrases = ["Engineering Your Next Adventure.", "Crafting Unforgettable Worlds.", "Where Innovation Meets Play."];
+                const phrases = ["Engineering solutions for the future.", "Crafting memories with games.", "Where Innovation Meets Play."];
                 let phraseIndex = 0; let charIndex = 0; let isDeleting = false;
                 function typeEffect() {
                     const currentPhrase = phrases[phraseIndex];
-                    if (isDeleting) {
-                        subtitle.textContent = currentPhrase.substring(0, charIndex--);
-                    } else {
-                        subtitle.textContent = currentPhrase.substring(0, charIndex++);
-                    }
-                    if (!isDeleting && charIndex === currentPhrase.length) {
-                        setTimeout(() => isDeleting = true, 2000);
-                    } else if (isDeleting && charIndex === 0) {
-                        isDeleting = false;
-                        phraseIndex = (phraseIndex + 1) % phrases.length;
-                    }
-                    const typeSpeed = isDeleting ? 50 : 100;
-                    setTimeout(typeEffect, typeSpeed);
+                    if (isDeleting) { subtitle.textContent = currentPhrase.substring(0, charIndex--); } else { subtitle.textContent = currentPhrase.substring(0, charIndex++); }
+                    if (!isDeleting && charIndex === currentPhrase.length) { setTimeout(() => isDeleting = true, 2000); } else if (isDeleting && charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; }
+                    setTimeout(typeEffect, isDeleting ? 50 : 100);
                 }
                 typeEffect();
             }
@@ -671,26 +616,32 @@
                     const { width, height } = rect;
                     const rotateX = (y / height - 0.5) * -30;
                     const rotateY = (x / width - 0.5) * 30;
-                    gsap.to(card, {
-                        duration: 0.2, rotationX: rotateX, rotationY: rotateY,
-                        transformPerspective: 1000, ease: 'power1.out'
-                    });
+                    gsap.to(card, { duration: 0.2, rotationX: rotateX, rotationY: rotateY, transformPerspective: 1000, ease: 'power1.out' });
                 };
                 const handleTiltEnter = () => { gsap.to(card, { scale: 1.05, duration: 0.3, ease: 'power2.out' }); };
-                const handleTiltLeave = () => {
-                    gsap.to(card, {
-                        duration: 0.3, scale: 1, rotationX: 0, rotationY: 0, ease: 'power2.out'
-                    });
-                };
-                
-                // Mouse Events for tilt-on-move
+                const handleTiltLeave = () => { gsap.to(card, { duration: 0.3, scale: 1, rotationX: 0, rotationY: 0, ease: 'power2.out' }); };
                 card.addEventListener('mouseenter', handleTiltEnter);
                 card.addEventListener('mousemove', handleTiltMove);
                 card.addEventListener('mouseleave', handleTiltLeave);
-
-                // Simplified Touch Events for "pop" effect without blocking scroll
                 card.addEventListener('touchstart', handleTiltEnter, { passive: true });
                 card.addEventListener('touchend', handleTiltLeave);
+            });
+
+            document.querySelectorAll('.toggle-visibility-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const card = button.closest('.product-card');
+                    const content = card.querySelector('.card-content');
+                    const icon = button.querySelector('i');
+                    
+                    content.classList.toggle('is-hidden');
+                    card.classList.toggle('is-collapsed');
+
+                    if (content.classList.contains('is-hidden')) {
+                        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    } else {
+                        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    }
+                });
             });
 
         });
