@@ -842,17 +842,20 @@
             window.addEventListener('mouseout', () => pointer.set(-10, -10));
             window.addEventListener('touchend', () => pointer.set(-10, -10));
             const tempVec = new THREE.Vector3();
+            const tempQuat = new THREE.Quaternion();
             const tempWorldPos = new THREE.Vector3();
             const tempScreenPos = new THREE.Vector3();
             const tempTargetPos = new THREE.Vector3();
             const tempForceCam = new THREE.Vector3();
             const tempColor = new THREE.Color();
+            const tempTargetColor = new THREE.Color();
+            const repulsionDirection2D = new THREE.Vector2();
             const currentSizesArr = new Float32Array(particleCount).set(particleSizes);
 
             gsap.timeline({ scrollTrigger: { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3 } }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut' });
 
             const animate = () => {
-                const inverseParticleQuaternion = tempVec.copy(particles.quaternion).invert();
+                const inverseParticleQuaternion = tempQuat.copy(particles.quaternion).invert();
                 const particlePositions = particles.geometry.attributes.position;
                 const particleColors = particles.geometry.attributes.color;
                 const currentParticleSizes = particles.geometry.attributes.aSize;
@@ -863,16 +866,17 @@
                     tempWorldPos.copy(tempVec).applyQuaternion(particles.quaternion);
                     tempScreenPos.copy(tempWorldPos).project(camera);
 
-                    const distance = pointer.distanceTo(tempScreenPos);
+                    // Use 2D distance check for mouse interaction
+                    const mouseDistance = Math.hypot(pointer.x - tempScreenPos.x, pointer.y - tempScreenPos.y);
                     tempTargetPos.fromArray(originalPositions, i3);
 
                     const rIdx = particleRarityIndices[i];
                     const rarityColor = rarities[rIdx].color;
                     let targetSize = particleSizes[i];
 
-                    if (distance < interactionRadius) {
-                        const forceMagnitude = 1 - distance / interactionRadius;
-                        const repulsionDirection2D = tempScreenPos.clone().sub(pointer).normalize();
+                    if (mouseDistance < interactionRadius) {
+                        const forceMagnitude = 1 - mouseDistance / interactionRadius;
+                        repulsionDirection2D.set(tempScreenPos.x - pointer.x, tempScreenPos.y - pointer.y).normalize();
 
                         tempForceCam.set(repulsionDirection2D.x, repulsionDirection2D.y, 0)
                             .applyQuaternion(camera.quaternion)
@@ -890,9 +894,8 @@
                     );
 
                     tempColor.fromArray(particleColors.array, i3);
-                    const targetColorHex = parseInt(rarityColor.replace('#', '0x'), 16);
-                    tempTargetPos.setHex(targetColorHex); // Reusing tempTargetPos as a color holder
-                    tempColor.lerp(tempTargetPos, 0.05);
+                    tempTargetColor.set(rarityColor);
+                    tempColor.lerp(tempTargetColor, 0.05);
                     tempColor.toArray(particleColors.array, i3);
 
                     const currentSize = currentParticleSizes.getX(i);
