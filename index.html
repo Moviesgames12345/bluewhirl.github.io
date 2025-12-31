@@ -830,7 +830,7 @@
             particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             particleGeometry.setAttribute('aSize', new THREE.BufferAttribute(particleSizes, 1));
-            const softCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="softGradient" cx="50%" cy="50%" r="50%"><stop offset="70%" stop-color="white" stop-opacity="1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(#softGradient)"/></svg>`;
+            const softCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="softGradient" cx="50%" cy="50%" r="50%"><stop offset="90%" stop-color="white" stop-opacity="1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(#softGradient)"/></svg>`;
             const softCircleDataUrl = 'data:image/svg+xml;base64,' + btoa(softCircleSvg);
             const particleTexture = new THREE.TextureLoader().load(softCircleDataUrl);
             const vertexShader = `attribute float aSize; varying vec3 vColor; void main() { vColor = color; vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewPosition; gl_PointSize = aSize * 15.0; }`;
@@ -1049,13 +1049,13 @@
 
                 updateInventoryUI();
 
-                // Reward on FIRST find of each tier
-                if (collectedState[rIdx] === 1) {
+                // Reward on 10th find of each tier
+                if (collectedState[rIdx] === 10) {
                     showRewardModal(rIdx);
                 }
 
-                // Global celebration on first of ALL
-                const isFirstOfAll = collectedState.every(count => count >= 1) && collectedState[rIdx] === 1 && collectedState.filter(c => c === 1).length === 5;
+                // Global celebration on 10 of ALL
+                const isFirstOfAll = collectedState.every(count => count >= 10) && collectedState[rIdx] === 10 && collectedState.filter(c => c === 10).length === 5;
 
                 // Visual feedback
                 gsap.to(particles.rotation, {
