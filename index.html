@@ -500,43 +500,48 @@
             <div id="user-rank" class="rank-badge">Whirl Novice</div>
             <div class="inventory-item" id="item-common" style="color: #38bdf8;">
                 <div class="particle-swatch" style="background: #38bdf8;"></div>
-                <span>Common</span>
+                <span>Common <small class="opacity-50">(1pt)</small></span>
                 <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-uncommon" style="color: #22d3ee;">
                 <div class="particle-swatch" style="background: #22d3ee;"></div>
-                <span>Uncommon</span>
+                <span>Uncommon <small class="opacity-50">(2pt)</small></span>
                 <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-rare" style="color: #a855f7;">
                 <div class="particle-swatch" style="background: #a855f7;"></div>
-                <span>Rare</span>
+                <span>Rare <small class="opacity-50">(5pt)</small></span>
                 <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-epic" style="color: #10b981;">
                 <div class="particle-swatch" style="background: #10b981;"></div>
-                <span>Epic</span>
+                <span>Epic <small class="opacity-50">(15pt)</small></span>
                 <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-legendary" style="color: #fbbf24;">
                 <div class="particle-swatch" style="background: #fbbf24;"></div>
-                <span>Legendary</span>
+                <span>Legendary <small class="opacity-50">(50pt)</small></span>
                 <span class="count">0</span>
             </div>
             <div class="hall-of-fame-tab">
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex flex-col gap-2 mb-3">
                     <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Hall of Fame</span>
-                    <button id="submit-score"
-                        class="text-[0.6rem] text-sky-400 hover:text-white underline">Submit</button>
+                    <div class="flex gap-2">
+                        <input type="text" id="leaderboard-username" placeholder="Your Name"
+                            class="bg-slate-800 border border-slate-700 text-[0.65rem] rounded px-2 py-1 flex-grow focus:border-sky-400 outline-none text-white">
+                        <button id="submit-score"
+                            class="text-[0.65rem] px-3 py-1 bg-sky-500/20 border border-sky-500/50 text-sky-400 rounded hover:bg-sky-500/40 transition-colors">Submit</button>
+                    </div>
                 </div>
                 <div id="leaderboard-list">
                     <!-- Simulated global leaders -->
                     <div class="leaderboard-row"><span class="leader-name">Zephyr_Code</span><span
-                            class="leader-score">1,240</span></div>
+                            class="leader-score">4,240</span></div>
                     <div class="leaderboard-row"><span class="leader-name">Whirl_King</span><span
-                            class="leader-score">892</span></div>
-                    <div class="leaderboard-row user-leader-row"><span class="leader-name">You</span><span
-                            id="user-total-score" class="leader-score">0</span></div>
+                            class="leader-score">2,892</span></div>
+                    <div class="leaderboard-row user-leader-row"><span id="display-username"
+                            class="leader-name">You</span><span id="user-total-score" class="leader-score">0</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1139,8 +1144,8 @@
                     countEl.textContent = count;
                     if (count > 0) el.classList.add('collected');
 
-                    // Score weight: Common=1, Uncommon=2, Rare=5, Epic=10, Legendary=25
-                    const weights = [1, 2, 5, 10, 25];
+                    // Score weight: Common=1, Uncommon=2, Rare=5, Epic=15, Legendary=50
+                    const weights = [1, 2, 5, 15, 50];
                     totalScore += count * weights[i];
                 });
 
@@ -1164,6 +1169,22 @@
             const inventoryToggle = document.getElementById('inventory-toggle');
             const inventoryContent = document.getElementById('inventory-content');
             const submitScoreButton = document.getElementById('submit-score');
+            const usernameInput = document.getElementById('leaderboard-username');
+            const displayUsername = document.getElementById('display-username');
+
+            // --- Profanity Filter ---
+            const blacklist = ['fuck', 'shit', 'ass', 'bitch', 'crap', 'damn', 'piss', 'dick', 'cock', 'pussy', 'nazi', 'hitler', 'rape']; // Basic list, can be expanded
+            function isProfane(name) {
+                const lowName = name.toLowerCase();
+                return blacklist.some(term => lowName.includes(term));
+            }
+
+            // Load stored username
+            const storedName = localStorage.getItem('whirlCollectorUsername');
+            if (storedName) {
+                usernameInput.value = storedName;
+                displayUsername.textContent = storedName;
+            }
 
             inventoryToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1174,9 +1195,27 @@
             submitScoreButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const total = document.getElementById('user-total-score').textContent;
-                console.log(`Score submitted to Discord: ${total}`);
-                submitScoreButton.textContent = "Submitted";
+                const name = usernameInput.value.trim();
+
+                if (!name) return;
+
+                if (isProfane(name)) {
+                    gsap.to(usernameInput, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
+                    usernameInput.style.borderColor = "#ef4444";
+                    setTimeout(() => usernameInput.style.borderColor = "", 1000);
+                    return;
+                }
+
+                // Persistence
+                localStorage.setItem('whirlCollectorUsername', name);
+                displayUsername.textContent = name;
+
+                console.log(`Score submitted to Discord: ${name} - ${total}`);
+                submitScoreButton.textContent = "Synced!";
                 submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
+
+                // Feedback
+                gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
             });
 
             document.getElementById('inventory-hud').addEventListener('click', e => e.stopPropagation());
