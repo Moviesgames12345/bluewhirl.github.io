@@ -130,13 +130,27 @@
 
         /* --- NEW: About Us tile background --- */
         .about-tile-bg {
-            background-color: rgba(30, 41, 59, 0.9);
-            /* slate-800 with 90% opacity */
+            background-color: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
 
         .light .about-tile-bg {
-            background-color: rgba(255, 255, 255, 0.9) !important;
-            /* white with 90% opacity */
+            background-color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .game-card,
+        .team-member-card {
+            background-color: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .light .game-card,
+        .light .team-member-card {
+            background-color: rgba(255, 255, 255, 0.7) !important;
         }
 
 
@@ -436,6 +450,11 @@
                     class="cta-button text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg">
                     Discover the Paranoia
                 </a>
+                <div class="mt-16 flex justify-center animate-bounce">
+                    <a href="#game-details" class="text-sky-400 opacity-60 hover:opacity-100 transition-opacity">
+                        <i class="fas fa-chevron-down fa-2x"></i>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -444,13 +463,13 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div>
                         <h2 class="section-title">Trust is Your Most Fragile Resource</h2>
-                        <p class="text-slate-400 mb-4 leading-relaxed">
+                        <p class="text-slate-300 mb-6 leading-loose tracking-wide font-medium">
                             <strong>Echoes In The Dark - </strong> You are part of a research team trapped in the
                             isolated, decaying Arctic Outpost. To survive, your group must explore the hazardous
                             facility, investigate clues from data logs and schematics, and use what you find to repair
                             critical systems for your escape or to contain the mysterious entity you've discovered.
                         </p>
-                        <p class="text-slate-400 mb-6 leading-relaxed">
+                        <p class="text-slate-300 mb-8 leading-loose tracking-wide font-medium">
                             But one of you is not who they seem. A hidden player, The Anomaly, is working against the
                             group. Their goal is to ensure no one leaves. They will deceive you, sabotage your
                             equipment, and turn the failing outpost itself into a weapon against you. Paranoia will

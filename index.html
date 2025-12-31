@@ -128,23 +128,35 @@
         }
 
         .about-tile-bg {
-            background-color: rgba(17, 40, 77, 0.692);
+            background-color: rgba(17, 40, 77, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
 
         .light .about-tile-bg {
-            background-color: rgba(255, 255, 255, 0.9) !important;
+            background-color: rgba(255, 255, 255, 0.7) !important;
         }
 
         .light .product-card-overlay {
-            background-color: rgba(249, 250, 251, 0.7) !important;
-            /* gray-50 with opacity */
+            background-color: rgba(249, 250, 251, 0.5) !important;
+        }
+
+        .product-card {
+            background-color: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+            transition: box-shadow 0.3s ease-in-out, min-height 0.4s ease-in-out, transform 0.3s ease-out;
         }
 
         .light .product-card h3,
         .light .product-card p {
             color: #1f2937 !important;
-            /* gray-800 */
         }
+
+        /* gray-800 */
 
 
         /* Dark mode (default) */
@@ -179,11 +191,6 @@
         /* 3D Tilt effect for cards */
         .tilt-card {
             transform-style: preserve-3d;
-        }
-
-        .product-card {
-            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
-            transition: box-shadow 0.3s ease-in-out, min-height 0.4s ease-in-out;
         }
 
         .product-card:hover {
@@ -416,7 +423,8 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="about-tile-bg rounded-2xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto">
                     <h2 class="section-title">About Us</h2>
-                    <p class="text-lg text-slate-200 max-w-3xl mx-auto text-center leading-relaxed">
+                    <p
+                        class="text-lg text-slate-200 max-w-3xl mx-auto text-center leading-loose tracking-wide font-medium">
                         Hello world.. I’m the entire Blue Whirl team — programmer, artist, sound designer, QA tester,
                         and coffee department all in one.
                         <br><br>I make games because therapy is expensive and programming is cheaper. Most of my ideas
@@ -686,8 +694,8 @@
             const softCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="softGradient" cx="50%" cy="50%" r="50%"><stop offset="70%" stop-color="white" stop-opacity="1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(#softGradient)"/></svg>`;
             const softCircleDataUrl = 'data:image/svg+xml;base64,' + btoa(softCircleSvg);
             const particleTexture = new THREE.TextureLoader().load(softCircleDataUrl);
-            const vertexShader = `attribute float aSize; varying vec3 vColor; void main() { vColor = color; vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewPosition; gl_PointSize = aSize * 18.0; }`;
-            const fragmentShader = `uniform sampler2D uTexture; varying vec3 vColor; void main() { gl_FragColor = vec4(vColor, 1.0); gl_FragColor = gl_FragColor * texture2D(uTexture, gl_PointCoord); }`;
+            const vertexShader = `attribute float aSize; varying vec3 vColor; void main() { vColor = color; vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewPosition; gl_PointSize = aSize * 15.0; }`;
+            const fragmentShader = `uniform sampler2D uTexture; varying vec3 vColor; void main() { vec4 texColor = texture2D(uTexture, gl_PointCoord); gl_FragColor = vec4(vColor, 0.35) * texColor; }`;
             const particleMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { uTexture: { value: particleTexture } }, transparent: true, depthWrite: false, vertexColors: true, blending: THREE.AdditiveBlending });
             const particles = new THREE.Points(particleGeometry, particleMaterial);
             scene.add(particles);

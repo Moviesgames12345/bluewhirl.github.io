@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,34 +13,69 @@
             font-family: 'Montserrat', sans-serif;
             transition: background-color 0.3s, color 0.3s;
         }
+
         /* Light mode */
         .light body {
             background-color: #f3f4f6;
             color: #1f2937;
         }
-        .light .bg-slate-900 { background-color: #e5e7eb !important; }
-        .light .bg-slate-800 { background-color: #ffffff !important; }
-        .light .text-slate-200 { color: #374151 !important; }
-        .light .text-slate-300 { color: #4b5563 !important; }
-        .light .text-slate-400 { color: #4b5563 !important; }
-        .light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; }
-        
+
+        .light .bg-slate-900 {
+            background-color: #e5e7eb !important;
+        }
+
+        .light .bg-slate-800 {
+            background-color: #ffffff !important;
+        }
+
+        .light .text-slate-200 {
+            color: #374151 !important;
+        }
+
+        .light .text-slate-300 {
+            color: #4b5563 !important;
+        }
+
+        .light .text-slate-400 {
+            color: #4b5563 !important;
+        }
+
+        .light .navbar-bg {
+            background-color: rgba(229, 231, 235, 0.9) !important;
+        }
+
         /* Dark mode (default) */
         body {
             background-color: #0f172a;
             color: #e2e8f0;
         }
-        .navbar-bg { background-color: rgba(15, 23, 42, 0.85); }
 
-        canvas#webgl { position: fixed; top: 0; left: 0; outline: none; z-index: 0; }
-        main { position: relative; z-index: 1; }
+        .navbar-bg {
+            background-color: rgba(15, 23, 42, 0.85);
+        }
+
+        canvas#webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            outline: none;
+            z-index: 0;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
 
         .policy-container {
-            background-color: rgba(30, 41, 59, 0.7);
-            backdrop-blur: md;
+            background-color: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
+
         .light .policy-container {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.7);
         }
 
         .section-title {
@@ -52,6 +88,7 @@
         }
     </style>
 </head>
+
 <body class="bg-slate-900 text-slate-200">
 
     <canvas id="webgl"></canvas>
@@ -65,7 +102,8 @@
                         <span class="text-2xl font-bold text-sky-400">Blue Whirl</span>
                     </a>
                     <div class="flex items-center">
-                        <button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+                        <button id="theme-toggle" title="Toggle dark/light mode"
+                            class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
                             <i class="fas fa-moon text-xl"></i>
                         </button>
                     </div>
@@ -80,30 +118,37 @@
                     <p class="text-slate-400 mb-8 italic">Effective Date: December 31, 2024</p>
 
                     <p class="mb-6 leading-relaxed">
-                        Welcome to The Bad Friend App. We respect your privacy and are committed to protecting the personal data you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
+                        Welcome to The Bad Friend App. We respect your privacy and are committed to protecting the
+                        personal data you share with us. This Privacy Policy explains how we collect, use, and safeguard
+                        your information when you use our mobile application.
                     </p>
 
                     <h2 class="text-2xl section-title">1. Information We Collect</h2>
-                    
+
                     <h3 class="text-xl font-semibold text-sky-300 mt-4 mb-2">1.1 Personal Data</h3>
                     <p class="mb-4">When you create an account, we collect:</p>
                     <ul class="list-disc pl-6 mb-4 space-y-2">
                         <li><strong>Email Address:</strong> Used for authentication and account management.</li>
                         <li><strong>Display Name:</strong> Used to personalize your experience.</li>
-                        <li><strong>Payment Information:</strong> Processed securely via Stripe (we do not store your full credit card details on our servers).</li>
+                        <li><strong>Payment Information:</strong> Processed securely via Stripe (we do not store your
+                            full credit card details on our servers).</li>
                     </ul>
 
                     <h3 class="text-xl font-semibold text-sky-300 mt-4 mb-2">1.2 Friend & Interaction Data</h3>
                     <p class="mb-4">To provide our core services, you may provide:</p>
                     <ul class="list-disc pl-6 mb-4 space-y-2">
-                        <li><strong>Contact Information:</strong> Names, phone numbers, and birthdays of your friends.</li>
+                        <li><strong>Contact Information:</strong> Names, phone numbers, and birthdays of your friends.
+                        </li>
                         <li><strong>Interaction Logs:</strong> Notes and dates of your communication with friends.</li>
                         <li><strong>Gift Ideas:</strong> Private notes about gift suggestions.</li>
                     </ul>
 
                     <h3 class="text-xl font-semibold text-sky-300 mt-4 mb-2">1.3 AI Processing (Google Gemini™)</h3>
                     <p class="mb-4">
-                        When you use our AI features (Message Drafter, Gift Suggestions, Magic Bar), certain data (such as friend interests or interaction notes) is sent to Google Gemini™ APIs for processing. This data is used solely to generate helpful suggestions for you and is not used to train the AI models.
+                        When you use our AI features (Message Drafter, Gift Suggestions, Magic Bar), certain data (such
+                        as friend interests or interaction notes) is sent to Google Gemini™ APIs for processing. This
+                        data is used solely to generate helpful suggestions for you and is not used to train the AI
+                        models.
                     </p>
 
                     <h2 class="text-2xl section-title">2. How We Use Your Information</h2>
@@ -117,9 +162,12 @@
 
                     <h2 class="text-2xl section-title">3. Data Protection & Security</h2>
                     <ul class="list-disc pl-6 mb-4 space-y-2">
-                        <li><strong>Encryption:</strong> We use industry-standard encryption for data in transit and at rest.</li>
-                        <li><strong>Privacy Vault:</strong> Private notes stored in the "Vault" are protected with AES-256 encryption and require a master PIN known only to you.</li>
-                        <li><strong>Authentication:</strong> We use Firebase Authentication to ensure your account remains secure.</li>
+                        <li><strong>Encryption:</strong> We use industry-standard encryption for data in transit and at
+                            rest.</li>
+                        <li><strong>Privacy Vault:</strong> Private notes stored in the "Vault" are protected with
+                            AES-256 encryption and require a master PIN known only to you.</li>
+                        <li><strong>Authentication:</strong> We use Firebase Authentication to ensure your account
+                            remains secure.</li>
                     </ul>
 
                     <h2 class="text-2xl section-title">4. Third-Party Services</h2>
@@ -134,14 +182,16 @@
                     <p class="mb-4">You have the right to:</p>
                     <ul class="list-disc pl-6 mb-4 space-y-2">
                         <li><strong>Access Your Data:</strong> View the information we have stored about you.</li>
-                        <li><strong>Delete Your Account:</strong> You can delete your account and all associated data at any time within the app settings or by contacting us.</li>
+                        <li><strong>Delete Your Account:</strong> You can delete your account and all associated data at
+                            any time within the app settings or by contacting us.</li>
                         <li><strong>Export Data:</strong> Request a copy of your stored connection data.</li>
                     </ul>
 
                     <h2 class="text-2xl section-title">6. Contact Us</h2>
                     <p class="mb-4">
                         If you have any questions or concerns about this Privacy Policy, please contact us at:<br>
-                        Email: <a href="mailto:blue_whirl@outlook.com" class="text-sky-400 hover:underline">blue_whirl@outlook.com</a>
+                        Email: <a href="mailto:blue_whirl@outlook.com"
+                            class="text-sky-400 hover:underline">blue_whirl@outlook.com</a>
                     </p>
 
                     <p class="mt-12 text-center text-sky-400 font-bold">
@@ -153,7 +203,8 @@
 
         <footer class="py-10 bg-slate-900 border-t border-slate-700">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
-                <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.</p>
+                <p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.
+                </p>
                 <p class="text-xs mt-2"><a href="index.html" class="hover:text-sky-400">Back to Home</a></p>
             </div>
         </footer>
@@ -252,4 +303,5 @@
         });
     </script>
 </body>
+
 </html>
