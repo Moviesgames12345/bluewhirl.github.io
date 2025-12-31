@@ -850,7 +850,7 @@
             const tempColor = new THREE.Color();
             const tempTargetColor = new THREE.Color();
             const repulsionDirection2D = new THREE.Vector2();
-            const currentSizesArr = new Float32Array(particleCount).set(particleSizes);
+            const originalSizes = new Float32Array(particleSizes);
 
             gsap.timeline({ scrollTrigger: { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3 } }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut' });
 
@@ -872,17 +872,23 @@
 
                     const rIdx = particleRarityIndices[i];
                     const rarityColor = rarities[rIdx].color;
-                    let targetSize = particleSizes[i];
+                    let targetSize = originalSizes[i];
 
                     if (mouseDistance < interactionRadius) {
                         const forceMagnitude = 1 - mouseDistance / interactionRadius;
-                        repulsionDirection2D.set(tempScreenPos.x - pointer.x, tempScreenPos.y - pointer.y).normalize();
+                        const dx = tempScreenPos.x - pointer.x;
+                        const dy = tempScreenPos.y - pointer.y;
+                        const dSq = dx * dx + dy * dy;
 
-                        tempForceCam.set(repulsionDirection2D.x, repulsionDirection2D.y, 0)
-                            .applyQuaternion(camera.quaternion)
-                            .applyQuaternion(inverseParticleQuaternion);
+                        if (dSq > 0.00001) {
+                            repulsionDirection2D.set(dx, dy).normalize();
+                            tempForceCam.set(repulsionDirection2D.x, repulsionDirection2D.y, 0)
+                                .applyQuaternion(camera.quaternion)
+                                .applyQuaternion(inverseParticleQuaternion);
 
-                        tempTargetPos.add(tempForceCam.multiplyScalar(forceMagnitude * (repulsionStrength * (1 + rIdx * 0.2))));
+                            tempTargetPos.add(tempForceCam.multiplyScalar(forceMagnitude * (repulsionStrength * (1 + rIdx * 0.2))));
+                        }
+
                         if (rIdx > 0) targetSize *= 1.5;
                     }
 
