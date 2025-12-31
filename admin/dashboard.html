@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Blue Whirl</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            border-left: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .sidebar {
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .glow {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .hacker-text {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen bg-slate-950">
+    <script>
+        // Security Check
+        if (!sessionStorage.getItem('bw_admin_session')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 p-6 hidden lg:flex flex-col">
+        <div class="flex items-center gap-3 mb-10">
+            <div
+                class="w-8 h-8 bg-sky-500 rounded flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                <i class="fas fa-whirlpool"></i>
+            </div>
+            <span class="font-bold tracking-tight text-white uppercase text-sm">BW Admin</span>
+        </div>
+
+        <nav class="flex-grow space-y-2">
+            <a href="#"
+                class="flex items-center gap-3 p-3 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                <i class="fas fa-chart-line w-5"></i>
+                <span class="text-sm font-medium">Overview</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 p-3 rounded-lg text-slate-400 hover:bg-slate-800 transition-colors">
+                <i class="fas fa-users w-5"></i>
+                <span class="text-sm font-medium">Collections</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 p-3 rounded-lg text-slate-400 hover:bg-slate-800 transition-colors">
+                <i class="fas fa-code w-5"></i>
+                <span class="text-sm font-medium">System Logs</span>
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-slate-800">
+            <button onclick="logout()"
+                class="flex items-center gap-3 p-3 w-full text-slate-500 hover:text-red-400 transition-colors">
+                <i class="fas fa-sign-out-alt w-5"></i>
+                <span class="text-sm font-medium">Terminate Session</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-8">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">System Statistics</h1>
+                <p class="text-sm text-slate-400 mt-1 uppercase tracking-widest text-[0.65rem]">Node: Primary-DC-West
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="resetSystem()"
+                    class="px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold rounded-lg hover:bg-red-500/20 transition-all">
+                    Emergency Reset
+                </button>
+                <div class="px-4 py-2 bg-slate-800 rounded-lg flex items-center gap-2 border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs text-slate-300 font-medium uppercase tracking-widest">System Online</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="stat-card p-6 rounded-2xl">
+                <span class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Total
+                    Syncs</span>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-3xl font-bold text-white glow tracking-tighter">4,281</span>
+                    <span class="text-xs text-emerald-400 font-medium">+12%</span>
+                </div>
+            </div>
+            <div class="stat-card p-6 rounded-2xl">
+                <span class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Legendary
+                    Finds</span>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-3xl font-bold text-amber-400 glow tracking-tighter">142</span>
+                    <span class="text-xs text-slate-500 font-medium">Global</span>
+                </div>
+            </div>
+            <div class="stat-card p-6 rounded-2xl">
+                <span class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Avg Architect
+                    Rank</span>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-2xl font-bold text-sky-400 glow tracking-tighter">Seeker</span>
+                </div>
+            </div>
+            <div class="stat-card p-6 rounded-2xl">
+                <span
+                    class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Submissions</span>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-3xl font-bold text-white glow tracking-tighter">1,092</span>
+                    <span class="text-xs text-sky-400 font-medium">Awaiting</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Submission Log -->
+            <div class="lg:col-span-2 space-y-4">
+                <h2
+                    class="text-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-800 pb-2 mb-4">
+                    Live Discovery Log</h2>
+                <div class="space-y-3" id="log-entries">
+                    <div class="stat-card p-4 rounded-xl flex items-center justify-between border-l-2 border-amber-500">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-amber-400">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Whirl_King</h3>
+                                <p class="text-[0.65rem] text-slate-500 uppercase">Discovered Legendary Fragment</p>
+                            </div>
+                        </div>
+                        <span class="text-[0.6rem] text-slate-400 font-mono">2m ago</span>
+                    </div>
+                    <div
+                        class="stat-card p-4 rounded-xl flex items-center justify-between border-l-2 border-emerald-500">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-emerald-400">
+                                <i class="fas fa-atom"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Zephyr_Code</h3>
+                                <p class="text-[0.65rem] text-slate-500 uppercase">Discovered Epic Fragment</p>
+                            </div>
+                        </div>
+                        <span class="text-[0.6rem] text-slate-400 font-mono">15m ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Management Tools -->
+            <div class="space-y-6">
+                <h2
+                    class="text-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-800 pb-2 mb-4">
+                    Terminal Tools</h2>
+                <div class="stat-card p-6 rounded-2xl space-y-4">
+                    <button onclick="clearLocalStorage()"
+                        class="w-full py-3 bg-slate-800 border border-slate-700 text-slate-300 text-[0.7rem] uppercase font-bold tracking-widest rounded-lg hover:bg-slate-700 transition-colors">
+                        Wipe Local Progress
+                    </button>
+                    <button onclick="downloadBackup()"
+                        class="w-full py-3 bg-slate-800 border border-slate-700 text-slate-300 text-[0.7rem] uppercase font-bold tracking-widest rounded-lg hover:bg-slate-700 transition-colors">
+                        Export System Stats
+                    </button>
+                    <p class="text-[0.6rem] text-slate-500 italic mt-4 text-center">Caution: Some actions are
+                        irreversible.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function logout() {
+            sessionStorage.removeItem('bw_admin_session');
+            window.location.href = 'login.html';
+        }
+
+        function clearLocalStorage() {
+            if (confirm("Are you sure you want to wipe all local collection data? This will reset your counters to zero.")) {
+                localStorage.clear();
+                alert("Local storage wiped. System reset.");
+            }
+        }
+
+        function resetSystem() {
+            gsap.to('main', { filter: 'invert(1)', duration: 0.1, repeat: 10, yoyo: true });
+            setTimeout(() => {
+                alert("EMERGENCY PROTOCOL INITIATED: User counters would be cleared via DB in Phase 2.");
+            }, 1000);
+        }
+
+        function downloadBackup() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                stats: { totalSyncs: 4281, legendaryFinds: 142 },
+                node: "Primary-DC-West"
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bw_backup_${Date.now()}.json`;
+            a.click();
+        }
+    </script>
+</body>
+
+</html>
