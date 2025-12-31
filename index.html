@@ -828,7 +828,7 @@
             const interactionRadius = 0.47;
             const repulsionStrength = 1.5;
             const raycaster = new THREE.Raycaster();
-            raycaster.params.Points.threshold = 0.1;
+            raycaster.params.Points.threshold = 0.25;
             function updatePointerPosition(event) {
                 const e = (event.touches && event.touches.length > 0) ? event.touches[0] : (event.changedTouches ? event.changedTouches[0] : event);
                 if (e.clientX !== undefined) {
@@ -851,6 +851,7 @@
             const tempTargetColor = new THREE.Color();
             const repulsionDirection2D = new THREE.Vector2();
             const originalSizes = new Float32Array(particleSizes);
+            const clock = new THREE.Clock();
 
             gsap.timeline({ scrollTrigger: { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3 } }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut' });
 
@@ -872,7 +873,13 @@
 
                     const rIdx = particleRarityIndices[i];
                     const rarityColor = rarities[rIdx].color;
-                    let targetSize = originalSizes[i];
+                    const elapsedTime = clock.getElapsedTime();
+
+                    // Add subtle pulsing based on rarity
+                    const pulseSpeed = 1 + rIdx * 0.5;
+                    const pulseAmount = 0.1 + rIdx * 0.05;
+                    const pulse = 1 + Math.sin(elapsedTime * pulseSpeed + i) * pulseAmount;
+                    let targetSize = originalSizes[i] * pulse;
 
                     if (mouseDistance < interactionRadius) {
                         const forceMagnitude = 1 - mouseDistance / interactionRadius;
@@ -886,10 +893,13 @@
                                 .applyQuaternion(camera.quaternion)
                                 .applyQuaternion(inverseParticleQuaternion);
 
-                            tempTargetPos.add(tempForceCam.multiplyScalar(forceMagnitude * (repulsionStrength * (1 + rIdx * 0.2))));
+                            // TWEAK: Rare particles move away SLOWER to make them catchable
+                            const rarityRepulsionFactor = rIdx === 0 ? 1 : 0.3;
+                            tempTargetPos.add(tempForceCam.multiplyScalar(forceMagnitude * (repulsionStrength * rarityRepulsionFactor)));
                         }
 
-                        if (rIdx > 0) targetSize *= 1.5;
+                        // Increase size on hover for visual feedback
+                        targetSize *= 1.4;
                     }
 
                     particlePositions.setXYZ(
