@@ -333,6 +333,88 @@
         #easter-egg-modal.visible #modal-content {
             transform: scale(1);
         }
+
+        /* Inventory HUD Styles */
+        #inventory-hud {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .inventory-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .inventory-item.collected {
+            opacity: 1;
+            border-color: currentColor;
+            color: #fff;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .particle-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        #inventory-toggle {
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #inventory-toggle.active {
+            transform: rotate(180deg);
+        }
+
+        .inventory-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        .inventory-content.visible {
+            max-height: 300px;
+        }
+
+        @media (max-width: 768px) {
+            #inventory-hud {
+                bottom: 1rem;
+                left: 1rem;
+            }
+        }
     </style>
 </head>
 
@@ -344,13 +426,13 @@
         class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div id="modal-content"
             class="bg-slate-800 rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95">
-            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Secret Found!</h3>
-            <p class="text-slate-300 mb-4">You've found a hidden secret! As a reward, you're eligible for a special role
-                with perks in our Discord community.</p>
+            <h3 class="text-2xl font-bold text-emerald-400 mb-4">The System is Synced!</h3>
+            <p class="text-slate-300 mb-4">You've collected all the essence fragments. Your connection to Blue Whirl is
+                complete. You've earned the **Legendary** role in our Discord.</p>
             <a href="https://discord.gg/AxyEXyd" target="_blank" rel="noopener noreferrer"
                 class="text-sky-400 hover:text-sky-300 underline mb-6 block">Join our Discord!</a>
             <form id="discord-form" class="space-y-4">
-                <p class="text-slate-300">Enter your Discord ID below to claim your role:</p>
+                <p class="text-slate-300">Enter your Discord ID below to claim your perks:</p>
                 <input type="text" id="discord-id" name="discordId"
                     class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400"
                     placeholder="your_discord_username" required>
@@ -359,6 +441,35 @@
             </form>
             <button id="close-modal-button" class="mt-4 text-slate-400 hover:text-white">Close</button>
         </div>
+    </div>
+
+    <!-- Inventory HUD -->
+    <div id="inventory-hud">
+        <div class="inventory-content" id="inventory-content">
+            <div class="inventory-item" id="item-common" style="color: #38bdf8;">
+                <div class="particle-swatch" style="background: #38bdf8;"></div>
+                <span>Common</span>
+            </div>
+            <div class="inventory-item" id="item-uncommon" style="color: #22d3ee;">
+                <div class="particle-swatch" style="background: #22d3ee;"></div>
+                <span>Uncommon</span>
+            </div>
+            <div class="inventory-item" id="item-rare" style="color: #a855f7;">
+                <div class="particle-swatch" style="background: #a855f7;"></div>
+                <span>Rare</span>
+            </div>
+            <div class="inventory-item" id="item-epic" style="color: #10b981;">
+                <div class="particle-swatch" style="background: #10b981;"></div>
+                <span>Epic</span>
+            </div>
+            <div class="inventory-item" id="item-legendary" style="color: #fbbf24;">
+                <div class="particle-swatch" style="background: #fbbf24;"></div>
+                <span>Legendary</span>
+            </div>
+        </div>
+        <button id="inventory-toggle" title="Toggle Inventory">
+            <i class="fas fa-box-open"></i>
+        </button>
     </div>
 
     <main>
@@ -666,27 +777,41 @@
             });
             renderer.setSize(sizes.width, sizes.height);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const rarities = [
+                { name: 'Common', color: '#38bdf8', count: 2150, size: 1.0, prob: 0.9 },
+                { name: 'Uncommon', color: '#22d3ee', count: 120, size: 1.2, prob: 0.05 },
+                { name: 'Rare', color: '#a855f7', count: 25, size: 1.5, prob: 0.01 },
+                { name: 'Epic', color: '#10b981', count: 4, size: 1.8, prob: 0.002 },
+                { name: 'Legendary', color: '#fbbf24', count: 1, size: 2.2, prob: 0.0005 }
+            ];
+
             const particleCount = 2300;
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
             const originalPositions = new Float32Array(particleCount * 3);
             const particleSizes = new Float32Array(particleCount);
-            const easterEggParticleIndex = Math.floor(Math.random() * particleCount);
-            const colorEasterEgg = new THREE.Color('#34d399');
-            const colorInside = new THREE.Color('#f472b6');
-            const colorOutside = new THREE.Color('#38bdf8');
-            for (let i = 0; i < particleCount; i++) {
-                const i3 = i * 3;
-                const phi = Math.acos(2 * Math.random() - 1);
-                const theta = Math.random() * Math.PI * 2;
-                const radius = 2 + Math.random() * 2;
-                positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
-                positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-                positions[i3 + 2] = radius * Math.cos(phi);
-                originalPositions.set([positions[i3], positions[i3 + 1], positions[i3 + 2]], i3);
-                colorOutside.toArray(colors, i3);
-                particleSizes[i] = Math.random() * 1.0 + 0.5;
-            }
+            const particleRarityIndices = new Int32Array(particleCount);
+
+            let currentIdx = 0;
+            rarities.forEach((rarity, rIdx) => {
+                const rColor = new THREE.Color(rarity.color);
+                for (let i = 0; i < rarity.count; i++) {
+                    const i3 = currentIdx * 3;
+                    const phi = Math.acos(2 * Math.random() - 1);
+                    const theta = Math.random() * Math.PI * 2;
+                    const radius = 2 + Math.random() * 2;
+                    positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                    positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                    positions[i3 + 2] = radius * Math.cos(phi);
+                    originalPositions.set([positions[i3], positions[i3 + 1], positions[i3 + 2]], i3);
+                    rColor.toArray(colors, i3);
+                    particleSizes[currentIdx] = Math.random() * 1.0 + rarity.size;
+                    particleRarityIndices[currentIdx] = rIdx;
+                    currentIdx++;
+                }
+            });
+
             const particleGeometry = new THREE.BufferGeometry();
             particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
@@ -727,17 +852,22 @@
                     const screenPos = worldPos.clone().project(camera);
                     const distance = pointer.distanceTo(screenPos);
                     const targetPos = new THREE.Vector3().fromArray(originalPositions, i3);
-                    let targetColor = colorOutside;
-                    const isEasterEgg = (i === easterEggParticleIndex);
+                    const rIdx = particleRarityIndices[i];
+                    let targetColor = new THREE.Color(rarities[rIdx].color);
                     let targetSize = particleSizes[i];
+
                     if (distance < interactionRadius) {
-                        if (isEasterEgg) { targetColor = colorEasterEgg; targetSize = 1.5; } else { targetColor = colorInside; }
                         const forceMagnitude = 1 - distance / interactionRadius;
                         const repulsionDirection2D = screenPos.clone().sub(pointer).normalize();
                         const force_cameraSpace = new THREE.Vector3(repulsionDirection2D.x, repulsionDirection2D.y, 0);
                         const force_worldSpace = force_cameraSpace.applyQuaternion(camera.quaternion);
                         const force_localSpace = force_worldSpace.applyQuaternion(inverseParticleQuaternion);
-                        targetPos.add(force_localSpace.multiplyScalar(forceMagnitude * repulsionStrength));
+                        targetPos.add(force_localSpace.multiplyScalar(forceMagnitude * (repulsionStrength * (1 + rIdx * 0.2))));
+
+                        // Interaction highlights
+                        if (rIdx > 0) {
+                            targetSize *= 1.5;
+                        }
                     }
                     particlePositions.setX(i, THREE.MathUtils.lerp(particleVec.x, targetPos.x, 0.05));
                     particlePositions.setY(i, THREE.MathUtils.lerp(particleVec.y, targetPos.y, 0.05));
@@ -794,11 +924,60 @@
                 raycaster.setFromCamera(pointer, camera);
                 const intersects = raycaster.intersectObject(particles, true);
                 if (intersects.length > 0) {
-                    if (intersects[0].index === easterEggParticleIndex) showModal();
+                    const idx = intersects[0].index;
+                    const rIdx = particleRarityIndices[idx];
+                    collectParticle(rIdx);
                 }
             }
+
+            const collectedState = JSON.parse(localStorage.getItem('collectedParticles') || '[false, false, false, false, false]');
+
+            function collectParticle(rIdx) {
+                if (!collectedState[rIdx]) {
+                    collectedState[rIdx] = true;
+                    localStorage.setItem('collectedParticles', JSON.stringify(collectedState));
+                    updateInventoryUI();
+
+                    // Visual feedback
+                    gsap.to(particles.rotation, {
+                        y: particles.rotation.y + Math.PI * 0.5,
+                        duration: 1,
+                        ease: "power2.out"
+                    });
+
+                    if (collectedState.every(v => v)) {
+                        triggerVictory();
+                    }
+                }
+            }
+
+            function updateInventoryUI() {
+                const items = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+                collectedState.forEach((isCollected, i) => {
+                    const el = document.getElementById(`item-${items[i]}`);
+                    if (isCollected) el.classList.add('collected');
+                });
+            }
+
+            function triggerVictory() {
+                gsap.to('main', { filter: 'brightness(2) contrast(1.2)', duration: 0.1, yoyo: true, repeat: 3 });
+                setTimeout(showModal, 1000);
+            }
+
+            updateInventoryUI();
+
+            const inventoryToggle = document.getElementById('inventory-toggle');
+            const inventoryContent = document.getElementById('inventory-content');
+            inventoryToggle.addEventListener('click', () => {
+                inventoryToggle.classList.toggle('active');
+                inventoryContent.classList.toggle('visible');
+            });
+
             window.addEventListener('click', onParticleClick);
-            window.addEventListener('touchend', onParticleClick, { passive: false });
+            window.addEventListener('touchend', (e) => {
+                const touch = e.changedTouches[0];
+                onParticleClick(touch);
+            }, { passive: false });
 
             const themeToggle = document.getElementById('theme-toggle');
             const themeIcon = themeToggle.querySelector('i');
