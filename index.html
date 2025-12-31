@@ -371,6 +371,15 @@
             box-shadow: 0 0 15px currentColor;
         }
 
+        .inventory-item .count {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.7rem;
+        }
+
         .particle-swatch {
             width: 12px;
             height: 12px;
@@ -422,24 +431,24 @@
 
     <canvas id="webgl"></canvas>
 
-    <div id="easter-egg-modal"
-        class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+    <div id="reward-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="modal-content"
-            class="bg-slate-800 rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95">
-            <h3 class="text-2xl font-bold text-emerald-400 mb-4">The System is Synced!</h3>
-            <p class="text-slate-300 mb-4">You've collected all the essence fragments. Your connection to Blue Whirl is
-                complete. You've earned the **Legendary** role in our Discord.</p>
-            <a href="https://discord.gg/AxyEXyd" target="_blank" rel="noopener noreferrer"
-                class="text-sky-400 hover:text-sky-300 underline mb-6 block">Join our Discord!</a>
-            <form id="discord-form" class="space-y-4">
-                <p class="text-slate-300">Enter your Discord ID below to claim your perks:</p>
-                <input type="text" id="discord-id" name="discordId"
-                    class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400"
-                    placeholder="your_discord_username" required>
-                <button type="submit" id="submit-discord-id"
-                    class="cta-button text-white font-bold w-full py-2 px-6 rounded-full text-base">Submit ID</button>
-            </form>
-            <button id="close-modal-button" class="mt-4 text-slate-400 hover:text-white">Close</button>
+            class="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95 transition-transform duration-300">
+            <div id="modal-icon"
+                class="w-20 h-20 bg-sky-400 rounded-full mx-auto mb-6 flex items-center justify-center text-3xl text-white shadow-lg">
+                <i class="fas fa-star"></i>
+            </div>
+            <h3 id="modal-title" class="text-3xl font-bold text-white mb-2">Fragment Sync!</h3>
+            <p id="modal-rarity" class="text-sky-400 font-bold tracking-widest uppercase text-sm mb-4">Common</p>
+            <div id="modal-body" class="text-slate-300 mb-8 leading-relaxed">
+                <!-- Dynamic content -->
+            </div>
+            <div id="modal-action-container">
+                <!-- Dynamic buttons -->
+            </div>
+            <button id="close-reward-button"
+                class="mt-6 text-slate-500 hover:text-white transition-colors">Dismiss</button>
         </div>
     </div>
 
@@ -449,22 +458,27 @@
             <div class="inventory-item" id="item-common" style="color: #38bdf8;">
                 <div class="particle-swatch" style="background: #38bdf8;"></div>
                 <span>Common</span>
+                <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-uncommon" style="color: #22d3ee;">
                 <div class="particle-swatch" style="background: #22d3ee;"></div>
                 <span>Uncommon</span>
+                <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-rare" style="color: #a855f7;">
                 <div class="particle-swatch" style="background: #a855f7;"></div>
                 <span>Rare</span>
+                <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-epic" style="color: #10b981;">
                 <div class="particle-swatch" style="background: #10b981;"></div>
                 <span>Epic</span>
+                <span class="count">0</span>
             </div>
             <div class="inventory-item" id="item-legendary" style="color: #fbbf24;">
                 <div class="particle-swatch" style="background: #fbbf24;"></div>
                 <span>Legendary</span>
+                <span class="count">0</span>
             </div>
         </div>
         <button id="inventory-toggle" title="Toggle Inventory">
@@ -934,74 +948,140 @@
             });
 
             // --- WEBSITE INTERACTIVITY CODE ---
-            const modal = document.getElementById('easter-egg-modal');
-            const closeModalButton = document.getElementById('close-modal-button');
-            const discordForm = document.getElementById('discord-form');
+            const rewardModal = document.getElementById('reward-modal');
+            const closeRewardButton = document.getElementById('close-reward-button');
+            const modalTitle = document.getElementById('modal-title');
+            const modalRarity = document.getElementById('modal-rarity');
+            const modalBody = document.getElementById('modal-body');
+            const modalActionContainer = document.getElementById('modal-action-container');
+            const modalIcon = document.getElementById('modal-icon');
 
-            function showModal() { modal.classList.add('visible'); }
-            function hideModal() { modal.classList.remove('visible'); }
-
-            closeModalButton.addEventListener('click', hideModal);
-            modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
-
-            discordForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const discordIdInput = document.getElementById('discord-id');
-                const submitButton = document.getElementById('submit-discord-id');
-                const discordId = discordIdInput.value.trim();
-                if (discordId) {
-                    submitButton.disabled = true;
-                    submitButton.textContent = 'Submitted!';
-                    submitButton.classList.remove('cta-button');
-                    submitButton.classList.add('bg-emerald-500', 'cursor-default');
-                    discordIdInput.disabled = true;
-                    console.log(`Discord ID captured (no-db): ${discordId}`);
+            const rewards = [
+                {
+                    title: "Sync Stabilized",
+                    body: "You've captured a resonance fragment. The studio's legacy is becoming clearer with every piece you find.",
+                    icon: "fa-atom",
+                    color: "#38bdf8"
+                },
+                {
+                    title: "Enhanced Vision",
+                    body: "A rare spectrum of light. Your contribution to the Whirl has earned you access to our digital wallpaper pack.",
+                    icon: "fa-eye",
+                    color: "#22d3ee",
+                    action: `<a href="#" class="cta-button inline-block text-white font-bold py-3 px-8 rounded-full text-sm">Download Wallpapers</a>`
+                },
+                {
+                    title: "Aura of Creation",
+                    body: "This fragment vibrates with the sound of hand-crafted code. You've unlocked a secret concept art piece from our archives.",
+                    icon: "fa-paint-brush",
+                    color: "#a855f7",
+                    action: `<a href="#" class="cta-button inline-block text-white font-bold py-3 px-8 rounded-full text-sm">View Concept Art</a>`
+                },
+                {
+                    title: "Legacy Connection",
+                    body: "The Blue Whirl recognizes your persistence. You've earned the **Veteran** role in our community. Enter your ID below to claim it.",
+                    icon: "fa-medal",
+                    color: "#10b981",
+                    action: `
+                        <form id="discord-form" class="space-y-4 mt-4">
+                            <input type="text" id="discord-id" class="bg-slate-700 border border-slate-600 text-slate-200 text-sm rounded-lg block w-full p-2.5 placeholder-slate-400" placeholder="Discord Username" required>
+                            <button type="submit" id="submit-discord-id" class="cta-button text-white font-bold w-full py-2 px-6 rounded-full text-base">Claim Role</button>
+                        </form>`
+                },
+                {
+                    title: "Grand Architect Status",
+                    body: "The system is fully synchronized. You are now a Legendary supporter. As a token of our gratitude, here is our secret trailer.",
+                    icon: "fa-crown",
+                    color: "#fbbf24",
+                    action: `<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" class="cta-button inline-block text-white font-bold py-3 px-8 rounded-full text-sm">Secret Trailer</a>`
                 }
-            });
+            ];
 
-            function onParticleClick(event) {
-                updatePointerPosition(event);
-                raycaster.setFromCamera(pointer, camera);
-                const intersects = raycaster.intersectObject(particles, true);
-                if (intersects.length > 0) {
-                    const idx = intersects[0].index;
-                    const rIdx = particleRarityIndices[idx];
-                    collectParticle(rIdx);
+            function showRewardModal(rIdx) {
+                const reward = rewards[rIdx];
+                const rarityName = rarities[rIdx].name;
+
+                modalTitle.textContent = reward.title;
+                modalRarity.textContent = rarityName;
+                modalRarity.style.color = reward.color;
+                modalBody.innerHTML = reward.body;
+                modalIcon.style.backgroundColor = reward.color;
+                modalIcon.innerHTML = `<i class="fas ${reward.icon}"></i>`;
+                modalActionContainer.innerHTML = reward.action || '';
+
+                // Re-bind discord form if it exists
+                const dForm = document.getElementById('discord-form');
+                if (dForm) {
+                    dForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const btn = document.getElementById('submit-discord-id');
+                        btn.disabled = true;
+                        btn.textContent = 'Role Requested!';
+                        btn.classList.replace('cta-button', 'bg-emerald-500');
+                        console.log(`Discord ID Captured: ${document.getElementById('discord-id').value}`);
+                    });
                 }
+
+                rewardModal.classList.add('opacity-100', 'pointer-events-auto');
+                rewardModal.querySelector('#modal-content').classList.replace('scale-95', 'scale-100');
             }
 
-            const collectedState = JSON.parse(localStorage.getItem('collectedParticles') || '[false, false, false, false, false]');
+            function hideRewardModal() {
+                rewardModal.classList.remove('opacity-100', 'pointer-events-auto');
+                rewardModal.querySelector('#modal-content').classList.replace('scale-100', 'scale-95');
+            }
 
-            function collectParticle(rIdx) {
-                if (!collectedState[rIdx]) {
-                    collectedState[rIdx] = true;
-                    localStorage.setItem('collectedParticles', JSON.stringify(collectedState));
-                    updateInventoryUI();
+            closeRewardButton.addEventListener('click', hideRewardModal);
+            rewardModal.addEventListener('click', (e) => { if (e.target === rewardModal) hideRewardModal(); });
 
-                    // Visual feedback
-                    gsap.to(particles.rotation, {
-                        y: particles.rotation.y + Math.PI * 0.5,
-                        duration: 1,
-                        ease: "power2.out"
-                    });
+            const storedState = localStorage.getItem('collectedParticlesCount');
+            const collectedState = storedState ? JSON.parse(storedState) : [0, 0, 0, 0, 0];
 
-                    if (collectedState.every(v => v)) {
-                        triggerVictory();
-                    }
+            function collectParticle(rIdx, pIdx) {
+                // Hide particle immediately
+                originalSizes[pIdx] = 0;
+                particles.geometry.attributes.aSize.setX(pIdx, 0);
+                particles.geometry.attributes.aSize.needsUpdate = true;
+
+                // Increment count
+                collectedState[rIdx]++;
+                localStorage.setItem('collectedParticlesCount', JSON.stringify(collectedState));
+
+                updateInventoryUI();
+
+                // Reward on FIRST find of each tier
+                if (collectedState[rIdx] === 1) {
+                    showRewardModal(rIdx);
+                }
+
+                // Global celebration on first of ALL
+                const isFirstOfAll = collectedState.every(count => count >= 1) && collectedState[rIdx] === 1 && collectedState.filter(c => c === 1).length === 5;
+
+                // Visual feedback
+                gsap.to(particles.rotation, {
+                    y: particles.rotation.y + Math.PI * 0.5,
+                    duration: 1,
+                    ease: "power2.out"
+                });
+
+                if (isFirstOfAll) {
+                    triggerVictory();
                 }
             }
 
             function updateInventoryUI() {
                 const items = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
-                collectedState.forEach((isCollected, i) => {
+                collectedState.forEach((count, i) => {
                     const el = document.getElementById(`item-${items[i]}`);
-                    if (isCollected) el.classList.add('collected');
+                    const countEl = el.querySelector('.count');
+
+                    countEl.textContent = count;
+                    if (count > 0) el.classList.add('collected');
                 });
             }
 
             function triggerVictory() {
                 gsap.to('main', { filter: 'brightness(2) contrast(1.2)', duration: 0.1, yoyo: true, repeat: 3 });
-                setTimeout(showModal, 1000);
             }
 
             updateInventoryUI();
@@ -1015,10 +1095,21 @@
             });
             document.getElementById('inventory-hud').addEventListener('click', e => e.stopPropagation());
 
+            function onParticleClick(event) {
+                updatePointerPosition(event);
+                raycaster.setFromCamera(pointer, camera);
+                const intersects = raycaster.intersectObject(particles, true);
+                if (intersects.length > 0) {
+                    const idx = intersects[0].index;
+                    const rIdx = particleRarityIndices[idx];
+                    collectParticle(rIdx, idx);
+                }
+            }
+
             window.addEventListener('click', onParticleClick);
             window.addEventListener('touchend', (e) => {
                 // Check if target is UI
-                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#easter-egg-modal')) return;
+                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal')) return;
                 onParticleClick(e);
             }, { passive: false });
 
