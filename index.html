@@ -415,7 +415,49 @@
         }
 
         .inventory-content.visible {
-            max-height: 300px;
+            max-height: 500px;
+        }
+
+        /* Leaderboard & Rank Styles */
+        .rank-badge {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #38bdf8;
+            margin-bottom: 0.25rem;
+            font-weight: 800;
+        }
+
+        .hall-of-fame-tab {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            padding: 2px 0;
+        }
+
+        .leader-name {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .leader-score {
+            font-family: monospace;
+            color: #38bdf8;
+        }
+
+        .user-leader-row {
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 4px;
+            padding: 4px;
+            margin-top: 4px;
         }
 
         @media (max-width: 768px) {
@@ -455,6 +497,7 @@
     <!-- Inventory HUD -->
     <div id="inventory-hud">
         <div class="inventory-content" id="inventory-content">
+            <div id="user-rank" class="rank-badge">Whirl Novice</div>
             <div class="inventory-item" id="item-common" style="color: #38bdf8;">
                 <div class="particle-swatch" style="background: #38bdf8;"></div>
                 <span>Common</span>
@@ -479,6 +522,22 @@
                 <div class="particle-swatch" style="background: #fbbf24;"></div>
                 <span>Legendary</span>
                 <span class="count">0</span>
+            </div>
+            <div class="hall-of-fame-tab">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Hall of Fame</span>
+                    <button id="submit-score"
+                        class="text-[0.6rem] text-sky-400 hover:text-white underline">Submit</button>
+                </div>
+                <div id="leaderboard-list">
+                    <!-- Simulated global leaders -->
+                    <div class="leaderboard-row"><span class="leader-name">Zephyr_Code</span><span
+                            class="leader-score">1,240</span></div>
+                    <div class="leaderboard-row"><span class="leader-name">Whirl_King</span><span
+                            class="leader-score">892</span></div>
+                    <div class="leaderboard-row user-leader-row"><span class="leader-name">You</span><span
+                            id="user-total-score" class="leader-score">0</span></div>
+                </div>
             </div>
         </div>
         <button id="inventory-toggle" title="Toggle Inventory">
@@ -1071,13 +1130,29 @@
 
             function updateInventoryUI() {
                 const items = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+                let totalScore = 0;
+
                 collectedState.forEach((count, i) => {
                     const el = document.getElementById(`item-${items[i]}`);
                     const countEl = el.querySelector('.count');
 
                     countEl.textContent = count;
                     if (count > 0) el.classList.add('collected');
+
+                    // Score weight: Common=1, Uncommon=2, Rare=5, Epic=10, Legendary=25
+                    const weights = [1, 2, 5, 10, 25];
+                    totalScore += count * weights[i];
                 });
+
+                // Update Rank & Hall of Fame
+                const rankEl = document.getElementById('user-rank');
+                const totalScoreEl = document.getElementById('user-total-score');
+                totalScoreEl.textContent = totalScore.toLocaleString();
+
+                if (totalScore >= 501) rankEl.textContent = "Grand Architect";
+                else if (totalScore >= 101) rankEl.textContent = "Fragment Master";
+                else if (totalScore >= 21) rankEl.textContent = "Resonance Seeker";
+                else rankEl.textContent = "Whirl Novice";
             }
 
             function triggerVictory() {
@@ -1088,11 +1163,22 @@
 
             const inventoryToggle = document.getElementById('inventory-toggle');
             const inventoryContent = document.getElementById('inventory-content');
+            const submitScoreButton = document.getElementById('submit-score');
+
             inventoryToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 inventoryToggle.classList.toggle('active');
                 inventoryContent.classList.toggle('visible');
             });
+
+            submitScoreButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const total = document.getElementById('user-total-score').textContent;
+                console.log(`Score submitted to Discord: ${total}`);
+                submitScoreButton.textContent = "Submitted";
+                submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
+            });
+
             document.getElementById('inventory-hud').addEventListener('click', e => e.stopPropagation());
 
             function onParticleClick(event) {
