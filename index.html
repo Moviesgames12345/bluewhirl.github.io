@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/cur1-11-47e999d7-32.css" />
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -168,11 +169,12 @@
         }
 
         .hero-gradient {
-            background: linear-gradient(120deg, rgba(30, 64, 175, 0) 0%, rgba(15, 23, 42, 0.1) 100%);
+            background: linear-gradient(120deg, rgba(30, 64, 175, 0.06) 0%, rgba(15, 23, 42, 0.35) 100%);
         }
 
         .navbar-bg {
-            background-color: rgba(15, 23, 42, 0.85);
+            background-color: rgba(15, 23, 42, 0.72);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.12);
         }
 
 
@@ -304,18 +306,33 @@
             background: #0ea5e9;
         }
 
-        canvas#webgl {
-            position: fixed;
-            top: 0;
-            left: 0;
-            outline: none;
-            z-index: 0;
-        }
+            canvas#webgl {
+                position: fixed;
+                top: 0;
+                left: 0;
+                outline: none;
+                z-index: 1;
+                pointer-events: none;
+                opacity: 0.74;
+                filter: saturate(1.18) contrast(1.06) blur(0px);
+            }
 
-        main {
-            position: relative;
-            z-index: 1;
-        }
+            main {
+                position: relative;
+                z-index: 2;
+            }
+
+            .hero-gradient h1,
+            .hero-gradient p,
+            .hero-gradient .cta-button {
+                text-shadow: 0 6px 22px rgba(2, 6, 23, 0.9);
+            }
+
+            .about-tile-bg,
+            .product-card,
+            #contact-form {
+                box-shadow: 0 16px 45px rgba(2, 6, 23, 0.45);
+            }
 
         #easter-egg-modal {
             transition: opacity 0.3s ease-out;
@@ -343,25 +360,45 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.75rem;
-            transition: transform 0.3s ease;
+            gap: 0.55rem;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            filter: drop-shadow(0 10px 20px rgba(2, 6, 23, 0.45));
+            max-width: 240px;
+        }
+
+        #inventory-hud.compact .inventory-content {
+            max-height: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #hud-mini-score {
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #7dd3fc;
+            background: rgba(15, 23, 42, 0.68);
+            border: 1px solid rgba(56, 189, 248, 0.26);
+            border-radius: 9999px;
+            padding: 4px 10px;
+            backdrop-filter: blur(8px);
         }
 
         .inventory-item {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            background: rgba(15, 23, 42, 0.6);
+            gap: 0.75rem;
+            background: rgba(15, 23, 42, 0.66);
             backdrop-filter: blur(8px);
-            padding: 0.5rem 1rem;
+            padding: 0.52rem 0.9rem;
             border-radius: 9999px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #94a3b8;
-            font-size: 0.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.72rem;
+            font-weight: 700;
+            transition: all 0.25s ease;
             cursor: pointer;
-            opacity: 0.5;
+            opacity: 0.58;
         }
 
         .inventory-item.collected {
@@ -371,18 +408,23 @@
             box-shadow: 0 0 15px currentColor;
         }
 
+        .inventory-item.hit {
+            transform: translateX(4px) scale(1.02);
+            filter: brightness(1.22);
+        }
+
         .inventory-item .count {
             margin-left: auto;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             padding: 2px 8px;
             border-radius: 4px;
             font-family: monospace;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
         }
 
         .particle-swatch {
-            width: 12px;
-            height: 12px;
+            width: 11px;
+            height: 11px;
             border-radius: 50%;
             box-shadow: 0 0 8px currentColor;
         }
@@ -405,17 +447,112 @@
             transform: rotate(180deg);
         }
 
+        .hud-toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        #inventory-toggle-label {
+            font-size: 0.62rem;
+            color: #7dd3fc;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            background: rgba(15, 23, 42, 0.68);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 4px 9px;
+            border-radius: 9999px;
+        }
+
         .inventory-content {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
+            opacity: 0;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
 
         .inventory-content.visible {
-            max-height: 500px;
+            max-height: 760px;
+            opacity: 1;
+        }
+
+        .combo-indicator {
+            font-size: 0.63rem;
+            font-weight: 700;
+            color: #fef08a;
+            opacity: 0;
+            transform: translateY(8px);
+            text-shadow: 0 0 14px rgba(250, 204, 21, 0.45);
+        }
+
+        .hold-status {
+            font-size: 0.6rem;
+            color: #cbd5e1;
+            margin-top: 0.15rem;
+            margin-bottom: 0.2rem;
+            min-height: 0.85rem;
+        }
+
+        .rarity-progress-row {
+            display: grid;
+            grid-template-columns: 58px 1fr 34px;
+            gap: 0.35rem;
+            align-items: center;
+            font-size: 0.6rem;
+            color: #cbd5e1;
+        }
+
+        .rarity-progress-track {
+            height: 6px;
+            border-radius: 9999px;
+            background: rgba(148, 163, 184, 0.2);
+            overflow: hidden;
+        }
+
+        .rarity-progress-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 9999px;
+            transition: width 0.35s ease;
+        }
+
+        #next-milestone {
+            font-size: 0.62rem;
+            color: #cbd5e1;
+            margin-top: 0.2rem;
+        }
+
+        .hud-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.35rem;
+            margin-top: 0.45rem;
+        }
+
+        .hud-action-btn {
+            font-size: 0.58rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 0.35rem 0.4rem;
+            border-radius: 0.45rem;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #7dd3fc;
+            background: rgba(14, 116, 144, 0.14);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .hud-action-btn:hover {
+            background: rgba(14, 116, 144, 0.3);
+            transform: translateY(-1px);
+        }
+
+        #inventory-hud input:focus-visible,
+        #inventory-hud button:focus-visible {
+            outline: 2px solid rgba(56, 189, 248, 0.75);
+            outline-offset: 2px;
         }
 
         /* Leaderboard and Rank Styles */
@@ -460,6 +597,41 @@
             margin-top: 4px;
         }
 
+        .click-feedback-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 55;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .click-feedback-ring {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 9999px;
+            border: 2px solid rgba(56, 189, 248, 0.9);
+            box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.12), 0 0 24px rgba(56, 189, 248, 0.65);
+            transform: translate(-50%, -50%) scale(0.35);
+            opacity: 1;
+            will-change: transform, opacity;
+        }
+
+        .click-feedback-ring.rare {
+            border-color: rgba(168, 85, 247, 0.95);
+            box-shadow: 0 0 0 10px rgba(168, 85, 247, 0.18), 0 0 30px rgba(168, 85, 247, 0.75);
+        }
+
+        .click-feedback-ring.epic {
+            border-color: rgba(16, 185, 129, 0.95);
+            box-shadow: 0 0 0 12px rgba(16, 185, 129, 0.2), 0 0 34px rgba(16, 185, 129, 0.75);
+        }
+
+        .click-feedback-ring.legendary {
+            border-color: rgba(251, 191, 36, 0.95);
+            box-shadow: 0 0 0 14px rgba(251, 191, 36, 0.22), 0 0 40px rgba(251, 191, 36, 0.8);
+        }
+
         @media (max-width: 768px) {
             #inventory-hud {
                 bottom: 1rem;
@@ -472,6 +644,7 @@
 <body class="bg-slate-900 text-slate-200">
 
     <canvas id="webgl"></canvas>
+    <div id="click-feedback-layer" class="click-feedback-layer"></div>
 
     <div id="reward-modal"
         class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
@@ -495,9 +668,15 @@
     </div>
 
     <!-- Inventory HUD -->
-    <div id="inventory-hud">
+    <div id="inventory-hud" class="compact" aria-label="Collector HUD">
+        <div id="hud-mini-score">Collector HUD · Score 0</div>
         <div class="inventory-content" id="inventory-content">
             <div id="user-rank" class="rank-badge">Whirl Novice</div>
+            <div id="combo-indicator" class="combo-indicator">Combo x2</div>
+            <div id="hold-status" class="hold-status">Hold a fragment for 2.0s to capture.</div>
+            <div class="rarity-progress-track mb-1"><div id="hold-progress-fill" class="rarity-progress-fill" style="background:#7dd3fc"></div></div>
+            <div class="rarity-progress-row"><span>Instability</span><div class="rarity-progress-track"><div id="instability-fill" class="rarity-progress-fill" style="background:#f97316"></div></div><span id="instability-text">0%</span></div>
+
             <div class="inventory-item" id="item-common" style="color: #38bdf8;">
                 <div class="particle-swatch" style="background: #38bdf8;"></div>
                 <span>Common <small class="opacity-50">(1pt)</small></span>
@@ -523,9 +702,19 @@
                 <span>Legendary <small class="opacity-50">(500pt)</small></span>
                 <span class="count">0</span>
             </div>
+
+            <div id="rarity-progress" class="mt-2 space-y-1">
+                <div class="rarity-progress-row"><span>Common</span><div class="rarity-progress-track"><div id="progress-common" class="rarity-progress-fill" style="background:#38bdf8"></div></div><span id="progress-text-common">0/10</span></div>
+                <div class="rarity-progress-row"><span>Uncommon</span><div class="rarity-progress-track"><div id="progress-uncommon" class="rarity-progress-fill" style="background:#22d3ee"></div></div><span id="progress-text-uncommon">0/10</span></div>
+                <div class="rarity-progress-row"><span>Rare</span><div class="rarity-progress-track"><div id="progress-rare" class="rarity-progress-fill" style="background:#a855f7"></div></div><span id="progress-text-rare">0/10</span></div>
+                <div class="rarity-progress-row"><span>Epic</span><div class="rarity-progress-track"><div id="progress-epic" class="rarity-progress-fill" style="background:#10b981"></div></div><span id="progress-text-epic">0/10</span></div>
+                <div class="rarity-progress-row"><span>Legendary</span><div class="rarity-progress-track"><div id="progress-legendary" class="rarity-progress-fill" style="background:#fbbf24"></div></div><span id="progress-text-legendary">0/10</span></div>
+            </div>
+            <div id="next-milestone">Next reward: 10 Common fragments.</div>
+
             <div class="hall-of-fame-tab">
                 <div class="flex flex-col gap-2 mb-3">
-                    <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Hall of Fame</span>
+                    <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Hall of Fame <small class="normal-case opacity-70">(session demo)</small></span>
                     <div class="flex gap-2">
                         <input type="text" id="leaderboard-username" placeholder="Your Name"
                         class="bg-slate-800 border border-slate-700 text-[0.65rem] rounded px-2 py-1 flex-grow focus:border-sky-400 outline-none text-white" />
@@ -535,19 +724,27 @@
                 </div>
                 <div id="leaderboard-list">
                     <!-- Simulated global leaders -->
-                    <div class="leaderboard-row"><span class="leader-name">Zephyr_Code</span><span
+                    <div class="leaderboard-row"><span class="leader-name">#1 Zephyr_Code</span><span
                             class="leader-score">15,740</span></div>
-                    <div class="leaderboard-row"><span class="leader-name">Whirl_King</span><span
+                    <div class="leaderboard-row"><span class="leader-name">#2 Whirl_King</span><span
                             class="leader-score">8,292</span></div>
                     <div class="leaderboard-row user-leader-row"><span id="display-username"
-                            class="leader-name">You</span><span id="user-total-score" class="leader-score">0</span>
+                            class="leader-name">Your Rank: #0</span><span id="user-total-score" class="leader-score">0</span>
                     </div>
+                </div>
+                <div class="hud-actions">
+                    <button id="hud-reset" type="button" class="hud-action-btn" title="Reset local collector data">Reset</button>
+                    <button id="hud-export" type="button" class="hud-action-btn" title="Copy score summary">Copy</button>
+                    <button id="hud-sfx" type="button" class="hud-action-btn" title="Toggle sound effects">SFX On</button>
                 </div>
             </div>
         </div>
-        <button id="inventory-toggle" title="Toggle Inventory" aria-label="Toggle inventory panel" type="button">
-            <i class="fas fa-box-open"></i>
-        </button>
+        <div class="hud-toggle-wrap">
+            <button id="inventory-toggle" title="Toggle Inventory" aria-label="Toggle inventory panel" type="button">
+                <i class="fas fa-box"></i>
+            </button>
+            <span id="inventory-toggle-label">Collector HUD</span>
+        </div>
     </div>
 
     <main>
@@ -862,14 +1059,14 @@
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
             const rarities = [
-                { name: 'Common', color: '#38bdf8', count: 1800, size: 1.0, prob: 0.9 },
-                { name: 'Uncommon', color: '#22d3ee', count: 400, size: 1.2, prob: 0.05 },
-                { name: 'Rare', color: '#a855f7', count: 80, size: 1.5, prob: 0.01 },
-                { name: 'Epic', color: '#10b981', count: 18, size: 1.8, prob: 0.002 },
-                { name: 'Legendary', color: '#fbbf24', count: 2, size: 2.2, prob: 0.0005 }
+                { name: 'Common', color: '#38bdf8', count: 1200, size: 0.95, prob: 0.9 },
+                { name: 'Uncommon', color: '#22d3ee', count: 260, size: 1.15, prob: 0.05 },
+                { name: 'Rare', color: '#a855f7', count: 70, size: 1.35, prob: 0.01 },
+                { name: 'Epic', color: '#10b981', count: 18, size: 1.7, prob: 0.002 },
+                { name: 'Legendary', color: '#fbbf24', count: 2, size: 2.1, prob: 0.0005 }
             ];
 
-            const particleCount = 2300;
+            const particleCount = rarities.reduce((sum, rarity) => sum + rarity.count, 0);
             const positions = new Float32Array(particleCount * 3);
             const colors = new Float32Array(particleCount * 3);
             const originalPositions = new Float32Array(particleCount * 3);
@@ -899,19 +1096,16 @@
             particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
             particleGeometry.setAttribute('aSize', new THREE.BufferAttribute(particleSizes, 1));
-            const softCircleSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="softGradient" cx="50%" cy="50%" r="50%"><stop offset="90%" stop-color="white" stop-opacity="1"/><stop offset="100%" stop-color="white" stop-opacity="0"/></radialGradient></defs><circle cx="50" cy="50" r="50" fill="url(#softGradient)"/></svg>`;
-            const softCircleDataUrl = 'data:image/svg+xml;base64,' + btoa(softCircleSvg);
-            const particleTexture = new THREE.TextureLoader().load(softCircleDataUrl);
-            const vertexShader = `attribute float aSize; varying vec3 vColor; void main() { vColor = color; vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewPosition; gl_PointSize = aSize * 24.0; }`;
-            const fragmentShader = `uniform sampler2D uTexture; varying vec3 vColor; void main() { vec4 texColor = texture2D(uTexture, gl_PointCoord); gl_FragColor = vec4(vColor, 0.75) * texColor; }`;
-            const particleMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: { uTexture: { value: particleTexture } }, transparent: true, depthWrite: false, vertexColors: true, blending: THREE.AdditiveBlending });
+            const vertexShader = `attribute float aSize; varying vec3 vColor; void main() { vColor = color; vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * modelViewPosition; gl_PointSize = aSize * 17.0; }`;
+            const fragmentShader = `varying vec3 vColor; void main() { float distToCenter = distance(gl_PointCoord, vec2(0.5)); float core = smoothstep(0.22, 0.0, distToCenter); float glow = smoothstep(0.55, 0.16, distToCenter); float alpha = max(core, glow * 0.7); gl_FragColor = vec4(vColor, alpha * 0.92); }`;
+            const particleMaterial = new THREE.ShaderMaterial({ vertexShader, fragmentShader, transparent: true, depthWrite: false, depthTest: false, vertexColors: true, blending: THREE.AdditiveBlending });
             const particles = new THREE.Points(particleGeometry, particleMaterial);
             scene.add(particles);
             const pointer = new THREE.Vector2(-10, -10);
-            const interactionRadius = 0.47;
-            const repulsionStrength = 1.5;
+            const interactionRadius = 0.34;
+            const repulsionStrength = 1.1;
             const raycaster = new THREE.Raycaster();
-            raycaster.params.Points.threshold = 0.5;
+            raycaster.params.Points.threshold = 0.18;
             function updatePointerPosition(event) {
                 const e = (event.touches && event.touches.length > 0) ? event.touches[0] : (event.changedTouches ? event.changedTouches[0] : event);
                 if (e.clientX !== undefined) {
@@ -924,6 +1118,12 @@
             window.addEventListener('touchmove', updatePointerPosition, { passive: false });
             window.addEventListener('mouseout', () => pointer.set(-10, -10));
             window.addEventListener('touchend', () => pointer.set(-10, -10));
+            window.addEventListener('contextmenu', (event) => event.preventDefault());
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
+                    event.preventDefault();
+                }
+            });
             const tempVec = new THREE.Vector3();
             const tempQuat = new THREE.Quaternion();
             const tempWorldPos = new THREE.Vector3();
@@ -934,7 +1134,16 @@
             const tempTargetColor = new THREE.Color();
             const repulsionDirection2D = new THREE.Vector2();
             const originalSizes = new Float32Array(particleSizes);
+            const particleShock = new Float32Array(particleCount);
             const clock = new THREE.Clock();
+            let holdingParticleIndex = -1;
+            let holdingRarityIndex = -1;
+            let holdStartAt = 0;
+            let holdRequiredMs = 2000;
+            let holdPointerX = 0;
+            let holdPointerY = 0;
+            let holdCompleted = false;
+            let instabilityLevel = 0;
 
             gsap.timeline({ scrollTrigger: { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3 } }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut' });
 
@@ -960,11 +1169,16 @@
 
                     // Add subtle pulsing based on rarity
                     const pulseSpeed = 1 + rIdx * 0.5;
-                    const pulseAmount = 0.1 + rIdx * 0.05;
+                    const pulseAmount = 0.045 + rIdx * 0.02;
                     const pulse = 1 + Math.sin(elapsedTime * pulseSpeed + i) * pulseAmount;
-                    let targetSize = originalSizes[i] * pulse;
+                    particleShock[i] *= 0.91;
+                    let targetSize = originalSizes[i] * pulse + particleShock[i] * (0.65 + rIdx * 0.12);
 
-                    if (mouseDistance < interactionRadius) {
+                    if (holdingParticleIndex === i) {
+                        const holdProgress = Math.min(1, Math.max(0, (performance.now() - holdStartAt) / holdRequiredMs));
+                        tempTargetPos.copy(tempVec);
+                        targetSize *= 1.65 + holdProgress * 0.35;
+                    } else if (mouseDistance < interactionRadius) {
                         const forceMagnitude = 1 - mouseDistance / interactionRadius;
                         const dx = tempScreenPos.x - pointer.x;
                         const dy = tempScreenPos.y - pointer.y;
@@ -976,8 +1190,7 @@
                                 .applyQuaternion(camera.quaternion)
                                 .applyQuaternion(inverseParticleQuaternion);
 
-                            // TWEAK: Rare particles move away SLOWER to make them catchable
-                            const rarityRepulsionFactor = rIdx === 0 ? 1 : 0.3;
+                            const rarityRepulsionFactor = [0.7, 0.85, 1.0, 1.25, 1.55][rIdx] ?? 1;
                             tempTargetPos.add(tempForceCam.multiplyScalar(forceMagnitude * (repulsionStrength * rarityRepulsionFactor)));
                         }
 
@@ -1000,6 +1213,30 @@
                     const currentSize = currentParticleSizes.getX(i);
                     currentParticleSizes.setX(i, THREE.MathUtils.lerp(currentSize, targetSize, 0.05));
                 }
+                if (holdingParticleIndex >= 0) {
+                    const holdElapsed = performance.now() - holdStartAt;
+                    const holdProgress = Math.min(1, Math.max(0, holdElapsed / holdRequiredMs));
+                    const holdFillEl = document.getElementById('hold-progress-fill');
+                    const holdStatusEl = document.getElementById('hold-status');
+                    if (holdFillEl) holdFillEl.style.width = `${Math.round(holdProgress * 100)}%`;
+                    if (holdStatusEl) holdStatusEl.textContent = `Capturing ${rarities[holdingRarityIndex]?.name || 'fragment'}... ${Math.round(holdProgress * 100)}%`;
+
+                    if (holdProgress >= 1 && !holdCompleted) {
+                        holdCompleted = true;
+                        const completedRarity = holdingRarityIndex;
+                        const completedIndex = holdingParticleIndex;
+                        const completeEvent = { clientX: holdPointerX, clientY: holdPointerY };
+                        holdPointerX = 0;
+                        holdPointerY = 0;
+                        holdingParticleIndex = -1;
+                        holdingRarityIndex = -1;
+                        holdStartAt = 0;
+                        collectParticle(completedRarity, completedIndex, completeEvent);
+                        instabilityLevel = Math.max(0, instabilityLevel - (12 + completedRarity * 4));
+                        updateInventoryUI();
+                    }
+                }
+
                 particlePositions.needsUpdate = true;
                 particleColors.needsUpdate = true;
                 currentParticleSizes.needsUpdate = true;
@@ -1018,6 +1255,14 @@
 
             // --- WEBSITE INTERACTIVITY CODE ---
             const rewardModal = document.getElementById('reward-modal');
+            const clickFeedbackLayer = document.getElementById('click-feedback-layer');
+            let pointFeedbackAudioCtx = null;
+            try {
+                pointFeedbackAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (error) {
+                console.warn('Audio context unavailable:', error);
+            }
+            let sfxEnabled = true;
             const closeRewardButton = document.getElementById('close-reward-button');
             const modalTitle = document.getElementById('modal-title');
             const modalRarity = document.getElementById('modal-rarity');
@@ -1103,18 +1348,185 @@
             closeRewardButton.addEventListener('click', hideRewardModal);
             rewardModal.addEventListener('click', (e) => { if (e.target === rewardModal) hideRewardModal(); });
 
-            const storedState = localStorage.getItem('collectedParticlesCount');
-            const collectedState = storedState ? JSON.parse(storedState) : [0, 0, 0, 0, 0];
+            const defaultCollectedState = [0, 0, 0, 0, 0];
+            let collectedState = [...defaultCollectedState];
+            try {
+                const storedState = localStorage.getItem('collectedParticlesCount');
+                if (storedState) {
+                    const parsedState = JSON.parse(storedState);
+                    if (Array.isArray(parsedState) && parsedState.length === 5) {
+                        collectedState = parsedState.map(v => {
+                            const n = Number(v);
+                            return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('Invalid collector state in localStorage, resetting:', error);
+                localStorage.removeItem('collectedParticlesCount');
+            }
 
-            function collectParticle(rIdx, pIdx) {
+            const storedScoreState = Number(localStorage.getItem('collectorTotalScore'));
+            let totalScoreState = Number.isFinite(storedScoreState) && storedScoreState >= 0 ? storedScoreState : 0;
+
+            const progressGoal = 10;
+            const rarityBasePoints = [1, 5, 25, 100, 500];
+            const rarityDifficultyMultiplier = [1, 1.2, 1.55, 2.25, 3.4];
+            const rarityComboGrowth = [0.08, 0.12, 0.2, 0.34, 0.55];
+            const rarityComboCap = [1.55, 2.05, 2.9, 4.1, 5.4];
+
+            let lastComboAt = 0;
+            let lastRarityHit = -1;
+            let sameRarityCombo = 0;
+            let rapidMissCount = 0;
+            let lastMissAt = 0;
+            let lastAttemptAt = 0;
+            let penaltyCooldownUntil = 0;
+
+            function playCollectSound(rIdx) {
+                if (!sfxEnabled || !pointFeedbackAudioCtx) return;
+                if (pointFeedbackAudioCtx.state === 'suspended') pointFeedbackAudioCtx.resume();
+
+                const osc = pointFeedbackAudioCtx.createOscillator();
+                const gain = pointFeedbackAudioCtx.createGain();
+                const baseFreq = [420, 520, 620, 760, 920][rIdx] || 420;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(baseFreq, pointFeedbackAudioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.2, pointFeedbackAudioCtx.currentTime + 0.09);
+                gain.gain.setValueAtTime(0.0001, pointFeedbackAudioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.08, pointFeedbackAudioCtx.currentTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, pointFeedbackAudioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(pointFeedbackAudioCtx.destination);
+                osc.start();
+                osc.stop(pointFeedbackAudioCtx.currentTime + 0.16);
+            }
+
+            function spawnFloatingText(x, y, text, color = '#7dd3fc') {
+                if (!clickFeedbackLayer) return;
+                const pop = document.createElement('div');
+                pop.className = 'click-feedback-ring';
+                pop.style.border = 'none';
+                pop.style.boxShadow = 'none';
+                pop.style.width = 'auto';
+                pop.style.height = 'auto';
+                pop.style.maxWidth = '60vw';
+                pop.style.whiteSpace = 'nowrap';
+                pop.style.padding = '0.3rem 0.55rem';
+                pop.style.borderRadius = '0.5rem';
+                pop.style.background = 'rgba(2, 6, 23, 0.76)';
+                pop.style.backdropFilter = 'blur(2px)';
+                pop.style.fontSize = '1.28rem';
+                pop.style.lineHeight = '1.2';
+                pop.style.fontWeight = '900';
+                pop.style.letterSpacing = '0.03em';
+                pop.style.textShadow = '0 0 12px rgba(2, 6, 23, 1), 0 0 26px rgba(2, 6, 23, 0.95)';
+                pop.style.color = color;
+                pop.textContent = text;
+                pop.style.left = `${x + 12}px`;
+                pop.style.top = `${y - 12}px`;
+                clickFeedbackLayer.appendChild(pop);
+                gsap.to(pop, {
+                    y: -30,
+                    opacity: 0,
+                    duration: 0.82,
+                    ease: 'power2.out',
+                    onComplete: () => pop.remove()
+                });
+            }
+
+            function showClickFeedback(pointerEvent, rIdx, pIdx, pointsEarned, comboMultiplier) {
+                if (!clickFeedbackLayer) return;
+
+                const e = (pointerEvent.touches && pointerEvent.touches.length > 0)
+                    ? pointerEvent.touches[0]
+                    : (pointerEvent.changedTouches ? pointerEvent.changedTouches[0] : pointerEvent);
+
+                if (e.clientX === undefined || e.clientY === undefined) return;
+
+                const ring = document.createElement('div');
+                ring.className = 'click-feedback-ring';
+                if (rIdx >= 2 && rIdx < 3) ring.classList.add('rare');
+                else if (rIdx >= 3 && rIdx < 4) ring.classList.add('epic');
+                else if (rIdx >= 4) ring.classList.add('legendary');
+
+                ring.style.left = `${e.clientX}px`;
+                ring.style.top = `${e.clientY}px`;
+                clickFeedbackLayer.appendChild(ring);
+
+                gsap.to(ring, {
+                    scale: 6,
+                    opacity: 0,
+                    duration: 0.55,
+                    ease: 'power3.out',
+                    onComplete: () => ring.remove()
+                });
+
+                const comboSuffix = comboMultiplier > 1.01 ? ` · x${comboMultiplier.toFixed(2)}` : '';
+                spawnFloatingText(
+                    e.clientX,
+                    e.clientY,
+                    `+${pointsEarned} ${['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'][rIdx]}${comboSuffix}`,
+                    ['#38bdf8', '#22d3ee', '#a855f7', '#10b981', '#fbbf24'][rIdx] || '#38bdf8'
+                );
+
+                const shockStrength = 2.2 + rIdx * 0.65;
+                for (let i = 0; i < particleCount; i++) {
+                    const distanceToHit = Math.abs(i - pIdx);
+                    if (distanceToHit < 26) {
+                        const influence = 1 - distanceToHit / 26;
+                        particleShock[i] = Math.max(particleShock[i], shockStrength * influence);
+                    }
+                }
+
+                gsap.to(particles.rotation, {
+                    y: particles.rotation.y + 0.22,
+                    x: particles.rotation.x + 0.08,
+                    duration: 0.35,
+                    ease: 'power2.out'
+                });
+
+                playCollectSound(rIdx);
+            }
+
+            function collectParticle(rIdx, pIdx, sourceEvent) {
+                const comboIndicator = document.getElementById('combo-indicator');
+                const now = performance.now();
+
+                if (lastRarityHit === rIdx && now - lastComboAt < 1500) {
+                    sameRarityCombo += 1;
+                } else {
+                    sameRarityCombo = 1;
+                }
+                lastRarityHit = rIdx;
+                lastComboAt = now;
+                rapidMissCount = 0;
+
+                const comboMultiplier = Math.min(
+                    1 + (sameRarityCombo - 1) * rarityComboGrowth[rIdx],
+                    rarityComboCap[rIdx]
+                );
+                const pointsEarned = Math.max(
+                    1,
+                    Math.round(rarityBasePoints[rIdx] * rarityDifficultyMultiplier[rIdx] * comboMultiplier)
+                );
+
+                if (comboIndicator && sameRarityCombo > 1) {
+                    comboIndicator.textContent = `${rarities[rIdx].name} chain x${sameRarityCombo} · x${comboMultiplier.toFixed(2)}`;
+                    gsap.fromTo(comboIndicator, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out' });
+                    gsap.to(comboIndicator, { opacity: 0, y: -10, duration: 0.45, delay: 0.7 });
+                }
+
                 // Hide particle immediately
                 originalSizes[pIdx] = 0;
                 particles.geometry.attributes.aSize.setX(pIdx, 0);
                 particles.geometry.attributes.aSize.needsUpdate = true;
 
-                // Increment count
+                // Increment count + score
                 collectedState[rIdx]++;
+                totalScoreState += pointsEarned;
                 localStorage.setItem('collectedParticlesCount', JSON.stringify(collectedState));
+                localStorage.setItem('collectorTotalScore', String(totalScoreState));
 
                 updateInventoryUI();
 
@@ -1127,9 +1539,16 @@
                 const isFirstOfAll = collectedState.every(count => count >= 10) && collectedState[rIdx] === 10 && collectedState.filter(c => c === 10).length === 5;
 
                 // Visual feedback
+                showClickFeedback(sourceEvent, rIdx, pIdx, pointsEarned, comboMultiplier);
+                const hitItem = document.getElementById(`item-${['common', 'uncommon', 'rare', 'epic', 'legendary'][rIdx]}`);
+                if (hitItem) {
+                    hitItem.classList.add('hit');
+                    setTimeout(() => hitItem.classList.remove('hit'), 240);
+                }
+
                 gsap.to(particles.rotation, {
-                    y: particles.rotation.y + Math.PI * 0.5,
-                    duration: 1,
+                    y: particles.rotation.y + Math.PI * 0.18,
+                    duration: 0.55,
                     ease: "power2.out"
                 });
 
@@ -1140,7 +1559,16 @@
 
             function updateInventoryUI() {
                 const items = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
-                let totalScore = 0;
+                const labels = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
+                const holdFillEl = document.getElementById('hold-progress-fill');
+                const holdStatusEl = document.getElementById('hold-status');
+                const instabilityFill = document.getElementById('instability-fill');
+                const instabilityText = document.getElementById('instability-text');
+
+                if (holdFillEl && holdingParticleIndex < 0) holdFillEl.style.width = '0%';
+                if (holdStatusEl && holdingParticleIndex < 0) holdStatusEl.textContent = 'Hold a fragment for 2.0s to capture.';
+                if (instabilityFill) instabilityFill.style.width = `${Math.round(Math.min(100, instabilityLevel))}%`;
+                if (instabilityText) instabilityText.textContent = `${Math.round(Math.min(100, instabilityLevel))}%`;
 
                 collectedState.forEach((count, i) => {
                     const el = document.getElementById(`item-${items[i]}`);
@@ -1149,20 +1577,40 @@
                     countEl.textContent = count;
                     if (count > 0) el.classList.add('collected');
 
-                    // Score weight: Common=1, Uncommon=5, Rare=25, Epic=100, Legendary=500
-                    const weights = [1, 5, 25, 100, 500];
-                    totalScore += count * weights[i];
+                    const progressFill = document.getElementById(`progress-${items[i]}`);
+                    const progressText = document.getElementById(`progress-text-${items[i]}`);
+                    if (progressFill) progressFill.style.width = `${Math.min(100, (count / progressGoal) * 100)}%`;
+                    if (progressText) progressText.textContent = `${Math.min(count, progressGoal)}/${progressGoal}`;
                 });
 
                 // Update Rank & Hall of Fame
                 const rankEl = document.getElementById('user-rank');
                 const totalScoreEl = document.getElementById('user-total-score');
-                totalScoreEl.textContent = totalScore.toLocaleString();
+                const miniScoreEl = document.getElementById('hud-mini-score');
+                const displayNameEl = document.getElementById('display-username');
+                const nextMilestoneEl = document.getElementById('next-milestone');
 
-                if (totalScore >= 2500) rankEl.textContent = "Grand Architect";
-                else if (totalScore >= 500) rankEl.textContent = "Fragment Master";
-                else if (totalScore >= 100) rankEl.textContent = "Resonance Seeker";
-                else rankEl.textContent = "Whirl Novice";
+                totalScoreEl.textContent = totalScoreState.toLocaleString();
+                if (miniScoreEl) miniScoreEl.textContent = `Collector HUD · Score ${totalScoreState.toLocaleString()}`;
+
+                let currentRank = "Whirl Novice";
+                if (totalScoreState >= 2500) currentRank = "Grand Architect";
+                else if (totalScoreState >= 500) currentRank = "Fragment Master";
+                else if (totalScoreState >= 100) currentRank = "Resonance Seeker";
+                rankEl.textContent = currentRank;
+
+                const scoreForRank = [15740, 8292, totalScoreState].sort((a, b) => b - a);
+                const userRank = scoreForRank.indexOf(totalScoreState) + 1;
+                const playerName = (document.getElementById('leaderboard-username')?.value || localStorage.getItem('whirlCollectorUsername') || 'You').trim();
+                if (displayNameEl) displayNameEl.textContent = `${playerName} · Rank #${userRank}`;
+
+                let nextIndex = collectedState.findIndex(c => c < progressGoal);
+                if (nextIndex === -1) {
+                    if (nextMilestoneEl) nextMilestoneEl.textContent = 'All rewards unlocked. Keep collecting for leaderboard score.';
+                } else {
+                    const remaining = progressGoal - collectedState[nextIndex];
+                    if (nextMilestoneEl) nextMilestoneEl.textContent = `Next reward: ${remaining} more ${labels[nextIndex]} fragment${remaining > 1 ? 's' : ''}.`;
+                }
             }
 
             function triggerVictory() {
@@ -1171,11 +1619,16 @@
 
             updateInventoryUI();
 
+            const inventoryHud = document.getElementById('inventory-hud');
             const inventoryToggle = document.getElementById('inventory-toggle');
+            const inventoryToggleLabel = document.getElementById('inventory-toggle-label');
             const inventoryContent = document.getElementById('inventory-content');
             const submitScoreButton = document.getElementById('submit-score');
             const usernameInput = document.getElementById('leaderboard-username');
             const displayUsername = document.getElementById('display-username');
+            const resetHudButton = document.getElementById('hud-reset');
+            const exportHudButton = document.getElementById('hud-export');
+            const sfxHudButton = document.getElementById('hud-sfx');
 
             // --- Profanity Filter ---
             const blacklist = ['fuck', 'shit', 'ass', 'bitch', 'crap', 'damn', 'piss', 'dick', 'cock', 'pussy', 'nazi', 'hitler', 'rape']; // Basic list, can be expanded
@@ -1188,13 +1641,21 @@
             const storedName = localStorage.getItem('whirlCollectorUsername');
             if (storedName) {
                 usernameInput.value = storedName;
-                displayUsername.textContent = storedName;
             }
+
+            function setHudExpanded(expanded) {
+                inventoryToggle.classList.toggle('active', expanded);
+                inventoryContent.classList.toggle('visible', expanded);
+                inventoryHud.classList.toggle('compact', !expanded);
+                inventoryToggle.querySelector('i').className = expanded ? 'fas fa-box-open' : 'fas fa-box';
+                if (inventoryToggleLabel) inventoryToggleLabel.textContent = expanded ? 'Hide HUD' : 'Collector HUD';
+            }
+
+            setHudExpanded(false);
 
             inventoryToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
-                inventoryToggle.classList.toggle('active');
-                inventoryContent.classList.toggle('visible');
+                setHudExpanded(!inventoryContent.classList.contains('visible'));
             });
 
             submitScoreButton.addEventListener('click', (e) => {
@@ -1213,7 +1674,7 @@
 
                 // Persistence
                 localStorage.setItem('whirlCollectorUsername', name);
-                displayUsername.textContent = name;
+                updateInventoryUI();
 
                 console.log(`Score submitted to Discord: ${name} - ${total}`);
                 submitScoreButton.textContent = "Synced!";
@@ -1223,24 +1684,212 @@
                 gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
             });
 
+            usernameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitScoreButton.click();
+                }
+            });
+
+            resetHudButton?.addEventListener('click', () => {
+                localStorage.removeItem('collectedParticlesCount');
+                localStorage.removeItem('whirlCollectorUsername');
+                localStorage.removeItem('collectorTotalScore');
+                collectedState = [0, 0, 0, 0, 0];
+                totalScoreState = 0;
+                sameRarityCombo = 0;
+                rapidMissCount = 0;
+                lastAttemptAt = 0;
+                instabilityLevel = 0;
+                holdingParticleIndex = -1;
+                holdingRarityIndex = -1;
+                holdStartAt = 0;
+                holdCompleted = false;
+                holdPointerX = 0;
+                holdPointerY = 0;
+                penaltyCooldownUntil = 0;
+                usernameInput.value = '';
+                originalSizes.set(particleSizes);
+                for (let i = 0; i < particleCount; i++) {
+                    particles.geometry.attributes.aSize.setX(i, originalSizes[i]);
+                }
+                particles.geometry.attributes.aSize.needsUpdate = true;
+                document.querySelectorAll('.inventory-item').forEach(item => item.classList.remove('collected'));
+                updateInventoryUI();
+            });
+
+            exportHudButton?.addEventListener('click', async () => {
+                const text = `Blue Whirl Collector\n${displayUsername.textContent}\nScore: ${document.getElementById('user-total-score').textContent}\nRank: ${document.getElementById('user-rank').textContent}`;
+                try {
+                    await navigator.clipboard.writeText(text);
+                    exportHudButton.textContent = 'Copied';
+                    setTimeout(() => exportHudButton.textContent = 'Copy', 1200);
+                } catch {
+                    exportHudButton.textContent = 'No Clip';
+                    setTimeout(() => exportHudButton.textContent = 'Copy', 1200);
+                }
+            });
+
+            sfxHudButton?.addEventListener('click', () => {
+                sfxEnabled = !sfxEnabled;
+                sfxHudButton.textContent = sfxEnabled ? 'SFX On' : 'SFX Off';
+            });
+
+            let lastScrollY = window.scrollY;
+            window.addEventListener('scroll', () => {
+                if (window.innerWidth > 768) return;
+                const currentY = window.scrollY;
+                if (currentY > lastScrollY + 25 && currentY > 120 && inventoryContent.classList.contains('visible')) {
+                    setHudExpanded(false);
+                }
+                if (currentY < lastScrollY - 25 && currentY < 120) {
+                    setHudExpanded(true);
+                }
+                lastScrollY = currentY;
+            }, { passive: true });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') setHudExpanded(false);
+            });
+
             document.getElementById('inventory-hud').addEventListener('click', e => e.stopPropagation());
 
-            function onParticleClick(event) {
-                updatePointerPosition(event);
-                raycaster.setFromCamera(pointer, camera);
-                const intersects = raycaster.intersectObject(particles, true);
-                if (intersects.length > 0) {
-                    const idx = intersects[0].index;
-                    const rIdx = particleRarityIndices[idx];
-                    collectParticle(rIdx, idx);
+            function applySpamPenalty(source, now, reasonText = 'Spam penalty applied') {
+                const penalty = Math.min(300, Math.max(35, Math.round(totalScoreState * 0.08)));
+                totalScoreState = Math.max(0, totalScoreState - penalty);
+                localStorage.setItem('collectorTotalScore', String(totalScoreState));
+                rapidMissCount = 0;
+                sameRarityCombo = 0;
+                lastRarityHit = -1;
+                holdingParticleIndex = -1;
+                holdingRarityIndex = -1;
+                holdStartAt = 0;
+                holdCompleted = false;
+                holdPointerX = 0;
+                holdPointerY = 0;
+                penaltyCooldownUntil = now + 1400;
+                updateInventoryUI();
+
+                if (source?.clientX !== undefined && source?.clientY !== undefined) {
+                    spawnFloatingText(source.clientX, source.clientY, `-${penalty} spam penalty`, '#f87171');
+                }
+
+                const comboIndicator = document.getElementById('combo-indicator');
+                if (comboIndicator) {
+                    comboIndicator.textContent = reasonText;
+                    gsap.fromTo(comboIndicator, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.16 });
+                    gsap.to(comboIndicator, { opacity: 0, y: -8, delay: 0.65, duration: 0.35 });
                 }
             }
 
-            window.addEventListener('click', onParticleClick);
-            window.addEventListener('touchend', (e) => {
-                // Check if target is UI
+            function onParticlePress(event) {
+                if (event.target?.closest('#inventory-hud, nav, #reward-modal, #mobile-menu, #contact-form, button, a, input, textarea, label')) {
+                    return;
+                }
+                if (event instanceof MouseEvent && event.button !== 0) return;
+                if (holdingParticleIndex >= 0) return;
+
+                const now = performance.now();
+                updatePointerPosition(event);
+
+                const source = (event.touches && event.touches.length > 0)
+                    ? event.touches[0]
+                    : (event.changedTouches ? event.changedTouches[0] : event);
+
+                if (now < penaltyCooldownUntil) {
+                    if (source?.clientX !== undefined && source?.clientY !== undefined) {
+                        spawnFloatingText(source.clientX, source.clientY, 'Cooldown...', '#fca5a5');
+                    }
+                    return;
+                }
+
+                if (now - lastAttemptAt < 380) instabilityLevel = Math.min(100, instabilityLevel + 7.5);
+                else instabilityLevel = Math.max(0, instabilityLevel - 2.5);
+                lastAttemptAt = now;
+
+                raycaster.setFromCamera(pointer, camera);
+                const intersects = raycaster.intersectObject(particles, true);
+                if (intersects.length > 0) {
+                    const bestHit = intersects
+                        .filter(hit => hit.index !== undefined && originalSizes[hit.index] > 0)
+                        .sort((a, b) => (a.distanceToRay ?? Number.MAX_VALUE) - (b.distanceToRay ?? Number.MAX_VALUE))[0];
+
+                    if (!bestHit) return;
+
+                    const idx = bestHit.index;
+                    const rIdx = particleRarityIndices[idx];
+
+                    holdingParticleIndex = idx;
+                    holdingRarityIndex = rIdx;
+                    holdStartAt = now;
+                    holdPointerX = source?.clientX ?? 0;
+                    holdPointerY = source?.clientY ?? 0;
+                    holdCompleted = false;
+                    rapidMissCount = 0;
+                    updateInventoryUI();
+                    return;
+                }
+
+                if (now - lastMissAt < 520) rapidMissCount += 1;
+                else rapidMissCount = 1;
+                lastMissAt = now;
+                instabilityLevel = Math.min(100, instabilityLevel + 10);
+                updateInventoryUI();
+
+                if (rapidMissCount >= 5 && Math.random() < (0.25 + instabilityLevel / 180)) {
+                    applySpamPenalty(source, now, 'Accuracy penalty applied');
+                }
+            }
+
+            function onParticleRelease(event) {
+                const now = performance.now();
+                const source = (event.touches && event.touches.length > 0)
+                    ? event.touches[0]
+                    : (event.changedTouches ? event.changedTouches[0] : event);
+
+                if (holdingParticleIndex < 0) return;
+
+                if (holdCompleted) {
+                    holdCompleted = false;
+                    updateInventoryUI();
+                    return;
+                }
+
+                const heldMs = now - holdStartAt;
+                const holdRatio = Math.min(1, heldMs / holdRequiredMs);
+                const failChance = Math.min(0.92, 0.08 + (1 - holdRatio) * 0.62 + instabilityLevel / 120);
+                const shouldPenalty = Math.random() < failChance;
+
+                instabilityLevel = Math.min(100, instabilityLevel + (1 - holdRatio) * 16 + 4);
+
+                holdingParticleIndex = -1;
+                holdingRarityIndex = -1;
+                holdStartAt = 0;
+                holdPointerX = 0;
+                holdPointerY = 0;
+                holdCompleted = false;
+
+                if (source?.clientX !== undefined && source?.clientY !== undefined) {
+                    spawnFloatingText(source.clientX, source.clientY, `Hold ${(holdRatio * 100).toFixed(0)}%`, '#fbbf24');
+                }
+
+                if (shouldPenalty) {
+                    applySpamPenalty(source, now, 'Capture destabilized');
+                    return;
+                }
+
+                updateInventoryUI();
+            }
+
+            window.addEventListener('mousedown', onParticlePress);
+            window.addEventListener('mouseup', onParticleRelease);
+            window.addEventListener('touchstart', (e) => {
                 if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal')) return;
-                onParticleClick(e);
+                onParticlePress(e);
+            }, { passive: false });
+            window.addEventListener('touchend', (e) => {
+                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal')) return;
+                onParticleRelease(e);
             }, { passive: false });
 
             const themeToggle = document.getElementById('theme-toggle');
