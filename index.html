@@ -453,6 +453,47 @@
             gap: 0.55rem;
         }
 
+        .hud-help-btn {
+            background: rgba(56, 189, 248, 0.16);
+            border: 1px solid rgba(56, 189, 248, 0.7);
+            color: #7dd3fc;
+            width: 30px;
+            height: 30px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.74rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .hud-help-panel {
+            display: none;
+            margin-top: 0.45rem;
+            max-width: 250px;
+            background: rgba(2, 6, 23, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 0.65rem;
+            padding: 0.6rem 0.7rem;
+            color: #cbd5e1;
+            font-size: 0.64rem;
+            line-height: 1.45;
+        }
+
+        .hud-help-panel.visible {
+            display: block;
+        }
+
+        .hud-help-panel ol {
+            margin: 0;
+            padding-left: 1rem;
+        }
+
+        .hud-help-panel li+li {
+            margin-top: 0.22rem;
+        }
+
         #inventory-toggle-label {
             font-size: 0.62rem;
             color: #7dd3fc;
@@ -527,9 +568,17 @@
 
         .hud-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 0.35rem;
             margin-top: 0.45rem;
+        }
+
+        body.game-only {
+            overflow: hidden;
+        }
+
+        body.game-only main {
+            display: none;
         }
 
         .hud-action-btn {
@@ -667,6 +716,19 @@
         </div>
     </div>
 
+    <div id="clear-scores-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-[101] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="clear-scores-content"
+            class="bg-slate-800 border border-red-500/40 rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center transform scale-95 transition-transform duration-300">
+            <h3 class="text-xl font-bold text-red-400 mb-3">Clear Submitted Scores?</h3>
+            <p class="text-slate-300 text-sm mb-5">This will permanently remove all submitted leaderboard scores.</p>
+            <div class="flex gap-2 justify-center">
+                <button id="cancel-clear-scores" type="button" class="hud-action-btn px-4">Cancel</button>
+                <button id="confirm-clear-scores" type="button" class="hud-action-btn px-4 border-red-400/60 text-red-300 bg-red-500/10 hover:bg-red-500/25">Clear All</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Inventory HUD -->
     <div id="inventory-hud" class="compact" aria-label="Collector HUD">
         <div id="hud-mini-score">Collector HUD · Score 0</div>
@@ -723,19 +785,14 @@
                     </div>
                 </div>
                 <div id="leaderboard-list">
-                    <!-- Simulated global leaders -->
-                    <div class="leaderboard-row"><span class="leader-name">#1 Zephyr_Code</span><span
-                            class="leader-score">15,740</span></div>
-                    <div class="leaderboard-row"><span class="leader-name">#2 Whirl_King</span><span
-                            class="leader-score">8,292</span></div>
-                    <div class="leaderboard-row user-leader-row"><span id="display-username"
-                            class="leader-name">Your Rank: #0</span><span id="user-total-score" class="leader-score">0</span>
-                    </div>
+                    <div class="leaderboard-row"><span class="leader-name">No submitted scores yet</span><span class="leader-score">--</span></div>
                 </div>
                 <div class="hud-actions">
                     <button id="hud-reset" type="button" class="hud-action-btn" title="Reset local collector data">Reset</button>
                     <button id="hud-export" type="button" class="hud-action-btn" title="Copy score summary">Copy</button>
                     <button id="hud-sfx" type="button" class="hud-action-btn" title="Toggle sound effects">SFX On</button>
+                    <button id="hud-focus" type="button" class="hud-action-btn" title="Toggle game-only focus mode">Focus</button>
+                    <button id="hud-clear-scores" type="button" class="hud-action-btn" title="Clear submitted leaderboard scores">Clear</button>
                 </div>
             </div>
         </div>
@@ -744,6 +801,15 @@
                 <i class="fas fa-box"></i>
             </button>
             <span id="inventory-toggle-label">Collector HUD</span>
+            <button id="hud-help-toggle" class="hud-help-btn" type="button" title="How to play" aria-label="Show game instructions">?</button>
+        </div>
+        <div id="hud-help-panel" class="hud-help-panel" aria-live="polite">
+            <ol>
+                <li>Press and hold a fragment for 2 seconds to capture it.</li>
+                <li>Higher tiers move faster and award bigger points.</li>
+                <li>Releasing too early can raise instability and trigger penalties.</li>
+                <li>Keep instability low for safer captures and better combo chains.</li>
+            </ol>
         </div>
     </div>
 
@@ -1255,6 +1321,8 @@
 
             // --- WEBSITE INTERACTIVITY CODE ---
             const rewardModal = document.getElementById('reward-modal');
+            const clearScoresModal = document.getElementById('clear-scores-modal');
+            const clearScoresContent = document.getElementById('clear-scores-content');
             const clickFeedbackLayer = document.getElementById('click-feedback-layer');
             let pointFeedbackAudioCtx = null;
             try {
@@ -1369,6 +1437,48 @@
             const storedScoreState = Number(localStorage.getItem('collectorTotalScore'));
             let totalScoreState = Number.isFinite(storedScoreState) && storedScoreState >= 0 ? storedScoreState : 0;
 
+            function loadLeaderboardEntries() {
+                try {
+                    const raw = localStorage.getItem('collectorLeaderboardEntries');
+                    if (!raw) return [];
+                    const parsed = JSON.parse(raw);
+                    if (!Array.isArray(parsed)) return [];
+                    return parsed
+                        .map(entry => ({
+                            name: String(entry?.name || '').trim(),
+                            score: Number(entry?.score || 0),
+                            ts: Number(entry?.ts || Date.now())
+                        }))
+                        .filter(entry => entry.name && Number.isFinite(entry.score) && entry.score >= 0);
+                } catch {
+                    return [];
+                }
+            }
+
+            let leaderboardEntries = loadLeaderboardEntries();
+
+            function saveLeaderboardEntries() {
+                localStorage.setItem('collectorLeaderboardEntries', JSON.stringify(leaderboardEntries));
+            }
+
+            function renderLeaderboard() {
+                const leaderboardList = document.getElementById('leaderboard-list');
+                if (!leaderboardList) return;
+
+                const topThree = [...leaderboardEntries]
+                    .sort((a, b) => b.score - a.score || a.ts - b.ts)
+                    .slice(0, 3);
+
+                if (topThree.length === 0) {
+                    leaderboardList.innerHTML = '<div class="leaderboard-row"><span class="leader-name">No submitted scores yet</span><span class="leader-score">--</span></div>';
+                    return;
+                }
+
+                leaderboardList.innerHTML = topThree.map((entry, idx) =>
+                    `<div class="leaderboard-row"><span class="leader-name">#${idx + 1} ${entry.name}</span><span class="leader-score">${entry.score.toLocaleString()}</span></div>`
+                ).join('');
+            }
+
             const progressGoal = 10;
             const rarityBasePoints = [1, 5, 25, 100, 500];
             const rarityDifficultyMultiplier = [1, 1.2, 1.55, 2.25, 3.4];
@@ -1416,7 +1526,7 @@
                 pop.style.borderRadius = '0.5rem';
                 pop.style.background = 'rgba(2, 6, 23, 0.76)';
                 pop.style.backdropFilter = 'blur(2px)';
-                pop.style.fontSize = '1.28rem';
+                pop.style.fontSize = '2.56rem';
                 pop.style.lineHeight = '1.2';
                 pop.style.fontWeight = '900';
                 pop.style.letterSpacing = '0.03em';
@@ -1585,24 +1695,16 @@
 
                 // Update Rank & Hall of Fame
                 const rankEl = document.getElementById('user-rank');
-                const totalScoreEl = document.getElementById('user-total-score');
                 const miniScoreEl = document.getElementById('hud-mini-score');
-                const displayNameEl = document.getElementById('display-username');
                 const nextMilestoneEl = document.getElementById('next-milestone');
 
-                totalScoreEl.textContent = totalScoreState.toLocaleString();
                 if (miniScoreEl) miniScoreEl.textContent = `Collector HUD · Score ${totalScoreState.toLocaleString()}`;
 
                 let currentRank = "Whirl Novice";
                 if (totalScoreState >= 2500) currentRank = "Grand Architect";
                 else if (totalScoreState >= 500) currentRank = "Fragment Master";
                 else if (totalScoreState >= 100) currentRank = "Resonance Seeker";
-                rankEl.textContent = currentRank;
-
-                const scoreForRank = [15740, 8292, totalScoreState].sort((a, b) => b - a);
-                const userRank = scoreForRank.indexOf(totalScoreState) + 1;
-                const playerName = (document.getElementById('leaderboard-username')?.value || localStorage.getItem('whirlCollectorUsername') || 'You').trim();
-                if (displayNameEl) displayNameEl.textContent = `${playerName} · Rank #${userRank}`;
+                if (rankEl) rankEl.textContent = currentRank;
 
                 let nextIndex = collectedState.findIndex(c => c < progressGoal);
                 if (nextIndex === -1) {
@@ -1618,6 +1720,7 @@
             }
 
             updateInventoryUI();
+            renderLeaderboard();
 
             const inventoryHud = document.getElementById('inventory-hud');
             const inventoryToggle = document.getElementById('inventory-toggle');
@@ -1625,10 +1728,15 @@
             const inventoryContent = document.getElementById('inventory-content');
             const submitScoreButton = document.getElementById('submit-score');
             const usernameInput = document.getElementById('leaderboard-username');
-            const displayUsername = document.getElementById('display-username');
             const resetHudButton = document.getElementById('hud-reset');
             const exportHudButton = document.getElementById('hud-export');
             const sfxHudButton = document.getElementById('hud-sfx');
+            const focusHudButton = document.getElementById('hud-focus');
+            const clearScoresButton = document.getElementById('hud-clear-scores');
+            const cancelClearScoresButton = document.getElementById('cancel-clear-scores');
+            const confirmClearScoresButton = document.getElementById('confirm-clear-scores');
+            const hudHelpToggle = document.getElementById('hud-help-toggle');
+            const hudHelpPanel = document.getElementById('hud-help-panel');
 
             // --- Profanity Filter ---
             const blacklist = ['fuck', 'shit', 'ass', 'bitch', 'crap', 'damn', 'piss', 'dick', 'cock', 'pussy', 'nazi', 'hitler', 'rape']; // Basic list, can be expanded
@@ -1651,50 +1759,53 @@
                 if (inventoryToggleLabel) inventoryToggleLabel.textContent = expanded ? 'Hide HUD' : 'Collector HUD';
             }
 
+            function setGameOnlyMode(enabled) {
+                document.body.classList.toggle('game-only', enabled);
+                localStorage.setItem('collectorGameOnlyMode', enabled ? '1' : '0');
+                if (focusHudButton) focusHudButton.textContent = enabled ? 'Site' : 'Focus';
+                if (hudHelpPanel && enabled) hudHelpPanel.classList.remove('visible');
+            }
+
+            function showClearScoresModal() {
+                if (!clearScoresModal || !clearScoresContent) return;
+                clearScoresModal.classList.add('opacity-100', 'pointer-events-auto');
+                clearScoresContent.classList.replace('scale-95', 'scale-100');
+            }
+
+            function hideClearScoresModal() {
+                if (!clearScoresModal || !clearScoresContent) return;
+                clearScoresModal.classList.remove('opacity-100', 'pointer-events-auto');
+                clearScoresContent.classList.replace('scale-100', 'scale-95');
+            }
+
+            function clearSubmittedScores() {
+                leaderboardEntries = [];
+                localStorage.removeItem('collectorLeaderboardEntries');
+                renderLeaderboard();
+            }
+
             setHudExpanded(false);
+            setGameOnlyMode(localStorage.getItem('collectorGameOnlyMode') === '1');
 
             inventoryToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 setHudExpanded(!inventoryContent.classList.contains('visible'));
             });
 
-            submitScoreButton.addEventListener('click', (e) => {
+            hudHelpToggle?.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const total = document.getElementById('user-total-score').textContent;
-                const name = usernameInput.value.trim();
-
-                if (!name) return;
-
-                if (isProfane(name)) {
-                    gsap.to(usernameInput, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
-                    usernameInput.style.borderColor = "#ef4444";
-                    setTimeout(() => usernameInput.style.borderColor = "", 1000);
-                    return;
-                }
-
-                // Persistence
-                localStorage.setItem('whirlCollectorUsername', name);
-                updateInventoryUI();
-
-                console.log(`Score submitted to Discord: ${name} - ${total}`);
-                submitScoreButton.textContent = "Synced!";
-                submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
-
-                // Feedback
-                gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
+                hudHelpPanel?.classList.toggle('visible');
             });
 
-            usernameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    submitScoreButton.click();
-                }
-            });
+            hudHelpPanel?.addEventListener('click', (e) => e.stopPropagation());
 
-            resetHudButton?.addEventListener('click', () => {
+            function resetCollectorProgress(clearPlayerName = true) {
                 localStorage.removeItem('collectedParticlesCount');
-                localStorage.removeItem('whirlCollectorUsername');
                 localStorage.removeItem('collectorTotalScore');
+                if (clearPlayerName) {
+                    localStorage.removeItem('whirlCollectorUsername');
+                }
+
                 collectedState = [0, 0, 0, 0, 0];
                 totalScoreState = 0;
                 sameRarityCombo = 0;
@@ -1708,7 +1819,10 @@
                 holdPointerX = 0;
                 holdPointerY = 0;
                 penaltyCooldownUntil = 0;
-                usernameInput.value = '';
+                if (clearPlayerName) {
+                    usernameInput.value = '';
+                }
+
                 originalSizes.set(particleSizes);
                 for (let i = 0; i < particleCount; i++) {
                     particles.geometry.attributes.aSize.setX(i, originalSizes[i]);
@@ -1716,10 +1830,48 @@
                 particles.geometry.attributes.aSize.needsUpdate = true;
                 document.querySelectorAll('.inventory-item').forEach(item => item.classList.remove('collected'));
                 updateInventoryUI();
+            }
+
+            submitScoreButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const name = usernameInput.value.trim();
+
+                if (!name) return;
+
+                if (isProfane(name)) {
+                    gsap.to(usernameInput, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
+                    usernameInput.style.borderColor = "#ef4444";
+                    setTimeout(() => usernameInput.style.borderColor = "", 1000);
+                    return;
+                }
+
+                const submittedScore = totalScoreState;
+                localStorage.setItem('whirlCollectorUsername', name);
+                leaderboardEntries.push({ name, score: submittedScore, ts: Date.now() });
+                saveLeaderboardEntries();
+                renderLeaderboard();
+
+                console.log(`Score submitted: ${name} - ${submittedScore}`);
+                submitScoreButton.textContent = "Submitted";
+                submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
+                gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
+
+                resetCollectorProgress(false);
+            });
+
+            usernameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitScoreButton.click();
+                }
+            });
+
+            resetHudButton?.addEventListener('click', () => {
+                resetCollectorProgress(true);
             });
 
             exportHudButton?.addEventListener('click', async () => {
-                const text = `Blue Whirl Collector\n${displayUsername.textContent}\nScore: ${document.getElementById('user-total-score').textContent}\nRank: ${document.getElementById('user-rank').textContent}`;
+                const text = `Blue Whirl Collector\nPlayer: ${(usernameInput.value || localStorage.getItem('whirlCollectorUsername') || 'You')}\nScore: ${totalScoreState.toLocaleString()}\nRank: ${document.getElementById('user-rank').textContent}`;
                 try {
                     await navigator.clipboard.writeText(text);
                     exportHudButton.textContent = 'Copied';
@@ -1733,6 +1885,31 @@
             sfxHudButton?.addEventListener('click', () => {
                 sfxEnabled = !sfxEnabled;
                 sfxHudButton.textContent = sfxEnabled ? 'SFX On' : 'SFX Off';
+            });
+
+            focusHudButton?.addEventListener('click', () => {
+                const enableFocus = !document.body.classList.contains('game-only');
+                setGameOnlyMode(enableFocus);
+            });
+
+            clearScoresButton?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showClearScoresModal();
+            });
+
+            cancelClearScoresButton?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hideClearScoresModal();
+            });
+
+            confirmClearScoresButton?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                clearSubmittedScores();
+                hideClearScoresModal();
+            });
+
+            clearScoresModal?.addEventListener('click', (e) => {
+                if (e.target === clearScoresModal) hideClearScoresModal();
             });
 
             let lastScrollY = window.scrollY;
@@ -1884,11 +2061,11 @@
             window.addEventListener('mousedown', onParticlePress);
             window.addEventListener('mouseup', onParticleRelease);
             window.addEventListener('touchstart', (e) => {
-                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal')) return;
+                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal') || e.target.closest('#clear-scores-modal')) return;
                 onParticlePress(e);
             }, { passive: false });
             window.addEventListener('touchend', (e) => {
-                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal')) return;
+                if (e.target.closest('#inventory-hud') || e.target.closest('nav') || e.target.closest('#reward-modal') || e.target.closest('#clear-scores-modal')) return;
                 onParticleRelease(e);
             }, { passive: false });
 
