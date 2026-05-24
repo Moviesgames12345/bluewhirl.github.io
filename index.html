@@ -373,15 +373,7 @@
         }
 
         #hud-mini-score {
-            font-size: 0.62rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: #7dd3fc;
-            background: rgba(15, 23, 42, 0.68);
-            border: 1px solid rgba(56, 189, 248, 0.26);
-            border-radius: 9999px;
-            padding: 4px 10px;
-            backdrop-filter: blur(8px);
+            display: none;
         }
 
         .inventory-item {
@@ -451,6 +443,7 @@
             display: flex;
             align-items: center;
             gap: 0.55rem;
+            width: 100%;
         }
 
         .hud-help-btn {
@@ -495,14 +488,20 @@
         }
 
         #inventory-toggle-label {
+            flex: 1;
             font-size: 0.62rem;
             color: #7dd3fc;
-            letter-spacing: 0.07em;
+            letter-spacing: 0.04em;
             text-transform: uppercase;
             background: rgba(15, 23, 42, 0.68);
             border: 1px solid rgba(56, 189, 248, 0.2);
-            padding: 4px 9px;
+            padding: 5px 10px;
             border-radius: 9999px;
+            text-align: center;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .inventory-content {
@@ -568,7 +567,7 @@
 
         .hud-actions {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 0.35rem;
             margin-top: 0.45rem;
         }
@@ -742,6 +741,67 @@
             box-shadow: 0 0 0 14px rgba(251, 191, 36, 0.22), 0 0 40px rgba(251, 191, 36, 0.8);
         }
 
+        .hold-lock-indicator {
+            position: absolute;
+            width: 90px;
+            height: 56px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 56;
+            display: none;
+        }
+
+        .hold-lock-ring {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(125, 211, 252, 0.95);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
+            transform: translate(-50%, -50%) scale(0.75);
+            animation: holdPulse 0.9s ease-out infinite;
+        }
+
+        .hold-lock-ring.second {
+            animation-delay: 0.3s;
+            opacity: 0.7;
+        }
+
+        .hold-lock-progress {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 74px;
+            height: 7px;
+            border-radius: 9999px;
+            border: 1px solid rgba(56, 189, 248, 0.65);
+            background: rgba(2, 6, 23, 0.88);
+            overflow: hidden;
+            transform: translateX(-50%);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
+        }
+
+        .hold-lock-progress-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #22d3ee 0%, #38bdf8 100%);
+            transition: width 0.08s linear;
+        }
+
+        @keyframes holdPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.62);
+                opacity: 0.95;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.45);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             #inventory-hud {
                 bottom: 1rem;
@@ -754,7 +814,13 @@
 <body class="bg-slate-900 text-slate-200">
 
     <canvas id="webgl"></canvas>
-    <div id="click-feedback-layer" class="click-feedback-layer"></div>
+    <div id="click-feedback-layer" class="click-feedback-layer">
+        <div id="hold-lock-indicator" class="hold-lock-indicator" aria-hidden="true">
+            <div class="hold-lock-progress"><div id="hold-lock-progress-fill" class="hold-lock-progress-fill"></div></div>
+            <div class="hold-lock-ring"></div>
+            <div class="hold-lock-ring second"></div>
+        </div>
+    </div>
 
     <div id="reward-modal"
         class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
@@ -792,7 +858,6 @@
 
     <!-- Inventory HUD -->
     <div id="inventory-hud" class="compact" aria-label="Collector HUD">
-        <div id="hud-mini-score">Collector HUD · Score 0</div>
         <div class="inventory-content" id="inventory-content">
             <div id="user-rank" class="rank-badge">Whirl Novice</div>
             <div id="combo-indicator" class="combo-indicator">Combo x2</div>
@@ -862,7 +927,6 @@
                     <button id="hud-reset" type="button" class="hud-action-btn" title="Reset local collector data">Reset</button>
                     <button id="hud-export" type="button" class="hud-action-btn" title="Copy score summary">Copy</button>
                     <button id="hud-sfx" type="button" class="hud-action-btn" title="Toggle sound effects">SFX On</button>
-                    <button id="hud-focus" type="button" class="hud-action-btn" title="Toggle game-only focus mode">Focus</button>
                     <button id="hud-clear-scores" type="button" class="hud-action-btn" title="Clear this player's submitted score">Clear</button>
                 </div>
             </div>
@@ -878,6 +942,7 @@
                 <i class="fas fa-box"></i>
             </button>
             <span id="inventory-toggle-label">You · 0</span>
+            <button id="hud-focus" type="button" class="hud-help-btn" title="Toggle game-only focus mode" aria-label="Toggle focus mode">Focus</button>
             <button id="hud-help-toggle" class="hud-help-btn" type="button" title="How to play" aria-label="Show game instructions">?</button>
         </div>
         <div id="hud-help-panel" class="hud-help-panel" aria-live="polite">
@@ -1289,6 +1354,8 @@
             let holdPointerY = 0;
             let holdCompleted = false;
             let instabilityLevel = 0;
+            const holdLockIndicator = document.getElementById('hold-lock-indicator');
+            const holdLockProgressFill = document.getElementById('hold-lock-progress-fill');
 
             gsap.timeline({ scrollTrigger: { trigger: 'main', start: 'top top', end: 'bottom bottom', scrub: 3 } }).to(particles.rotation, { y: Math.PI, x: Math.PI / 2, ease: 'power1.inOut' });
 
@@ -1297,6 +1364,9 @@
                 const particlePositions = particles.geometry.attributes.position;
                 const particleColors = particles.geometry.attributes.color;
                 const currentParticleSizes = particles.geometry.attributes.aSize;
+                let holdAnchorX = 0;
+                let holdAnchorY = 0;
+                let hasHoldAnchor = false;
 
                 for (let i = 0; i < particleCount; i++) {
                     const i3 = i * 3;
@@ -1323,6 +1393,9 @@
                         const holdProgress = Math.min(1, Math.max(0, (performance.now() - holdStartAt) / holdRequiredMs));
                         tempTargetPos.copy(tempVec);
                         targetSize *= 1.65 + holdProgress * 0.35;
+                        holdAnchorX = ((tempScreenPos.x + 1) * 0.5) * sizes.width;
+                        holdAnchorY = ((-tempScreenPos.y + 1) * 0.5) * sizes.height;
+                        hasHoldAnchor = true;
                     } else if (mouseDistance < interactionRadius) {
                         const forceMagnitude = 1 - mouseDistance / interactionRadius;
                         const dx = tempScreenPos.x - pointer.x;
@@ -1366,6 +1439,13 @@
                     if (holdFillEl) holdFillEl.style.width = `${Math.round(holdProgress * 100)}%`;
                     if (holdStatusEl) holdStatusEl.textContent = `Capturing ${rarities[holdingRarityIndex]?.name || 'fragment'}... ${Math.round(holdProgress * 100)}%`;
 
+                    if (holdLockProgressFill) holdLockProgressFill.style.width = `${Math.round(holdProgress * 100)}%`;
+                    if (holdLockIndicator && hasHoldAnchor) {
+                        holdLockIndicator.style.display = 'block';
+                        holdLockIndicator.style.left = `${holdAnchorX}px`;
+                        holdLockIndicator.style.top = `${holdAnchorY}px`;
+                    }
+
                     if (holdProgress >= 1 && !holdCompleted) {
                         holdCompleted = true;
                         const completedRarity = holdingRarityIndex;
@@ -1380,6 +1460,9 @@
                         instabilityLevel = Math.max(0, instabilityLevel - (12 + completedRarity * 4));
                         updateInventoryUI();
                     }
+                } else {
+                    if (holdLockIndicator) holdLockIndicator.style.display = 'none';
+                    if (holdLockProgressFill) holdLockProgressFill.style.width = '0%';
                 }
 
                 particlePositions.needsUpdate = true;
@@ -1797,12 +1880,9 @@
 
                 // Update Rank & Hall of Fame
                 const rankEl = document.getElementById('user-rank');
-                const miniScoreEl = document.getElementById('hud-mini-score');
                 const nextMilestoneEl = document.getElementById('next-milestone');
                 const activePlayerRankEl = document.getElementById('active-player-rank');
                 const activePlayerScoreEl = document.getElementById('active-player-score');
-
-                if (miniScoreEl) miniScoreEl.textContent = `Collector HUD · Score ${totalScoreState.toLocaleString()}`;
 
                 let currentRank = "Whirl Novice";
                 if (totalScoreState >= 2500) currentRank = "Grand Architect";
