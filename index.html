@@ -1929,19 +1929,21 @@
                     const playerRef = doc(firestoreDb, 'leaderboard', getOrCreatePlayerKey());
                     const existing = await getDoc(playerRef);
                     const existingScore = existing.exists() ? Number(existing.data()?.score || 0) : -1;
+                    const existingName = existing.exists() ? String(existing.data()?.name || '').trim() : '';
                     const isNewBest = submittedScore > existingScore;
+                    const isNameChange = existingName !== name;
 
-                    if (isNewBest) {
+                    if (isNewBest || isNameChange || !existing.exists()) {
                         await setDoc(playerRef, {
                             name,
-                            score: submittedScore,
+                            score: isNewBest ? submittedScore : Math.max(0, existingScore),
                             createdAt: existing.exists() ? (existing.data()?.createdAt || serverTimestamp()) : serverTimestamp(),
                             updatedAt: serverTimestamp()
                         }, { merge: true });
                     }
 
-                    console.log(`Score submitted globally: ${name} - ${submittedScore}${isNewBest ? ' (new best)' : ' (kept existing best)'}`);
-                    submitScoreButton.textContent = isNewBest ? 'Best Saved' : 'No Best';
+                    console.log(`Score submitted globally: ${name} - ${submittedScore}${isNewBest ? ' (new best)' : isNameChange ? ' (name updated)' : ' (best unchanged)'}`);
+                    submitScoreButton.textContent = isNewBest ? 'Best Saved' : (isNameChange ? 'Name Saved' : 'Saved');
                     submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
                     gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
                     setTimeout(() => {
