@@ -1801,7 +1801,6 @@
             const rarityBasePoints = [1, 4, 12, 30, 90];
             const rarityDifficultyMultiplier = [1, 1.12, 1.3, 1.55, 1.9];
             const rarityComboGrowth = [0.03, 0.07, 0.1, 0.13, 0.16];
-            const rarityComboCap = [1.35, 1.7, 2.05, 2.35, 2.6];
 
             const comboResetWindowMs = 6000;
             let lastComboAt = 0;
@@ -2014,10 +2013,7 @@
 
             function getCurrentComboMultiplier(rIdx) {
                 if (rIdx < 0 || sameRarityCombo <= 0) return 1;
-                return Math.min(
-                    1 + (sameRarityCombo - 1) * rarityComboGrowth[rIdx],
-                    rarityComboCap[rIdx]
-                );
+                return 1 + (sameRarityCombo - 1) * rarityComboGrowth[rIdx];
             }
 
             function getComboTimeRemainingMs(now = performance.now()) {
