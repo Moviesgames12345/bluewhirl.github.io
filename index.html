@@ -614,6 +614,39 @@
             font-weight: 800;
         }
 
+        .active-player-panel {
+            margin-top: 0.45rem;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(14, 116, 144, 0.1));
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            border-radius: 0.6rem;
+            padding: 0.5rem 0.6rem;
+            box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.15) inset, 0 0 14px rgba(56, 189, 248, 0.15);
+        }
+
+        .active-player-title {
+            font-size: 0.56rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #bae6fd;
+            margin-bottom: 0.3rem;
+            font-weight: 800;
+        }
+
+        .active-player-stats {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.2rem 0.5rem;
+            align-items: center;
+            font-size: 0.66rem;
+            color: #cbd5e1;
+        }
+
+        .active-player-value {
+            color: #e0f2fe;
+            font-family: monospace;
+            font-weight: 800;
+        }
+
         .hall-of-fame-tab {
             margin-top: 1rem;
             padding-top: 1rem;
@@ -720,11 +753,11 @@
         class="fixed inset-0 bg-black/80 backdrop-blur-md z-[101] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div id="clear-scores-content"
             class="bg-slate-800 border border-red-500/40 rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center transform scale-95 transition-transform duration-300">
-            <h3 class="text-xl font-bold text-red-400 mb-3">Clear Submitted Scores?</h3>
-            <p class="text-slate-300 text-sm mb-5">This will permanently remove all submitted leaderboard scores.</p>
+            <h3 class="text-xl font-bold text-red-400 mb-3">Clear Your Submitted Score?</h3>
+            <p class="text-slate-300 text-sm mb-5">This will remove only this player's best score from the global leaderboard.</p>
             <div class="flex gap-2 justify-center">
                 <button id="cancel-clear-scores" type="button" class="hud-action-btn px-4">Cancel</button>
-                <button id="confirm-clear-scores" type="button" class="hud-action-btn px-4 border-red-400/60 text-red-300 bg-red-500/10 hover:bg-red-500/25">Clear All</button>
+                <button id="confirm-clear-scores" type="button" class="hud-action-btn px-4 border-red-400/60 text-red-300 bg-red-500/10 hover:bg-red-500/25">Clear Mine</button>
             </div>
         </div>
     </div>
@@ -774,6 +807,16 @@
             </div>
             <div id="next-milestone">Next reward: 10 Common fragments.</div>
 
+            <div class="active-player-panel" aria-label="Current player stats">
+                <div class="active-player-title">Current Run</div>
+                <div class="active-player-stats">
+                    <span>Rank</span>
+                    <span id="active-player-rank" class="active-player-value">Whirl Novice</span>
+                    <span>Score</span>
+                    <span id="active-player-score" class="active-player-value">0</span>
+                </div>
+            </div>
+
             <div class="hall-of-fame-tab">
                 <div class="flex flex-col gap-2 mb-3">
                     <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Hall of Fame <small class="normal-case opacity-70">(session demo)</small></span>
@@ -792,7 +835,7 @@
                     <button id="hud-export" type="button" class="hud-action-btn" title="Copy score summary">Copy</button>
                     <button id="hud-sfx" type="button" class="hud-action-btn" title="Toggle sound effects">SFX On</button>
                     <button id="hud-focus" type="button" class="hud-action-btn" title="Toggle game-only focus mode">Focus</button>
-                    <button id="hud-clear-scores" type="button" class="hud-action-btn" title="Clear submitted leaderboard scores">Clear</button>
+                    <button id="hud-clear-scores" type="button" class="hud-action-btn" title="Clear this player's submitted score">Clear</button>
                 </div>
             </div>
         </div>
@@ -1105,6 +1148,8 @@
         import * as THREE from 'three';
         import { gsap } from 'gsap';
         import { ScrollTrigger } from 'ScrollTrigger';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+        import { getFirestore, collection, doc, getDoc, setDoc, serverTimestamp, query, orderBy, limit, onSnapshot, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -1437,46 +1482,68 @@
             const storedScoreState = Number(localStorage.getItem('collectorTotalScore'));
             let totalScoreState = Number.isFinite(storedScoreState) && storedScoreState >= 0 ? storedScoreState : 0;
 
-            function loadLeaderboardEntries() {
-                try {
-                    const raw = localStorage.getItem('collectorLeaderboardEntries');
-                    if (!raw) return [];
-                    const parsed = JSON.parse(raw);
-                    if (!Array.isArray(parsed)) return [];
-                    return parsed
-                        .map(entry => ({
-                            name: String(entry?.name || '').trim(),
-                            score: Number(entry?.score || 0),
-                            ts: Number(entry?.ts || Date.now())
-                        }))
-                        .filter(entry => entry.name && Number.isFinite(entry.score) && entry.score >= 0);
-                } catch {
-                    return [];
-                }
+            const firebaseConfig = {
+                apiKey: 'AIzaSyA-x-Xz3hQQZRCIpyks-75xSOytCsQZ8NM',
+                authDomain: 'webgameleaderboard.firebaseapp.com',
+                projectId: 'webgameleaderboard',
+                storageBucket: 'webgameleaderboard.firebasestorage.app',
+                messagingSenderId: '206704315519',
+                appId: '1:206704315519:web:faa979a903b2a8b1f0034a',
+                measurementId: 'G-M4NLYVWR2G'
+            };
+
+            let leaderboardEntries = [];
+            let firestoreDb = null;
+            let leaderboardCollectionRef = null;
+            let leaderboardRealtimeUnsub = null;
+
+            try {
+                const firebaseApp = initializeApp(firebaseConfig);
+                firestoreDb = getFirestore(firebaseApp);
+                leaderboardCollectionRef = collection(firestoreDb, 'leaderboard');
+            } catch (error) {
+                console.error('Firebase initialization failed:', error);
             }
 
-            let leaderboardEntries = loadLeaderboardEntries();
-
-            function saveLeaderboardEntries() {
-                localStorage.setItem('collectorLeaderboardEntries', JSON.stringify(leaderboardEntries));
+            function getOrCreatePlayerKey() {
+                let key = localStorage.getItem('whirlCollectorPlayerKey');
+                if (key) return key;
+                key = (window.crypto?.randomUUID?.() || `player_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`);
+                localStorage.setItem('whirlCollectorPlayerKey', key);
+                return key;
             }
 
             function renderLeaderboard() {
                 const leaderboardList = document.getElementById('leaderboard-list');
                 if (!leaderboardList) return;
 
-                const topThree = [...leaderboardEntries]
-                    .sort((a, b) => b.score - a.score || a.ts - b.ts)
-                    .slice(0, 3);
-
-                if (topThree.length === 0) {
+                if (leaderboardEntries.length === 0) {
                     leaderboardList.innerHTML = '<div class="leaderboard-row"><span class="leader-name">No submitted scores yet</span><span class="leader-score">--</span></div>';
                     return;
                 }
 
-                leaderboardList.innerHTML = topThree.map((entry, idx) =>
+                leaderboardList.innerHTML = leaderboardEntries.map((entry, idx) =>
                     `<div class="leaderboard-row"><span class="leader-name">#${idx + 1} ${entry.name}</span><span class="leader-score">${entry.score.toLocaleString()}</span></div>`
                 ).join('');
+            }
+
+            function subscribeLeaderboard() {
+                if (!leaderboardCollectionRef) {
+                    renderLeaderboard();
+                    return;
+                }
+
+                const topScoresQuery = query(leaderboardCollectionRef, orderBy('score', 'desc'), limit(3));
+                leaderboardRealtimeUnsub = onSnapshot(topScoresQuery, (snapshot) => {
+                    leaderboardEntries = snapshot.docs.map(doc => ({
+                        name: String(doc.data()?.name || 'Unknown'),
+                        score: Number(doc.data()?.score || 0)
+                    }));
+                    renderLeaderboard();
+                }, (error) => {
+                    console.error('Leaderboard subscription failed:', error);
+                    renderLeaderboard();
+                });
             }
 
             const progressGoal = 10;
@@ -1697,6 +1764,8 @@
                 const rankEl = document.getElementById('user-rank');
                 const miniScoreEl = document.getElementById('hud-mini-score');
                 const nextMilestoneEl = document.getElementById('next-milestone');
+                const activePlayerRankEl = document.getElementById('active-player-rank');
+                const activePlayerScoreEl = document.getElementById('active-player-score');
 
                 if (miniScoreEl) miniScoreEl.textContent = `Collector HUD · Score ${totalScoreState.toLocaleString()}`;
 
@@ -1705,6 +1774,8 @@
                 else if (totalScoreState >= 500) currentRank = "Fragment Master";
                 else if (totalScoreState >= 100) currentRank = "Resonance Seeker";
                 if (rankEl) rankEl.textContent = currentRank;
+                if (activePlayerRankEl) activePlayerRankEl.textContent = currentRank;
+                if (activePlayerScoreEl) activePlayerScoreEl.textContent = totalScoreState.toLocaleString();
 
                 let nextIndex = collectedState.findIndex(c => c < progressGoal);
                 if (nextIndex === -1) {
@@ -1720,6 +1791,7 @@
             }
 
             updateInventoryUI();
+            subscribeLeaderboard();
             renderLeaderboard();
 
             const inventoryHud = document.getElementById('inventory-hud');
@@ -1778,10 +1850,11 @@
                 clearScoresContent.classList.replace('scale-100', 'scale-95');
             }
 
-            function clearSubmittedScores() {
-                leaderboardEntries = [];
-                localStorage.removeItem('collectorLeaderboardEntries');
-                renderLeaderboard();
+            async function clearSubmittedScores() {
+                if (!firestoreDb) return false;
+                const playerRef = doc(firestoreDb, 'leaderboard', getOrCreatePlayerKey());
+                await deleteDoc(playerRef);
+                return true;
             }
 
             setHudExpanded(false);
@@ -1832,7 +1905,7 @@
                 updateInventoryUI();
             }
 
-            submitScoreButton.addEventListener('click', (e) => {
+            submitScoreButton.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const name = usernameInput.value.trim();
 
@@ -1847,16 +1920,42 @@
 
                 const submittedScore = totalScoreState;
                 localStorage.setItem('whirlCollectorUsername', name);
-                leaderboardEntries.push({ name, score: submittedScore, ts: Date.now() });
-                saveLeaderboardEntries();
-                renderLeaderboard();
 
-                console.log(`Score submitted: ${name} - ${submittedScore}`);
-                submitScoreButton.textContent = "Submitted";
-                submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
-                gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
+                try {
+                    if (!leaderboardCollectionRef || !firestoreDb) {
+                        throw new Error('Leaderboard backend unavailable');
+                    }
 
-                resetCollectorProgress(false);
+                    const playerRef = doc(firestoreDb, 'leaderboard', getOrCreatePlayerKey());
+                    const existing = await getDoc(playerRef);
+                    const existingScore = existing.exists() ? Number(existing.data()?.score || 0) : -1;
+                    const isNewBest = submittedScore > existingScore;
+
+                    if (isNewBest) {
+                        await setDoc(playerRef, {
+                            name,
+                            score: submittedScore,
+                            createdAt: existing.exists() ? (existing.data()?.createdAt || serverTimestamp()) : serverTimestamp(),
+                            updatedAt: serverTimestamp()
+                        }, { merge: true });
+                    }
+
+                    console.log(`Score submitted globally: ${name} - ${submittedScore}${isNewBest ? ' (new best)' : ' (kept existing best)'}`);
+                    submitScoreButton.textContent = isNewBest ? 'Best Saved' : 'No Best';
+                    submitScoreButton.classList.replace('text-sky-400', 'text-emerald-500');
+                    gsap.to(submitScoreButton, { scale: 1.1, duration: 0.1, yoyo: true, repeat: 1 });
+                    setTimeout(() => {
+                        submitScoreButton.textContent = 'Submit';
+                        submitScoreButton.classList.replace('text-emerald-500', 'text-sky-400');
+                    }, 1200);
+                    resetCollectorProgress(false);
+                } catch (error) {
+                    console.error('Score submit failed:', error);
+                    submitScoreButton.textContent = 'Failed';
+                    setTimeout(() => {
+                        submitScoreButton.textContent = 'Submit';
+                    }, 1200);
+                }
             });
 
             usernameInput.addEventListener('keydown', (e) => {
@@ -1902,10 +2001,18 @@
                 hideClearScoresModal();
             });
 
-            confirmClearScoresButton?.addEventListener('click', (e) => {
+            confirmClearScoresButton?.addEventListener('click', async (e) => {
                 e.stopPropagation();
-                clearSubmittedScores();
-                hideClearScoresModal();
+                try {
+                    const cleared = await clearSubmittedScores();
+                    if (!cleared) {
+                        spawnFloatingText(window.innerWidth * 0.5, window.innerHeight * 0.5, 'Enter your player name first', '#fbbf24');
+                    }
+                } catch (error) {
+                    console.error('Clearing score failed:', error);
+                } finally {
+                    hideClearScoresModal();
+                }
             });
 
             clearScoresModal?.addEventListener('click', (e) => {
