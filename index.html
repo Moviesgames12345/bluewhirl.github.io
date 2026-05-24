@@ -1378,7 +1378,7 @@
         import { gsap } from 'gsap';
         import { ScrollTrigger } from 'ScrollTrigger';
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
-        import { getFirestore, collection, doc, getDoc, setDoc, serverTimestamp, query, orderBy, limit, onSnapshot, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+        import { getFirestore, collection, doc, getDoc, setDoc, serverTimestamp, query, orderBy, limit, onSnapshot, deleteDoc, increment } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -1754,6 +1754,27 @@
             } catch (error) {
                 console.error('Firebase initialization failed:', error);
             }
+
+            async function trackDailyVisit() {
+                if (!firestoreDb) return;
+                const todayKey = new Date().toISOString().slice(0, 10);
+                const stampKey = `bwVisitTracked:${todayKey}`;
+                if (localStorage.getItem(stampKey)) return;
+
+                try {
+                    const metricRef = doc(firestoreDb, 'site_metrics_daily', todayKey);
+                    await setDoc(metricRef, {
+                        date: todayKey,
+                        totalVisits: increment(1),
+                        updatedAt: serverTimestamp()
+                    }, { merge: true });
+                    localStorage.setItem(stampKey, '1');
+                } catch (error) {
+                    console.error('Daily visit tracking failed:', error);
+                }
+            }
+
+            trackDailyVisit();
 
             function getOrCreatePlayerKey() {
                 let key = localStorage.getItem('whirlCollectorPlayerKey');

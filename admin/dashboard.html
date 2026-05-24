@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Blue Whirl</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"
+            }
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
     <style>
         body {
@@ -58,7 +66,7 @@
         <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-white">Your dashboard</h1>
-                <p class="text-sm text-slate-400">Simple view of your local game data and quick tools.</p>
+                <p class="text-sm text-slate-400">Live view of local progress, website visits, and global leaderboard data.</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <button id="open-site-btn" class="action-btn !w-auto !px-4">Open site</button>
@@ -106,6 +114,36 @@
             </div>
         </section>
 
+        <section class="grid grid-cols-1 xl:grid-cols-4 gap-4">
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Visits today</div>
+                <div id="stat-visits-today" class="text-2xl font-bold text-cyan-300">0</div>
+            </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Visits last 7 days</div>
+                <div id="stat-visits-7d" class="text-2xl font-bold text-indigo-300">0</div>
+            </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Players on leaderboard</div>
+                <div id="stat-global-players" class="text-2xl font-bold text-emerald-300">0</div>
+            </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Top score (global)</div>
+                <div id="stat-global-top-score" class="text-2xl font-bold text-amber-300">0</div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+            <div class="panel p-4">
+                <h2 class="text-base font-bold text-white mb-3">Daily visits (recent)</h2>
+                <div id="daily-visits-list" class="space-y-2 text-sm max-h-72 overflow-y-auto"></div>
+            </div>
+            <div class="panel p-4">
+                <h2 class="text-base font-bold text-white mb-3">Global leaderboard (all players)</h2>
+                <div id="global-leaderboard-list" class="space-y-2 text-sm max-h-72 overflow-y-auto"></div>
+            </div>
+        </section>
+
         <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="panel p-4">
                 <h2 class="text-base font-bold text-white mb-3">Tools</h2>
@@ -127,7 +165,28 @@
         </section>
     </main>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from 'firebase/app';
+        import { getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc } from 'firebase/firestore';
+
+        const firebaseConfig = {
+            apiKey: 'AIzaSyA-x-Xz3hQQZRCIpyks-75xSOytCsQZ8NM',
+            authDomain: 'webgameleaderboard.firebaseapp.com',
+            projectId: 'webgameleaderboard',
+            storageBucket: 'webgameleaderboard.firebasestorage.app',
+            messagingSenderId: '206704315519',
+            appId: '1:206704315519:web:faa979a903b2a8b1f0034a',
+            measurementId: 'G-M4NLYVWR2G'
+        };
+
+        let firestoreDb = null;
+        try {
+            const firebaseApp = initializeApp(firebaseConfig);
+            firestoreDb = getFirestore(firebaseApp);
+        } catch (error) {
+            console.error('Admin Firebase init failed:', error);
+        }
+
         const GAME_KEYS = [
             'collectorTotalScore',
             'collectedParticlesCount',
@@ -149,6 +208,12 @@
         const lastRefreshEl = document.getElementById('last-refresh');
         const activityLogEl = document.getElementById('activity-log');
         const importFileEl = document.getElementById('import-file');
+        const statVisitsTodayEl = document.getElementById('stat-visits-today');
+        const statVisits7dEl = document.getElementById('stat-visits-7d');
+        const statGlobalPlayersEl = document.getElementById('stat-global-players');
+        const statGlobalTopScoreEl = document.getElementById('stat-global-top-score');
+        const dailyVisitsListEl = document.getElementById('daily-visits-list');
+        const globalLeaderboardListEl = document.getElementById('global-leaderboard-list');
 
         function getRank(score) {
             if (score >= 2500) return 'Backyard Wizard';
@@ -187,6 +252,74 @@
                     <div class="text-xs text-slate-500 mt-1">${item.at.toLocaleTimeString()}</div>
                 </div>`
             ).join('');
+        }
+
+        function formatDateShort(dateKey) {
+            const d = new Date(`${dateKey}T00:00:00`);
+            return Number.isNaN(d.getTime()) ? dateKey : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        }
+
+        async function loadGlobalMonitoring() {
+            if (!firestoreDb) {
+                statVisitsTodayEl.textContent = 'N/A';
+                statVisits7dEl.textContent = 'N/A';
+                statGlobalPlayersEl.textContent = 'N/A';
+                statGlobalTopScoreEl.textContent = 'N/A';
+                dailyVisitsListEl.innerHTML = '<div class="text-slate-400">Could not connect to Firebase.</div>';
+                globalLeaderboardListEl.innerHTML = '<div class="text-slate-400">Could not connect to Firebase.</div>';
+                return;
+            }
+
+            try {
+                const todayKey = new Date().toISOString().slice(0, 10);
+                const visitQuery = query(collection(firestoreDb, 'site_metrics_daily'), orderBy('date', 'desc'), limit(30));
+                const visitSnap = await getDocs(visitQuery);
+                const visitRows = visitSnap.docs.map(d => ({
+                    date: String(d.data()?.date || d.id),
+                    totalVisits: Number(d.data()?.totalVisits || 0)
+                }));
+
+                const todayVisits = visitRows.find(v => v.date === todayKey)?.totalVisits || 0;
+                const visits7d = visitRows.slice(0, 7).reduce((sum, row) => sum + row.totalVisits, 0);
+                statVisitsTodayEl.textContent = todayVisits.toLocaleString();
+                statVisits7dEl.textContent = visits7d.toLocaleString();
+
+                if (visitRows.length === 0) {
+                    dailyVisitsListEl.innerHTML = '<div class="text-slate-400">No visit data yet.</div>';
+                } else {
+                    dailyVisitsListEl.innerHTML = visitRows.map(row => `
+                        <div class="border border-slate-700/60 rounded-lg px-3 py-2 bg-slate-900/45 flex items-center justify-between">
+                            <span>${formatDateShort(row.date)}</span>
+                            <span class="font-bold text-cyan-300">${row.totalVisits.toLocaleString()}</span>
+                        </div>
+                    `).join('');
+                }
+
+                const leaderboardQuery = query(collection(firestoreDb, 'leaderboard'), orderBy('score', 'desc'));
+                const leaderboardSnap = await getDocs(leaderboardQuery);
+                const leaders = leaderboardSnap.docs.map(d => ({
+                    name: String(d.data()?.name || 'Unknown'),
+                    score: Number(d.data()?.score || 0)
+                }));
+
+                statGlobalPlayersEl.textContent = leaders.length.toLocaleString();
+                statGlobalTopScoreEl.textContent = (leaders[0]?.score || 0).toLocaleString();
+
+                if (leaders.length === 0) {
+                    globalLeaderboardListEl.innerHTML = '<div class="text-slate-400">No submitted scores yet.</div>';
+                } else {
+                    globalLeaderboardListEl.innerHTML = leaders.map((entry, idx) => `
+                        <div class="border border-slate-700/60 rounded-lg px-3 py-2 bg-slate-900/45 flex items-center justify-between gap-3">
+                            <span class="text-slate-300 truncate">#${idx + 1} ${entry.name}</span>
+                            <span class="font-bold text-amber-300">${entry.score.toLocaleString()}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Global monitoring load failed:', error);
+                dailyVisitsListEl.innerHTML = '<div class="text-amber-300">Could not load visit analytics.</div>';
+                globalLeaderboardListEl.innerHTML = '<div class="text-amber-300">Could not load leaderboard data.</div>';
+            }
         }
 
         function renderDashboard() {
@@ -268,8 +401,7 @@
                         if (value === null || value === undefined) localStorage.removeItem(key);
                         else localStorage.setItem(key, String(value));
                     }
-                    renderDashboard();
-                    addActivity('Imported backup file.');
+                    refreshAllData('Imported backup file.');
                 } catch {
                     alert('Could not read that JSON file.');
                 }
@@ -281,15 +413,13 @@
             if (!confirm('Clear game score + collected dots on this browser?')) return;
             localStorage.removeItem('collectorTotalScore');
             localStorage.removeItem('collectedParticlesCount');
-            renderDashboard();
-            addActivity('Cleared game progress only.');
+            refreshAllData('Cleared game progress only.');
         }
 
         function clearAllLocalData() {
             if (!confirm('Clear all local website data on this browser? This cannot be undone.')) return;
             localStorage.clear();
-            renderDashboard();
-            addActivity('Cleared all local site data.');
+            refreshAllData('Cleared all local site data.');
         }
 
         function copyQuickReport() {
@@ -317,9 +447,14 @@
             window.location.href = '../index.html';
         });
 
-        document.getElementById('refresh-btn').addEventListener('click', () => {
+        async function refreshAllData(logMessage = null) {
             renderDashboard();
-            addActivity('Refreshed dashboard data.');
+            await loadGlobalMonitoring();
+            if (logMessage) addActivity(logMessage);
+        }
+
+        document.getElementById('refresh-btn').addEventListener('click', async () => {
+            await refreshAllData('Refreshed dashboard data.');
         });
 
         document.getElementById('copy-report-btn').addEventListener('click', copyQuickReport);
@@ -334,7 +469,7 @@
             e.target.value = '';
         });
 
-        renderDashboard();
+        await refreshAllData();
         addActivity('Dashboard loaded.');
     </script>
 </body>
