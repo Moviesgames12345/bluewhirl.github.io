@@ -654,6 +654,34 @@
             width: 100%;
         }
 
+        .compact-leaderboard {
+            display: none;
+            width: 100%;
+            margin-top: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            border-radius: 0.55rem;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            background: rgba(2, 6, 23, 0.78);
+        }
+
+        #inventory-hud.compact .compact-leaderboard {
+            display: block;
+        }
+
+        .compact-leaderboard-title {
+            font-size: 0.52rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #7dd3fc;
+            margin-bottom: 0.25rem;
+            font-weight: 800;
+        }
+
+        .compact-leaderboard-list .leaderboard-row {
+            font-size: 0.62rem;
+            padding: 1px 0;
+        }
+
         .leaderboard-row {
             display: flex;
             justify-content: space-between;
@@ -839,11 +867,17 @@
                 </div>
             </div>
         </div>
+        <div id="compact-leaderboard" class="compact-leaderboard" aria-label="Top leaders while HUD collapsed">
+            <div class="compact-leaderboard-title">Top 3 Leaders</div>
+            <div id="compact-leaderboard-list" class="compact-leaderboard-list">
+                <div class="leaderboard-row"><span class="leader-name">No submitted scores yet</span><span class="leader-score">--</span></div>
+            </div>
+        </div>
         <div class="hud-toggle-wrap">
             <button id="inventory-toggle" title="Toggle Inventory" aria-label="Toggle inventory panel" type="button">
                 <i class="fas fa-box"></i>
             </button>
-            <span id="inventory-toggle-label">Collector HUD</span>
+            <span id="inventory-toggle-label">You · 0</span>
             <button id="hud-help-toggle" class="hud-help-btn" type="button" title="How to play" aria-label="Show game instructions">?</button>
         </div>
         <div id="hud-help-panel" class="hud-help-panel" aria-live="polite">
@@ -1515,16 +1549,17 @@
 
             function renderLeaderboard() {
                 const leaderboardList = document.getElementById('leaderboard-list');
-                if (!leaderboardList) return;
+                const compactLeaderboardList = document.getElementById('compact-leaderboard-list');
+                if (!leaderboardList && !compactLeaderboardList) return;
 
-                if (leaderboardEntries.length === 0) {
-                    leaderboardList.innerHTML = '<div class="leaderboard-row"><span class="leader-name">No submitted scores yet</span><span class="leader-score">--</span></div>';
-                    return;
-                }
-
-                leaderboardList.innerHTML = leaderboardEntries.map((entry, idx) =>
+                const emptyHtml = '<div class="leaderboard-row"><span class="leader-name">No submitted scores yet</span><span class="leader-score">--</span></div>';
+                const filledHtml = leaderboardEntries.map((entry, idx) =>
                     `<div class="leaderboard-row"><span class="leader-name">#${idx + 1} ${entry.name}</span><span class="leader-score">${entry.score.toLocaleString()}</span></div>`
                 ).join('');
+
+                const html = leaderboardEntries.length === 0 ? emptyHtml : filledHtml;
+                if (leaderboardList) leaderboardList.innerHTML = html;
+                if (compactLeaderboardList) compactLeaderboardList.innerHTML = html;
             }
 
             function subscribeLeaderboard() {
@@ -1777,6 +1812,13 @@
                 if (activePlayerRankEl) activePlayerRankEl.textContent = currentRank;
                 if (activePlayerScoreEl) activePlayerScoreEl.textContent = totalScoreState.toLocaleString();
 
+                const hudLabelEl = document.getElementById('inventory-toggle-label');
+                const hudEl = document.getElementById('inventory-hud');
+                if (hudLabelEl && hudEl?.classList.contains('compact')) {
+                    const activeName = (document.getElementById('leaderboard-username')?.value || localStorage.getItem('whirlCollectorUsername') || 'You').trim() || 'You';
+                    hudLabelEl.textContent = `${activeName} · ${totalScoreState.toLocaleString()}`;
+                }
+
                 let nextIndex = collectedState.findIndex(c => c < progressGoal);
                 if (nextIndex === -1) {
                     if (nextMilestoneEl) nextMilestoneEl.textContent = 'All rewards unlocked. Keep collecting for leaderboard score.';
@@ -1828,7 +1870,14 @@
                 inventoryContent.classList.toggle('visible', expanded);
                 inventoryHud.classList.toggle('compact', !expanded);
                 inventoryToggle.querySelector('i').className = expanded ? 'fas fa-box-open' : 'fas fa-box';
-                if (inventoryToggleLabel) inventoryToggleLabel.textContent = expanded ? 'Hide HUD' : 'Collector HUD';
+                if (inventoryToggleLabel) {
+                    if (expanded) {
+                        inventoryToggleLabel.textContent = 'Hide HUD';
+                    } else {
+                        const activeName = (document.getElementById('leaderboard-username')?.value || localStorage.getItem('whirlCollectorUsername') || 'You').trim() || 'You';
+                        inventoryToggleLabel.textContent = `${activeName} · ${totalScoreState.toLocaleString()}`;
+                    }
+                }
             }
 
             function setGameOnlyMode(enabled) {
