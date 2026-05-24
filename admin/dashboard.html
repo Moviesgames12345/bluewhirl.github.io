@@ -6,239 +6,336 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Blue Whirl</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/dist/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/cur1-11-47e999d7-32.css">
     <style>
         body {
-            background-color: #0f172a;
+            background: #020617;
             color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         }
 
-        .dashboard-container {
-            border-left: 1px solid rgba(56, 189, 248, 0.1);
+        .panel {
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 14px;
         }
 
-        .stat-card {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
+        .mini-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 700;
         }
 
-        .stat-card:hover {
-            border-color: rgba(56, 189, 248, 0.3);
-            background: rgba(30, 41, 59, 0.6);
+        .action-btn {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.65rem;
+            font-size: 0.74rem;
+            font-weight: 700;
+            border: 1px solid rgba(100, 116, 139, 0.45);
+            background: rgba(30, 41, 59, 0.55);
+            color: #cbd5e1;
+            transition: background .2s ease, border-color .2s ease;
         }
 
-        .sidebar {
-            background: rgba(15, 23, 42, 0.95);
-            border-right: 1px solid rgba(56, 189, 248, 0.1);
-        }
-
-        .glow {
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-        }
-
-        .hacker-text {
-            font-family: 'Courier New', Courier, monospace;
+        .action-btn:hover {
+            background: rgba(30, 41, 59, 0.85);
+            border-color: rgba(14, 165, 233, 0.65);
         }
     </style>
 </head>
 
-<body class="flex min-h-screen bg-slate-950">
+<body>
     <script>
-        // Security Check
         if (!sessionStorage.getItem('bw_admin_session')) {
             window.location.href = 'login.html';
         }
     </script>
 
-    <!-- Sidebar -->
-    <aside class="sidebar w-64 p-6 hidden lg:flex flex-col">
-        <div class="flex items-center gap-3 mb-10">
-            <div
-                class="w-8 h-8 bg-sky-500 rounded flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
-                <i class="fas fa-whirlpool"></i>
-            </div>
-            <span class="font-bold tracking-tight text-white uppercase text-sm">BW Admin</span>
-        </div>
-
-        <nav class="flex-grow space-y-2">
-            <a href="#"
-                class="flex items-center gap-3 p-3 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                <i class="fas fa-chart-line w-5"></i>
-                <span class="text-sm font-medium">Overview</span>
-            </a>
-            <a href="#"
-                class="flex items-center gap-3 p-3 rounded-lg text-slate-400 hover:bg-slate-800 transition-colors">
-                <i class="fas fa-users w-5"></i>
-                <span class="text-sm font-medium">Collections</span>
-            </a>
-            <a href="#"
-                class="flex items-center gap-3 p-3 rounded-lg text-slate-400 hover:bg-slate-800 transition-colors">
-                <i class="fas fa-code w-5"></i>
-                <span class="text-sm font-medium">System Logs</span>
-            </a>
-        </nav>
-
-        <div class="mt-auto pt-6 border-t border-slate-800">
-            <button onclick="logout()"
-                class="flex items-center gap-3 p-3 w-full text-slate-500 hover:text-red-400 transition-colors">
-                <i class="fas fa-sign-out-alt w-5"></i>
-                <span class="text-sm font-medium">Terminate Session</span>
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-grow p-8">
-        <header class="flex justify-between items-center mb-10">
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">System Statistics</h1>
-                <p class="text-sm text-slate-400 mt-1 uppercase tracking-widest text-[0.65rem]">Node: Primary-DC-West
-                </p>
+                <h1 class="text-2xl font-bold text-white">Your dashboard</h1>
+                <p class="text-sm text-slate-400">Simple view of your local game data and quick tools.</p>
             </div>
-            <div class="flex gap-4">
-                <button onclick="resetSystem()"
-                    class="px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold rounded-lg hover:bg-red-500/20 transition-all">
-                    Emergency Reset
-                </button>
-                <div class="px-4 py-2 bg-slate-800 rounded-lg flex items-center gap-2 border border-slate-700">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs text-slate-300 font-medium uppercase tracking-widest">System Online</span>
-                </div>
+            <div class="flex flex-wrap gap-2">
+                <button id="open-site-btn" class="action-btn !w-auto !px-4">Open site</button>
+                <button id="refresh-btn" class="action-btn !w-auto !px-4">Refresh</button>
+                <button id="logout-btn" class="action-btn !w-auto !px-4 !border-red-400/50 !text-red-300">Sign out</button>
             </div>
         </header>
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div class="stat-card p-6 rounded-2xl">
-                <span class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Total
-                    Syncs</span>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-white glow tracking-tighter">4,281</span>
-                    <span class="text-xs text-emerald-400 font-medium">+12%</span>
-                </div>
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Player name</div>
+                <div id="stat-player" class="text-xl font-bold text-white">—</div>
             </div>
-            <div class="stat-card p-6 rounded-2xl">
-                <span class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Legendary
-                    Finds</span>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-amber-400 glow tracking-tighter">142</span>
-                    <span class="text-xs text-slate-500 font-medium">Global</span>
-                </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Current score</div>
+                <div id="stat-score" class="text-xl font-bold text-sky-300">0</div>
             </div>
-            <div class="stat-card p-6 rounded-2xl">
-                <span class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Avg Architect
-                    Rank</span>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-sky-400 glow tracking-tighter">Seeker</span>
-                </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Current rank</div>
+                <div id="stat-rank" class="text-xl font-bold text-emerald-300">Servo Rookie</div>
             </div>
-            <div class="stat-card p-6 rounded-2xl">
-                <span
-                    class="text-[0.6rem] uppercase tracking-widest text-slate-500 font-bold mb-1 block">Submissions</span>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-white glow tracking-tighter">1,092</span>
-                    <span class="text-xs text-sky-400 font-medium">Awaiting</span>
-                </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Total dots collected</div>
+                <div id="stat-total-captures" class="text-xl font-bold text-violet-300">0</div>
             </div>
-        </div>
+            <div class="panel p-4">
+                <div class="mini-label mb-1">Legendary collected</div>
+                <div id="stat-legendary" class="text-xl font-bold text-amber-300">0</div>
+            </div>
+        </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Submission Log -->
-            <div class="lg:col-span-2 space-y-4">
-                <h2
-                    class="text-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-800 pb-2 mb-4">
-                    Live Discovery Log</h2>
-                <div class="space-y-3" id="log-entries">
-                    <div class="stat-card p-4 rounded-xl flex items-center justify-between border-l-2 border-amber-500">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-amber-400">
-                                <i class="fas fa-crown"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-white">Whirl_King</h3>
-                                <p class="text-[0.65rem] text-slate-500 uppercase">Discovered Legendary Fragment</p>
-                            </div>
-                        </div>
-                        <span class="text-[0.6rem] text-slate-400 font-mono">2m ago</span>
-                    </div>
-                    <div
-                        class="stat-card p-4 rounded-xl flex items-center justify-between border-l-2 border-emerald-500">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-emerald-400">
-                                <i class="fas fa-atom"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-white">Zephyr_Code</h3>
-                                <p class="text-[0.65rem] text-slate-500 uppercase">Discovered Epic Fragment</p>
-                            </div>
-                        </div>
-                        <span class="text-[0.6rem] text-slate-400 font-mono">15m ago</span>
-                    </div>
-                </div>
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="panel p-4 lg:col-span-2">
+                <h2 class="text-base font-bold text-white mb-3">Dot breakdown</h2>
+                <div id="dot-breakdown" class="space-y-3"></div>
             </div>
 
-            <!-- Management Tools -->
-            <div class="space-y-6">
-                <h2
-                    class="text-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-800 pb-2 mb-4">
-                    Terminal Tools</h2>
-                <div class="stat-card p-6 rounded-2xl space-y-4">
-                    <button onclick="clearLocalStorage()"
-                        class="w-full py-3 bg-slate-800 border border-slate-700 text-slate-300 text-[0.7rem] uppercase font-bold tracking-widest rounded-lg hover:bg-slate-700 transition-colors">
-                        Wipe Local Progress
-                    </button>
-                    <button onclick="downloadBackup()"
-                        class="w-full py-3 bg-slate-800 border border-slate-700 text-slate-300 text-[0.7rem] uppercase font-bold tracking-widest rounded-lg hover:bg-slate-700 transition-colors">
-                        Export System Stats
-                    </button>
-                    <p class="text-[0.6rem] text-slate-500 italic mt-4 text-center">Caution: Some actions are
-                        irreversible.</p>
+            <div class="panel p-4">
+                <h2 class="text-base font-bold text-white mb-3">Quick checks</h2>
+                <div id="quick-checks" class="space-y-2 text-sm"></div>
+                <div class="mt-4 pt-4 border-t border-slate-700/60">
+                    <div class="mini-label mb-1">Last refresh</div>
+                    <div id="last-refresh" class="text-sm text-slate-300">—</div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="panel p-4">
+                <h2 class="text-base font-bold text-white mb-3">Tools</h2>
+                <div class="space-y-2">
+                    <button id="copy-report-btn" class="action-btn">Copy quick report</button>
+                    <button id="export-btn" class="action-btn">Export local backup (JSON)</button>
+                    <button id="import-btn" class="action-btn">Import local backup (JSON)</button>
+                    <button id="clear-game-btn" class="action-btn">Clear game progress only</button>
+                    <button id="clear-all-btn" class="action-btn !border-red-400/45 !text-red-300">Clear all local site data</button>
+                </div>
+                <input id="import-file" type="file" accept="application/json" class="hidden" />
+                <p class="text-xs text-slate-500 mt-3">Tip: "game progress only" keeps your browser settings and anything not related to the game.</p>
+            </div>
+
+            <div class="panel p-4">
+                <h2 class="text-base font-bold text-white mb-3">Activity</h2>
+                <div id="activity-log" class="space-y-2 text-sm max-h-64 overflow-y-auto"></div>
+            </div>
+        </section>
     </main>
 
     <script>
-        function logout() {
-            sessionStorage.removeItem('bw_admin_session');
-            window.location.href = 'login.html';
+        const GAME_KEYS = [
+            'collectorTotalScore',
+            'collectedParticlesCount',
+            'whirlCollectorUsername',
+            'whirlCollectorPlayerKey'
+        ];
+
+        const rarityLabels = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
+        const rarityColors = ['#60a5fa', '#2dd4bf', '#c084fc', '#fb7185', '#fbbf24'];
+        const activity = [];
+
+        const statPlayerEl = document.getElementById('stat-player');
+        const statScoreEl = document.getElementById('stat-score');
+        const statRankEl = document.getElementById('stat-rank');
+        const statTotalCapturesEl = document.getElementById('stat-total-captures');
+        const statLegendaryEl = document.getElementById('stat-legendary');
+        const dotBreakdownEl = document.getElementById('dot-breakdown');
+        const quickChecksEl = document.getElementById('quick-checks');
+        const lastRefreshEl = document.getElementById('last-refresh');
+        const activityLogEl = document.getElementById('activity-log');
+        const importFileEl = document.getElementById('import-file');
+
+        function getRank(score) {
+            if (score >= 2500) return 'Backyard Wizard';
+            if (score >= 500) return 'Mad Ute Scientist';
+            if (score >= 100) return 'Bunnings Tinkerer';
+            return 'Servo Rookie';
         }
 
-        function clearLocalStorage() {
-            if (confirm("Are you sure you want to wipe all local collection data? This will reset your counters to zero.")) {
-                localStorage.clear();
-                alert("Local storage wiped. System reset.");
+        function parseCounts() {
+            try {
+                const raw = JSON.parse(localStorage.getItem('collectedParticlesCount') || '[0,0,0,0,0]');
+                if (!Array.isArray(raw) || raw.length !== 5) return [0, 0, 0, 0, 0];
+                return raw.map(v => {
+                    const n = Number(v);
+                    return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 0;
+                });
+            } catch {
+                return [0, 0, 0, 0, 0];
             }
         }
 
-        function resetSystem() {
-            gsap.to('main', { filter: 'invert(1)', duration: 0.1, repeat: 10, yoyo: true });
-            setTimeout(() => {
-                alert("EMERGENCY PROTOCOL INITIATED: User counters would be cleared via DB in Phase 2.");
-            }, 1000);
+        function addActivity(message) {
+            activity.unshift({ message, at: new Date() });
+            if (activity.length > 20) activity.length = 20;
+            renderActivity();
         }
 
-        function downloadBackup() {
-            const data = {
-                timestamp: new Date().toISOString(),
-                stats: { totalSyncs: 4281, legendaryFinds: 142 },
-                node: "Primary-DC-West"
+        function renderActivity() {
+            if (activity.length === 0) {
+                activityLogEl.innerHTML = '<div class="text-slate-400">No actions yet.</div>';
+                return;
+            }
+            activityLogEl.innerHTML = activity.map(item =>
+                `<div class="border border-slate-700/60 rounded-lg px-3 py-2 bg-slate-900/45">
+                    <div class="text-slate-200">${item.message}</div>
+                    <div class="text-xs text-slate-500 mt-1">${item.at.toLocaleTimeString()}</div>
+                </div>`
+            ).join('');
+        }
+
+        function renderDashboard() {
+            const counts = parseCounts();
+            const totalCaptures = counts.reduce((a, b) => a + b, 0);
+            const score = Math.max(0, Number(localStorage.getItem('collectorTotalScore') || 0));
+            const player = (localStorage.getItem('whirlCollectorUsername') || 'You').trim() || 'You';
+            const rank = getRank(score);
+
+            statPlayerEl.textContent = player;
+            statScoreEl.textContent = score.toLocaleString();
+            statRankEl.textContent = rank;
+            statTotalCapturesEl.textContent = totalCaptures.toLocaleString();
+            statLegendaryEl.textContent = String(counts[4] || 0);
+
+            const maxCount = Math.max(1, ...counts);
+            dotBreakdownEl.innerHTML = counts.map((count, idx) => {
+                const widthPct = Math.max(4, Math.round((count / maxCount) * 100));
+                return `<div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span style="color:${rarityColors[idx]};font-weight:700">${rarityLabels[idx]}</span>
+                        <span class="text-slate-300">${count}</span>
+                    </div>
+                    <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full" style="width:${widthPct}%;background:${rarityColors[idx]}"></div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            const hasPlayerKey = !!localStorage.getItem('whirlCollectorPlayerKey');
+            const hasTheme = !!localStorage.getItem('theme');
+            const checks = [
+                { label: 'Saved player key exists', ok: hasPlayerKey },
+                { label: 'Theme preference saved', ok: hasTheme },
+                { label: 'Any score data found', ok: score > 0 || totalCaptures > 0 },
+                { label: 'Collector array format looks valid', ok: Array.isArray(counts) && counts.length === 5 }
+            ];
+
+            quickChecksEl.innerHTML = checks.map(c =>
+                `<div class="flex items-center justify-between border border-slate-700/60 rounded-lg px-3 py-2 bg-slate-900/40">
+                    <span>${c.label}</span>
+                    <span class="${c.ok ? 'text-emerald-400' : 'text-amber-300'} font-bold">${c.ok ? 'OK' : 'Check'}</span>
+                </div>`
+            ).join('');
+
+            lastRefreshEl.textContent = new Date().toLocaleString();
+        }
+
+        function exportBackup() {
+            const snapshot = {};
+            for (const key of GAME_KEYS) snapshot[key] = localStorage.getItem(key);
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                source: 'bw-admin-dashboard',
+                snapshot
             };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `bw_backup_${Date.now()}.json`;
+            a.download = `bw_local_backup_${Date.now()}.json`;
             a.click();
+            URL.revokeObjectURL(url);
+            addActivity('Exported local backup file.');
         }
+
+        function importBackupFile(file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(String(reader.result || '{}'));
+                    const snapshot = data?.snapshot;
+                    if (!snapshot || typeof snapshot !== 'object') {
+                        alert('That file is not a valid backup.');
+                        return;
+                    }
+                    for (const key of GAME_KEYS) {
+                        const value = snapshot[key];
+                        if (value === null || value === undefined) localStorage.removeItem(key);
+                        else localStorage.setItem(key, String(value));
+                    }
+                    renderDashboard();
+                    addActivity('Imported backup file.');
+                } catch {
+                    alert('Could not read that JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function clearGameProgressOnly() {
+            if (!confirm('Clear game score + collected dots on this browser?')) return;
+            localStorage.removeItem('collectorTotalScore');
+            localStorage.removeItem('collectedParticlesCount');
+            renderDashboard();
+            addActivity('Cleared game progress only.');
+        }
+
+        function clearAllLocalData() {
+            if (!confirm('Clear all local website data on this browser? This cannot be undone.')) return;
+            localStorage.clear();
+            renderDashboard();
+            addActivity('Cleared all local site data.');
+        }
+
+        function copyQuickReport() {
+            const counts = parseCounts();
+            const score = Math.max(0, Number(localStorage.getItem('collectorTotalScore') || 0));
+            const player = (localStorage.getItem('whirlCollectorUsername') || 'You').trim() || 'You';
+            const report = [
+                `Player: ${player}`,
+                `Score: ${score.toLocaleString()}`,
+                `Rank: ${getRank(score)}`,
+                `Common: ${counts[0]} | Uncommon: ${counts[1]} | Rare: ${counts[2]} | Epic: ${counts[3]} | Legendary: ${counts[4]}`
+            ].join('\n');
+
+            navigator.clipboard.writeText(report)
+                .then(() => addActivity('Copied quick report to clipboard.'))
+                .catch(() => alert('Clipboard blocked. Try again.'));
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            sessionStorage.removeItem('bw_admin_session');
+            window.location.href = 'login.html';
+        });
+
+        document.getElementById('open-site-btn').addEventListener('click', () => {
+            window.location.href = '../index.html';
+        });
+
+        document.getElementById('refresh-btn').addEventListener('click', () => {
+            renderDashboard();
+            addActivity('Refreshed dashboard data.');
+        });
+
+        document.getElementById('copy-report-btn').addEventListener('click', copyQuickReport);
+        document.getElementById('export-btn').addEventListener('click', exportBackup);
+        document.getElementById('import-btn').addEventListener('click', () => importFileEl.click());
+        document.getElementById('clear-game-btn').addEventListener('click', clearGameProgressOnly);
+        document.getElementById('clear-all-btn').addEventListener('click', clearAllLocalData);
+
+        importFileEl.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) importBackupFile(file);
+            e.target.value = '';
+        });
+
+        renderDashboard();
+        addActivity('Dashboard loaded.');
     </script>
 </body>
 
