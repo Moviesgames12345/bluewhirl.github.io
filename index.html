@@ -704,10 +704,12 @@
             border: 1px solid rgba(250, 204, 21, 0.45);
             background: linear-gradient(90deg, rgba(120, 53, 15, 0.36) 0%, rgba(146, 64, 14, 0.42) 50%, rgba(120, 53, 15, 0.36) 100%);
             color: #fde68a;
-            font-size: 0.7rem;
+            font-size: 0.66rem;
             font-weight: 900;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.02em;
             text-shadow: 0 0 12px rgba(250, 204, 21, 0.45);
+            white-space: nowrap;
+            text-overflow: ellipsis;
             overflow: hidden;
             max-height: 1.8rem;
             opacity: 1;
@@ -922,6 +924,16 @@
             #inventory-hud {
                 bottom: 1rem;
                 left: 1rem;
+                max-width: min(240px, calc(100vw - 2rem));
+                max-height: calc(100dvh - 2rem);
+            }
+
+            #inventory-hud .inventory-content.visible {
+                max-height: calc(100dvh - 16rem);
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                padding-right: 0.2rem;
             }
         }
     </style>
@@ -975,7 +987,7 @@
     <!-- Inventory HUD -->
     <div id="inventory-hud" class="compact" aria-label="Collector HUD">
         <div class="inventory-content" id="inventory-content">
-            <div id="user-rank" class="rank-badge">Whirl Novice</div>
+            <div id="user-rank" class="rank-badge">Servo Rookie</div>
             <div id="combo-indicator" class="combo-indicator">Combo x2</div>
             <div id="combo-live" class="combo-live inactive">Chain: None · Multiplier x1.00</div>
             <div id="hold-status" class="hold-status">Hold a fragment for 2.0s to capture.</div>
@@ -1021,7 +1033,7 @@
                 <div class="active-player-title">Current Run</div>
                 <div class="active-player-stats">
                     <span>Rank</span>
-                    <span id="active-player-rank" class="active-player-value">Whirl Novice</span>
+                    <span id="active-player-rank" class="active-player-value">Servo Rookie</span>
                     <span>Score</span>
                     <span id="active-player-score" class="active-player-value">0</span>
                 </div>
@@ -1791,7 +1803,7 @@
             const rarityComboGrowth = [0.03, 0.07, 0.1, 0.13, 0.16];
             const rarityComboCap = [1.35, 1.7, 2.05, 2.35, 2.6];
 
-            const comboResetWindowMs = 4500;
+            const comboResetWindowMs = 6000;
             let lastComboAt = 0;
             let lastRarityHit = -1;
             let sameRarityCombo = 0;
@@ -1887,50 +1899,31 @@
                     onComplete: () => ring.remove()
                 });
 
-                const comboSuffix = comboMultiplier > 1.01 ? ` · x${comboMultiplier.toFixed(2)}` : '';
                 const rewardColor = ['#3b82f6', '#14b8a6', '#a855f7', '#f43f5e', '#fbbf24'][rIdx] || '#3b82f6';
                 spawnFloatingText(
                     e.clientX,
                     e.clientY,
-                    `+${pointsEarned} ${['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'][rIdx]}${comboSuffix}`,
-                    rewardColor,
-                    comboMultiplier > 1.01
-                        ? {
-                            fontSize: '2.95rem',
-                            fontWeight: '900',
-                            background: 'rgba(12, 10, 2, 0.86)',
-                            border: '1px solid rgba(250, 204, 21, 0.6)',
-                            boxShadow: '0 0 0 6px rgba(250, 204, 21, 0.12), 0 0 24px rgba(250, 204, 21, 0.65)',
-                            textShadow: '0 0 8px rgba(254, 240, 138, 0.95), 0 0 24px rgba(250, 204, 21, 0.75)',
-                            duration: 1.0,
-                            riseY: -46,
-                            toScale: 1.08
-                        }
-                        : {}
+                    `x${comboMultiplier.toFixed(2)}  +${pointsEarned}`,
+                    comboMultiplier > 1.01 ? '#fde047' : rewardColor,
+                    {
+                        fontSize: comboMultiplier > 1.01 ? 'clamp(1.05rem, 3.9vw, 1.55rem)' : 'clamp(0.95rem, 3.5vw, 1.35rem)',
+                        fontWeight: '900',
+                        padding: '0.2rem 0.4rem',
+                        background: comboMultiplier > 1.01 ? 'rgba(12, 10, 2, 0.82)' : 'rgba(2, 6, 23, 0.74)',
+                        border: comboMultiplier > 1.01 ? '1px solid rgba(250, 204, 21, 0.62)' : '1px solid rgba(125, 211, 252, 0.35)',
+                        boxShadow: comboMultiplier > 1.01
+                            ? '0 0 0 4px rgba(250, 204, 21, 0.11), 0 0 18px rgba(250, 204, 21, 0.55)'
+                            : '0 0 0 3px rgba(56, 189, 248, 0.1), 0 0 14px rgba(56, 189, 248, 0.3)',
+                        textShadow: comboMultiplier > 1.01
+                            ? '0 0 7px rgba(254, 240, 138, 0.92), 0 0 18px rgba(250, 204, 21, 0.72)'
+                            : '0 0 8px rgba(2, 6, 23, 0.95)',
+                        duration: comboMultiplier > 1.01 ? 0.95 : 0.82,
+                        riseY: comboMultiplier > 1.01 ? -42 : -30,
+                        toScale: comboMultiplier > 1.01 ? 1.06 : 1,
+                        offsetX: 10,
+                        offsetY: -8
+                    }
                 );
-
-                if (comboMultiplier > 1.01) {
-                    spawnFloatingText(
-                        e.clientX,
-                        e.clientY,
-                        `COMBO BOOST x${comboMultiplier.toFixed(2)}`,
-                        '#fde047',
-                        {
-                            fontSize: '2.05rem',
-                            fontWeight: '900',
-                            background: 'rgba(120, 53, 15, 0.72)',
-                            border: '1px solid rgba(251, 191, 36, 0.72)',
-                            boxShadow: '0 0 0 8px rgba(251, 191, 36, 0.14), 0 0 30px rgba(251, 191, 36, 0.72)',
-                            textShadow: '0 0 10px rgba(254, 240, 138, 0.92), 0 0 26px rgba(251, 191, 36, 0.78)',
-                            duration: 1.05,
-                            riseY: -76,
-                            offsetY: -54,
-                            fromScale: 0.82,
-                            toScale: 1.1,
-                            ease: 'back.out(1.45)'
-                        }
-                    );
-                }
 
                 const shockStrength = 2.2 + rIdx * 0.65;
                 for (let i = 0; i < particleCount; i++) {
@@ -1954,8 +1947,9 @@
             function collectParticle(rIdx, pIdx, sourceEvent) {
                 const comboIndicator = document.getElementById('combo-indicator');
                 const now = performance.now();
+                const comboStillActive = getComboTimeRemainingMs(now) > 0;
 
-                if (lastRarityHit === rIdx && now - lastComboAt < comboResetWindowMs) {
+                if (lastRarityHit === rIdx && comboStillActive) {
                     sameRarityCombo += 1;
                 } else {
                     sameRarityCombo = 1;
@@ -2062,7 +2056,7 @@
                 }
 
                 const comboMultLive = getCurrentComboMultiplier(lastRarityHit);
-                const secondsLeft = (remainingMs / 1000).toFixed(1);
+                const secondsLeft = (Math.max(100, remainingMs) / 1000).toFixed(1);
                 const isUrgent = remainingMs <= 1400;
                 if (comboLiveEl) {
                     comboLiveEl.textContent = `⚡ Chain ${rarities[lastRarityHit].name} x${sameRarityCombo} · MULTI x${comboMultLive.toFixed(2)} · RESET ${secondsLeft}s`;
@@ -2071,7 +2065,7 @@
                     comboLiveEl.classList.toggle('combo-danger', isUrgent);
                 }
                 if (compactComboLiveEl) {
-                    compactComboLiveEl.textContent = `⚡ Combo ${rarities[lastRarityHit].name} x${sameRarityCombo} · x${comboMultLive.toFixed(2)} · ${secondsLeft}s`;
+                    compactComboLiveEl.textContent = `⚡ ${rarities[lastRarityHit].name} x${sameRarityCombo} · x${comboMultLive.toFixed(2)} · ${secondsLeft}s`;
                     compactComboLiveEl.classList.remove('inactive');
                     compactComboLiveEl.classList.add('combo-active');
                     compactComboLiveEl.classList.toggle('combo-danger', isUrgent);
@@ -2112,10 +2106,10 @@
                 const activePlayerRankEl = document.getElementById('active-player-rank');
                 const activePlayerScoreEl = document.getElementById('active-player-score');
 
-                let currentRank = "Whirl Novice";
-                if (totalScoreState >= 2500) currentRank = "Grand Architect";
-                else if (totalScoreState >= 500) currentRank = "Fragment Master";
-                else if (totalScoreState >= 100) currentRank = "Resonance Seeker";
+                let currentRank = "Servo Rookie";
+                if (totalScoreState >= 2500) currentRank = "Backyard Wizard";
+                else if (totalScoreState >= 500) currentRank = "Mad Ute Scientist";
+                else if (totalScoreState >= 100) currentRank = "Bunnings Tinkerer";
                 if (rankEl) rankEl.textContent = currentRank;
                 if (activePlayerRankEl) activePlayerRankEl.textContent = currentRank;
                 if (activePlayerScoreEl) activePlayerScoreEl.textContent = totalScoreState.toLocaleString();
