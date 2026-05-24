@@ -2222,19 +2222,38 @@
                 else instabilityLevel = Math.max(0, instabilityLevel - 2.5);
                 lastAttemptAt = now;
 
-                raycaster.setFromCamera(pointer, camera);
-                const intersects = raycaster.intersectObject(particles, true);
-                if (intersects.length > 0) {
-                    const bestHit = intersects
-                        .filter(hit => hit.index !== undefined && originalSizes[hit.index] > 0)
-                        .sort((a, b) => (a.distanceToRay ?? Number.MAX_VALUE) - (b.distanceToRay ?? Number.MAX_VALUE))[0];
+                const posArray = particles.geometry.attributes.position.array;
+                const pickLocal = new THREE.Vector3();
+                const pickProjected = new THREE.Vector3();
+                let bestIdx = -1;
+                let bestScore = Number.POSITIVE_INFINITY;
 
-                    if (!bestHit) return;
+                for (let i = 0; i < particleCount; i++) {
+                    if (originalSizes[i] <= 0) continue;
 
-                    const idx = bestHit.index;
-                    const rIdx = particleRarityIndices[idx];
+                    const i3 = i * 3;
+                    pickLocal.set(posArray[i3], posArray[i3 + 1], posArray[i3 + 2]);
+                    pickProjected.copy(pickLocal).applyQuaternion(particles.quaternion).project(camera);
 
-                    holdingParticleIndex = idx;
+                    if (pickProjected.z < -1 || pickProjected.z > 1) continue;
+
+                    const dx = pickProjected.x - pointer.x;
+                    const dy = pickProjected.y - pointer.y;
+                    const distSq = dx * dx + dy * dy;
+
+                    const hitRadiusNdc = 0.02 + Math.max(0, originalSizes[i]) * 0.006;
+                    const score = distSq / (hitRadiusNdc * hitRadiusNdc);
+
+                    if (score < 1 && score < bestScore) {
+                        bestScore = score;
+                        bestIdx = i;
+                    }
+                }
+
+                if (bestIdx !== -1) {
+                    const rIdx = particleRarityIndices[bestIdx];
+
+                    holdingParticleIndex = bestIdx;
                     holdingRarityIndex = rIdx;
                     holdStartAt = now;
                     holdPointerX = source?.clientX ?? 0;
