@@ -1475,7 +1475,32 @@
             const repulsionDirection2D = new THREE.Vector2();
             let comboSystemReady = false;
             const originalSizes = new Float32Array(particleSizes);
+            const initialSizes = new Float32Array(particleSizes); // pristine copy for reset
             const particleShock = new Float32Array(particleCount);
+
+            // Restore previously collected dot indices so they stay gone after refresh
+            let collectedParticleIndices = new Set();
+            try {
+                const storedIndices = localStorage.getItem('collectedParticleIndices');
+                if (storedIndices) {
+                    const parsed = JSON.parse(storedIndices);
+                    if (Array.isArray(parsed)) {
+                        parsed.forEach(idx => {
+                            if (idx >= 0 && idx < particleCount) {
+                                collectedParticleIndices.add(idx);
+                                originalSizes[idx] = 0;
+                                particleSizes[idx] = 0;
+                            }
+                        });
+                    }
+                }
+            } catch (e) {
+                localStorage.removeItem('collectedParticleIndices');
+            }
+            // Sync zeroed entries to the GPU buffer
+            if (collectedParticleIndices.size > 0) {
+                particles.geometry.attributes.aSize.needsUpdate = true;
+            }
             const clock = new THREE.Clock();
             let holdingParticleIndex = -1;
             let holdingRarityIndex = -1;
@@ -1992,10 +2017,14 @@
                     gsap.to(comboIndicator, { opacity: 0, y: -10, duration: 0.45, delay: 0.7 });
                 }
 
-                // Hide particle immediately
+                // Hide particle immediately and persist so it stays gone after refresh
                 originalSizes[pIdx] = 0;
                 particles.geometry.attributes.aSize.setX(pIdx, 0);
                 particles.geometry.attributes.aSize.needsUpdate = true;
+                collectedParticleIndices.add(pIdx);
+                try {
+                    localStorage.setItem('collectedParticleIndices', JSON.stringify([...collectedParticleIndices]));
+                } catch (e) { /* storage full */ }
 
                 // Increment count + score
                 collectedState[rIdx]++;
@@ -2243,6 +2272,8 @@
             function resetCollectorProgress(clearPlayerName = true) {
                 localStorage.removeItem('collectedParticlesCount');
                 localStorage.removeItem('collectorTotalScore');
+                localStorage.removeItem('collectedParticleIndices');
+                collectedParticleIndices.clear();
                 if (clearPlayerName) {
                     localStorage.removeItem('whirlCollectorUsername');
                 }
@@ -2266,7 +2297,7 @@
                     usernameInput.value = '';
                 }
 
-                originalSizes.set(particleSizes);
+                originalSizes.set(initialSizes);
                 for (let i = 0; i < particleCount; i++) {
                     particles.geometry.attributes.aSize.setX(i, originalSizes[i]);
                 }
