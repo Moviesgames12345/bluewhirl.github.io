@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Privacy Policy | Screw It</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	<style>
+		body {
+			font-family: 'Montserrat', sans-serif;
+			transition: background-color 0.3s, color 0.3s;
+		}
+
+		/* Light mode */
+		.light body {
+			background-color: #f3f4f6;
+			color: #1f2937;
+		}
+
+		.light .bg-slate-900 {
+			background-color: #e5e7eb !important;
+		}
+
+		.light .bg-slate-800 {
+			background-color: #ffffff !important;
+		}
+
+		.light .text-slate-200 {
+			color: #374151 !important;
+		}
+
+		.light .text-slate-300 {
+			color: #4b5563 !important;
+		}
+
+		.light .text-slate-400 {
+			color: #4b5563 !important;
+		}
+
+		.light .navbar-bg {
+			background-color: rgba(229, 231, 235, 0.9) !important;
+		}
+
+		/* Dark mode (default) */
+		body {
+			background-color: #0f172a;
+			color: #e2e8f0;
+		}
+
+		.navbar-bg {
+			background-color: rgba(15, 23, 42, 0.85);
+		}
+
+		canvas#webgl {
+			position: fixed;
+			top: 0;
+			left: 0;
+			outline: none;
+			z-index: 0;
+		}
+
+		main {
+			position: relative;
+			z-index: 1;
+		}
+
+		.policy-container {
+			background-color: rgba(30, 41, 59, 0.4);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			border: 1px solid rgba(56, 189, 248, 0.2);
+		}
+
+		.light .policy-container {
+			background-color: rgba(255, 255, 255, 0.7);
+		}
+
+		.section-title {
+			color: #38bdf8;
+			border-bottom: 2px solid #38bdf8;
+			padding-bottom: 0.5rem;
+			margin-top: 2rem;
+			margin-bottom: 1rem;
+			font-weight: 700;
+		}
+	</style>
+</head>
+
+<body class="bg-slate-900 text-slate-200">
+
+	<canvas id="webgl"></canvas>
+
+	<main>
+		<nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-20">
+					<div class="flex items-center space-x-2">
+						<span class="text-2xl font-bold text-sky-400">Screw It</span>
+					</div>
+					<div class="flex items-center">
+						<button id="theme-toggle" title="Toggle dark/light mode"
+							class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+							<i class="fas fa-moon text-xl"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<section class="py-16 md:py-24">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="policy-container rounded-2xl shadow-2xl p-8 md:p-12 max-w-4xl mx-auto backdrop-blur-md">
+					<h1 class="text-4xl font-bold text-sky-400 mb-2">Privacy Policy for Screw It</h1>
+					<p class="text-slate-400 mb-8 italic">Effective Date: January 01, 2026</p>
+
+					<p class="mb-6 leading-relaxed">
+						Welcome to Screw It. We respect your privacy and are committed to protecting the
+						personal data you share with us. This Privacy Policy explains how we collect, use, and safeguard
+						your information when you use our mobile application and services to connect clients with independent contractors.
+					</p>
+
+					<h2 class="text-2xl section-title">1. Information We Collect</h2>
+
+					<h3 class="text-xl font-semibold text-sky-300 mt-4 mb-2">1.1 Personal Data</h3>
+					<p class="mb-4">When you create an account as a Client or a Contractor, we collect:</p>
+					<ul class="list-disc pl-6 mb-4 space-y-2">
+						<li><strong>Email Address:</strong> Used for authentication and account management.</li>
+						<li><strong>Name / Business Name:</strong> Used to identify you within the platform.</li>
+						<li><strong>Location Data:</strong> Clients provide job addresses to receive accurate quotes. Contractors may provide service area locations.</li>
+						<li><strong>Payment Information:</strong> Processed securely via Stripe. We do not store your full credit card or bank account details on our servers.</li>
+					</ul>
+
+					<h3 class="text-xl font-semibold text-sky-300 mt-4 mb-2">1.2 Job & Interaction Data</h3>
+					<p class="mb-4">To provide our core marketplace services, we process:</p>
+					<ul class="list-disc pl-6 mb-4 space-y-2">
+						<li><strong>Job Details & Photos:</strong> Information, descriptions, and media uploaded by clients to outline the required work.</li>
+						<li><strong>Chat Messages:</strong> In-app communications between clients and contractors to coordinate jobs securely.</li>
+						<li><strong>Reviews & Ratings:</strong> Public feedback provided after a job is completed.</li>
+					</ul>
+
+					<h3 class="text-xl font-semibold text-sky-300 mt-4 mb-2">1.3 AI Processing</h3>
+					<p class="mb-4">
+						When clients request a variation to a job's scope of work, the proposed changes are sent to an AI service (Google Gemini API) to generate a clean, revised, and legally structured Scope of Work document. This data is not used to train global AI models.
+					</p>
+
+					<h2 class="text-2xl section-title">2. How We Use Your Information</h2>
+					<p class="mb-4">We use your data to:</p>
+					<ul class="list-disc pl-6 mb-4 space-y-2">
+						<li>Facilitate connections between clients and verified contractors.</li>
+						<li>Process secure payments and contractor payouts via Stripe Connect.</li>
+						<li>Send push notifications regarding job bids, messages, and project updates.</li>
+						<li>Maintain trust and safety on the platform through review monitoring and administrative oversight.</li>
+					</ul>
+
+					<h2 class="text-2xl section-title">3. Data Protection & Security</h2>
+					<ul class="list-disc pl-6 mb-4 space-y-2">
+						<li><strong>Encryption:</strong> All data transmitted between your device and our servers is encrypted in transit using HTTPS/SSL.</li>
+						<li><strong>Authentication:</strong> We use Google Firebase Authentication to ensure account security.</li>
+						<li><strong>Financial Security:</strong> All financial and payout information is tokenized and stored securely by Stripe, a PCI-compliant payment processor.</li>
+					</ul>
+
+					<h2 class="text-2xl section-title">4. Third-Party Services</h2>
+					<p class="mb-4">We use the following trusted third-party services:</p>
+					<ul class="list-disc pl-6 mb-4 space-y-2">
+						<li><strong>Google Firebase:</strong> For secure database storage, authentication, and cloud functions.</li>
+						<li><strong>Stripe:</strong> For secure payment processing, credit card holds, and contractor bank payouts.</li>
+						<li><strong>Expo Application Services:</strong> For delivering push notifications to your device.</li>
+					</ul>
+
+					<h2 class="text-2xl section-title">5. Your Rights & Account Deletion</h2>
+					<p class="mb-4">You have the right to control your data:</p>
+					<ul class="list-disc pl-6 mb-4 space-y-2">
+						<li><strong>Access Your Data:</strong> You can view all your active jobs, bids, and profile information within the app.</li>
+						<li><strong>Delete Your Account:</strong> You can permanently delete your account and all associated personal data directly within the app by navigating to the <strong>Profile tab</strong> and tapping <strong>"Delete Account"</strong>.</li>
+					</ul>
+
+					<h2 class="text-2xl section-title">6. Contact Us</h2>
+					<p class="mb-4">
+						If you have any questions or concerns about this Privacy Policy, please contact us at:<br>
+						Email: <a href="mailto:support@screwit.app"
+							class="text-sky-400 hover:underline">support@screwit.app</a>
+					</p>
+
+					<p class="mt-12 text-center text-sky-400 font-bold">
+						Screw It - Getting the job done.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<footer class="py-10 bg-slate-900 border-t border-slate-700">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+				<p class="text-sm">&copy; <span id="current-year"></span> Blue Whirl Game Studio. All rights reserved.
+				</p>
+			</div>
+		</footer>
+	</main>
+
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+			"gsap": "https://unpkg.com/gsap@3.12.5/index.js"
+		}
+	}
+	</script>
+
+	<script type="module">
+		import * as THREE from 'three';
+		import { gsap } from 'gsap';
+
+		document.addEventListener('DOMContentLoaded', () => {
+			// --- 3D PARTICLE ANIMATION ---
+			const scene = new THREE.Scene();
+			const sizes = { width: window.innerWidth, height: window.innerHeight };
+			const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+			camera.position.z = 4;
+			scene.add(camera);
+			const renderer = new THREE.WebGLRenderer({
+				canvas: document.querySelector('canvas#webgl'),
+				alpha: true,
+				antialias: true
+			});
+			renderer.setSize(sizes.width, sizes.height);
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+			const particleCount = 1000;
+			const positions = new Float32Array(particleCount * 3);
+			const colors = new Float32Array(particleCount * 3);
+			const colorOutside = new THREE.Color('#38bdf8');
+
+			for (let i = 0; i < particleCount; i++) {
+				const i3 = i * 3;
+				positions[i3] = (Math.random() - 0.5) * 10;
+				positions[i3 + 1] = (Math.random() - 0.5) * 10;
+				positions[i3 + 2] = (Math.random() - 0.5) * 10;
+				colorOutside.toArray(colors, i3);
+			}
+
+			const particleGeometry = new THREE.BufferGeometry();
+			particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+			particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+			const particleMaterial = new THREE.PointsMaterial({
+				size: 0.05,
+				vertexColors: true,
+				transparent: true,
+				opacity: 0.5,
+				blending: THREE.AdditiveBlending
+			});
+			const particles = new THREE.Points(particleGeometry, particleMaterial);
+			scene.add(particles);
+
+			const animate = () => {
+				particles.rotation.y += 0.001;
+				particles.rotation.x += 0.0005;
+				renderer.render(scene, camera);
+				requestAnimationFrame(animate);
+			};
+			animate();
+
+			window.addEventListener('resize', () => {
+				sizes.width = window.innerWidth;
+				sizes.height = window.innerHeight;
+				camera.aspect = sizes.width / sizes.height;
+				camera.updateProjectionMatrix();
+				renderer.setSize(sizes.width, sizes.height);
+			});
+
+			// --- THEME TOGGLE ---
+			const themeToggle = document.getElementById('theme-toggle');
+			const themeIcon = themeToggle.querySelector('i');
+			if (localStorage.getItem('theme') === 'light') {
+				document.documentElement.classList.add('light');
+				themeIcon.classList.replace('fa-moon', 'fa-sun');
+			}
+			themeToggle.addEventListener('click', () => {
+				document.documentElement.classList.toggle('light');
+				if (document.documentElement.classList.contains('light')) {
+					localStorage.setItem('theme', 'light');
+					themeIcon.classList.replace('fa-moon', 'fa-sun');
+				} else {
+					localStorage.setItem('theme', 'dark');
+					themeIcon.classList.replace('fa-sun', 'fa-moon');
+				}
+			});
+
+			document.getElementById('current-year').textContent = new Date().getFullYear();
+		});
+	</script>
+</body>
+
+</html>
