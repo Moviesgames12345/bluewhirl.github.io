@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Screw It - Getting the Job Done</title>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body, html {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+		}
+
+		.video-background {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			z-index: -2;
+		}
+
+		.video-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.65);
+			z-index: -1;
+		}
+
+		.content-wrapper {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			padding: 20px;
+			text-align: center;
+		}
+
+		.badge {
+			display: inline-block;
+			background: rgba(56, 189, 248, 0.15);
+			border: 1px solid rgba(56, 189, 248, 0.5);
+			color: #38bdf8;
+			font-size: 13px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			padding: 6px 18px;
+			border-radius: 999px;
+			margin-bottom: 24px;
+		}
+
+		.headline {
+			font-size: clamp(36px, 9vw, 72px);
+			font-weight: 900;
+			color: #ffffff;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			line-height: 1.05;
+			margin-bottom: 20px;
+			text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.8);
+		}
+
+		.headline span {
+			color: #38bdf8;
+		}
+
+		.sub-headline {
+			font-size: clamp(16px, 4vw, 22px);
+			font-weight: 500;
+			color: #e5e5e5;
+			line-height: 1.5;
+			margin-bottom: 40px;
+			max-width: 580px;
+			text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+		}
+
+		.button-group {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 14px;
+			width: 100%;
+			max-width: 360px;
+		}
+
+		.cta-button {
+			width: 100%;
+			padding: 18px 20px;
+			font-size: clamp(15px, 3.5vw, 18px);
+			font-weight: 900;
+			text-transform: uppercase;
+			color: #000000;
+			background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			letter-spacing: 1px;
+			text-decoration: none;
+			display: block;
+			transition: all 0.3s ease;
+			box-shadow: 0 6px 24px rgba(56, 189, 248, 0.4);
+		}
+
+		.cta-button:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 32px rgba(56, 189, 248, 0.6);
+		}
+
+		.cta-button:active {
+			transform: translateY(0);
+		}
+
+		.secondary-button {
+			width: 100%;
+			padding: 16px 20px;
+			font-size: clamp(13px, 3vw, 15px);
+			font-weight: 700;
+			text-transform: uppercase;
+			color: #38bdf8;
+			background: transparent;
+			border: 2px solid rgba(56, 189, 248, 0.5);
+			border-radius: 8px;
+			cursor: pointer;
+			letter-spacing: 1px;
+			text-decoration: none;
+			display: block;
+			transition: all 0.3s ease;
+		}
+
+		.secondary-button:hover {
+			background: rgba(56, 189, 248, 0.1);
+			border-color: #38bdf8;
+		}
+
+		.tagline {
+			margin-top: 32px;
+			font-size: 13px;
+			font-weight: 600;
+			color: rgba(255, 255, 255, 0.4);
+			text-transform: uppercase;
+			letter-spacing: 2px;
+		}
+	</style>
+</head>
+<body>
+	<video class="video-background" autoplay muted loop playsinline>
+		<source src="assets/loading1.mp4" type="video/mp4">
+	</video>
+	<div class="video-overlay"></div>
+
+	<div class="content-wrapper">
+		<div class="badge">Coming Soon</div>
+		<h1 class="headline">Screw <span>It</span></h1>
+		<p class="sub-headline">A marketplace connecting clients with skilled independent contractors. Post a job, get bids, get it done.</p>
+
+		<div class="button-group">
+			<a href="screw-it-privacy-policy.html" class="secondary-button">Privacy Policy</a>
+		</div>
+
+		<p class="tagline">Screw It — Getting the job done.</p>
+	</div>
+
+	<script>
+		window.addEventListener('load', () => {
+			const video = document.querySelector('.video-background');
+			if (video) {
+				video.play().catch(err => {
+					console.log('Video autoplay failed:', err);
+				});
+			}
+		});
+	</script>
+</body>
+</html>
