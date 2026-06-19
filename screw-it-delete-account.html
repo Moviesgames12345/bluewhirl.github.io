@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Account Deletion | Screw It</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+	<style>
+		body { font-family: 'Montserrat', sans-serif; transition: background-color 0.3s, color 0.3s; background-color: #0f172a; color: #e2e8f0; }
+		.light body { background-color: #f3f4f6; color: #1f2937; }
+		.light .bg-slate-900 { background-color: #e5e7eb !important; }
+		.light .bg-slate-800 { background-color: #ffffff !important; }
+		.light .text-slate-200 { color: #374151 !important; }
+		.light .text-slate-400 { color: #4b5563 !important; }
+		.navbar-bg { background-color: rgba(15, 23, 42, 0.85); }
+		.light .navbar-bg { background-color: rgba(229, 231, 235, 0.9) !important; }
+		canvas#webgl { position: fixed; top: 0; left: 0; outline: none; z-index: 0; }
+		main { position: relative; z-index: 1; }
+		.policy-container { background-color: rgba(30, 41, 59, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.2); }
+		.light .policy-container { background-color: rgba(255, 255, 255, 0.7); }
+	</style>
+</head>
+<body class="bg-slate-900 text-slate-200">
+	<canvas id="webgl"></canvas>
+	<main>
+		<nav class="navbar-bg sticky top-0 z-50 shadow-lg backdrop-blur-md">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-20">
+					<div class="flex items-center space-x-2">
+						<a href="screw-it.html" class="text-2xl font-bold text-sky-400 hover:text-sky-300 transition-colors">Screw It</a>
+					</div>
+					<div class="flex items-center">
+						<button id="theme-toggle" title="Toggle dark/light mode" class="ml-4 text-slate-400 hover:text-sky-400 focus:outline-none">
+							<i class="fas fa-moon text-xl"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</nav>
+		<section class="py-16 md:py-24">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="policy-container rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl mx-auto backdrop-blur-md text-center">
+					<i class="fas fa-user-minus text-6xl text-sky-400 mb-6"></i>
+					<h1 class="text-4xl font-bold text-sky-400 mb-6">Request Account Deletion</h1>
+					<p class="mb-6 leading-relaxed text-left">
+						We value your privacy. If you wish to permanently delete your Screw It account and all associated personal data, you can do so directly within the mobile app:
+					</p>
+					<ol class="list-decimal pl-6 mb-8 text-left space-y-2 font-medium">
+						<li>Open the <strong>Screw It</strong> app.</li>
+						<li>Navigate to the <strong>Profile</strong> tab.</li>
+						<li>Tap the <strong>Delete Account</strong> button at the bottom of the screen.</li>
+					</ol>
+					<div class="bg-slate-800 p-6 rounded-xl border border-slate-700 text-left mb-8">
+						<h3 class="font-bold text-sky-300 mb-2">Can't access the app?</h3>
+						<p class="text-sm">If you no longer have access to the app and wish to request manual account deletion, please email our support team from the email address associated with your account.</p>
+						<a href="mailto:support@screwit.app?subject=Account%20Deletion%20Request" class="inline-block mt-4 px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-lg transition-colors">
+							Email Support
+						</a>
+					</div>
+					<p class="text-xs text-slate-400 mt-8 text-left">
+						<strong>What data is deleted?</strong> Your profile information, personal details, location data, and authentication records are permanently removed. Messages and job histories may be retained in an anonymized format for administrative records, in accordance with our <a href="screw-it-privacy-policy.html" class="text-sky-400 hover:underline">Privacy Policy</a>.
+					</p>
+				</div>
+			</div>
+		</section>
+	</main>
+	<script type="importmap">
+	{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+	</script>
+	<script type="module">
+		import * as THREE from 'three';
+		document.addEventListener('DOMContentLoaded', () => {
+			const scene = new THREE.Scene();
+			const sizes = { width: window.innerWidth, height: window.innerHeight };
+			const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+			camera.position.z = 4;
+			scene.add(camera);
+			const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('canvas#webgl'), alpha: true, antialias: true });
+			renderer.setSize(sizes.width, sizes.height);
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+			const particleCount = 1000;
+			const positions = new Float32Array(particleCount * 3);
+			const colors = new Float32Array(particleCount * 3);
+			const colorOutside = new THREE.Color('#38bdf8');
+
+			for (let i = 0; i < particleCount; i++) {
+				const i3 = i * 3;
+				positions[i3] = (Math.random() - 0.5) * 10;
+				positions[i3 + 1] = (Math.random() - 0.5) * 10;
+				positions[i3 + 2] = (Math.random() - 0.5) * 10;
+				colorOutside.toArray(colors, i3);
+			}
+
+			const particleGeometry = new THREE.BufferGeometry();
+			particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+			particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+			const particleMaterial = new THREE.PointsMaterial({ size: 0.05, vertexColors: true, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
+			const particles = new THREE.Points(particleGeometry, particleMaterial);
+			scene.add(particles);
+
+			const animate = () => {
+				particles.rotation.y += 0.001;
+				particles.rotation.x += 0.0005;
+				renderer.render(scene, camera);
+				requestAnimationFrame(animate);
+			};
+			animate();
+
+			window.addEventListener('resize', () => {
+				sizes.width = window.innerWidth;
+				sizes.height = window.innerHeight;
+				camera.aspect = sizes.width / sizes.height;
+				camera.updateProjectionMatrix();
+				renderer.setSize(sizes.width, sizes.height);
+			});
+
+			const themeToggle = document.getElementById('theme-toggle');
+			const themeIcon = themeToggle.querySelector('i');
+			if (localStorage.getItem('theme') === 'light') {
+				document.documentElement.classList.add('light');
+				themeIcon.classList.replace('fa-moon', 'fa-sun');
+			}
+			themeToggle.addEventListener('click', () => {
+				document.documentElement.classList.toggle('light');
+				if (document.documentElement.classList.contains('light')) {
+					localStorage.setItem('theme', 'light');
+					themeIcon.classList.replace('fa-moon', 'fa-sun');
+				} else {
+					localStorage.setItem('theme', 'dark');
+					themeIcon.classList.replace('fa-sun', 'fa-moon');
+				}
+			});
+		});
+	</script>
+</body>
+</html>
